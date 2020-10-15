@@ -32,8 +32,6 @@ module.exports = {
             res.status(500).json({error: 1, message: error});
         }
     },
-
-
     sociallogin: async (req, res) => {
         newuser = await users.model.findOne({ email: req.body.email });
         if(!newuser){
@@ -45,23 +43,26 @@ module.exports = {
                     password: "socialaccess",
                     isAdmin: req.body.isAdmin,
                 });
+                console.log(user);
                 let token = jwt.sign({ token: {name: user.name, id: user.id}}, process.env.TOKEN_SECRET, { expiresIn: "1d" });
+                console.log(token, "created to");
                 res.json({error: 0,
                 message: "user created",
                 token: token});
             } catch (error) {
+                console.log("errr");
                 console.log(error);
                 res.status(500).json({error: 1, message: error});
             }
         }else{
+            console.log("enter else");
             let token = jwt.sign({ token: {name: newuser.name, id: newuser.id}}, process.env.TOKEN_SECRET, { expiresIn: "1d" });
+            console.log("token", token);
             res.json({error: 0,
             message: "login successful",
             token: token});
         }
-        
     },
-
     loginuser: async (req, res) => {
         try{
             keystone.session.signin({ email: req.body.email, password: req.body.password }, req, res, function (user) {
@@ -69,7 +70,6 @@ module.exports = {
                     return res.json({error: 0,
                         message: "login Successful",
                         token: token});
-                
             }, function(err){
                 return res.json({
                     success: true,
@@ -77,13 +77,10 @@ module.exports = {
                     message: (err && err.message ? err.message : false) || 'Sorry, there was an issue signing you in, please try again.'
                 });           
             });
-            
         }catch(err){
             console.log(error);
             res.status(500).json({error: 1, message: error});
-            
         }
-        
     },
     //following api logic is on temp bases. will change it later
     listFood: async (req, res) => {
@@ -103,34 +100,29 @@ module.exports = {
             spicyDetail.push(spice_constant);
         })
         let breakfast = [];
-        let newBreakfast = [];
         let lunch = [];
-        let newLunch = [];
         let dinner = [];
-        let newDinner = [];
         let completeDetail = {};
-
         async function pushArray(foundItem, arrayName){
             await foundItem.map((item)=> {
                 arrayName.push(item.id);
             })
         }
-
         let allergyDetails = [];
         let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
         pushArray(newAllergens, allergyDetails);
-
         let availableDetails = [];
         let newAvailable = await availability.model.find({ name: { $in: req.body.mealType } });
         pushArray(newAvailable, availableDetails);
-
         let daysDetails = [];
+        let daysNames = [];
         let newDays = await days.model.find({ name: { $in: req.body.day } });
         pushArray(newDays, daysDetails);
-
+        newDays.map((i)=>{
+            daysNames.push(i.name); 
+        })
         let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
         const finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
-        console.log(JSON.stringify(finalfood));
         for await (let ele of finalfood) {
             ele = JSON.parse(JSON.stringify(ele));
             let timing = ele.availability;
@@ -144,18 +136,52 @@ module.exports = {
                 else if(elem.name == 'Dinner') {
                     dinner.push(ele)
                 }
-            }                       
-
-            for await(let element of ele.available_days){
-                for await (let item of daysDetails) {
-                    if(element._id == item){
-                        completeDetail[`${element.name}`] = {Breakfast: breakfast, Lunch: lunch, Dinner: dinner};
+            }   
+        }
+        for await(let i of daysNames){  
+            completeDetail[`${i}`] = {Breakfast:[], Lunch: [], Dinner: []};
+        }
+        for await(let v of breakfast){
+            g = v.available_days;
+            for await(let k of g){
+                for await(let i of daysDetails){
+                    if(i ==k._id){ 
+                        v = JSON.parse(JSON.stringify(v));
+                        delete v.allergens;
+                        delete v.availability;
+                        delete v.available_days;
+                        completeDetail[`${k.name}`].Breakfast.push(v);
                     }
-                    delete ele.allergens;
-                    delete ele.availability;
-                    delete ele.available_days;
-                }
-            }    
+                } 
+            }
+        }
+        for await(let v of lunch){
+            g = v.available_days;
+            for await(let k of g){
+                daysDetails.map((i)=> {
+                    if(i ==k._id){
+                        v = JSON.parse(JSON.stringify(v));
+                        delete v.allergens;
+                        delete v.availability;
+                        delete v.available_days;
+                        completeDetail[`${k.name}`].Lunch.push(v);  
+                    }
+                });  
+            }
+        }
+        for await(let v of dinner){
+            g = v.available_days;
+            for await(let k of g){
+                daysDetails.map((i)=> {
+                    if(i ==k._id){
+                        v = JSON.parse(JSON.stringify(v));
+                        delete v.allergens;
+                        delete v.availability;
+                        delete v.available_days;
+                        completeDetail[`${k.name}`].Dinner.push(v);
+                    }
+                });  
+            }
         }
         res.json(completeDetail);
     },
