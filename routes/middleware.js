@@ -9,6 +9,8 @@
  */
 var _ = require('lodash');
 let jwt = require('jsonwebtoken');
+const keystone = require('keystone');
+let users = keystone.list('User');
 
 /**
 	Initialises the standard view locals
@@ -57,15 +59,22 @@ exports.requireUser = function (req, res, next) {
 };
 
 
-exports.verifyUser = function(req, res, next){
-	token = req.headers.token;
+exports.verifyUser = async function(req, res, next){
+	token = req.headers.authorization;
 
-	jwt.verify(token, process.env.TOKEN_SECRET, function(err, decoded) {
+	jwt.verify(token, process.env.TOKEN_SECRET, async function(err, decoded) {
 
 		if(err){
 			res.send(err.message);
 		}else{
-			console.log(decoded);
+			let id = decoded.token.id;
+			let foundUser = await users.model.findOne({_id: id});
+			if(foundUser){
+				next();
+			}else{
+				res.json({error: 1, message: "User Not Found"})
+			}
+
 		}
 		// decoded undefined
 		

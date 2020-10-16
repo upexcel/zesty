@@ -8,7 +8,7 @@ let Cart = new keystone.List(('Cart'), {
 Cart.add({
     userId: {type: Types.Relationship, ref: 'User'},
     foodId: {type: Types.Relationship, ref: 'Dishes'},
-    itemNum: {type: Number}
+    quantity: {type: Number}
             
     }
 );
