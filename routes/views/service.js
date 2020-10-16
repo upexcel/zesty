@@ -6,13 +6,13 @@ module.exports = {
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-              user: 'rajat_raj@excellencetechnologies.in',
-              pass: 'rydrcqxcwuqeueko'
+              user: 'youremail@gmail.com',
+              pass: 'yourpassword'
             }
           });
           
           var mailOptions = {
-            from: 'rajat_raj@excellencetechnologies.in',
+            from: 'youremail',
             to: email,
             subject: 'Generate New Password.',
             text: link

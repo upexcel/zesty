@@ -121,7 +121,12 @@ module.exports = {
 
     updatepassword: async (req, res)=> {
         try{
-
+            user = await users.model.findOne({_id: req.body._id});
+            if(user){
+                let newuser = await users.model.updateItem({password: req.body.password}, function (error) {
+                    
+                  });
+            }
         }catch(error){
             res.json({error:1, message: error});
         }
