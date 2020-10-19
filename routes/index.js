@@ -48,7 +48,9 @@ exports = module.exports = function (app) {
 	app.post('/api/savecart', routes.views.user.createcart);
 	app.post('/api/createuserfood', routes.views.user.dishDetails);
 	app.get('/api/getuserfood', routes.views.user.getDishDetails);
-	// app.get('/api/verifynewpassword', routes.views.user.verifypassword);
+	app.get('/api/verifynewpassword', routes.views.user.verifypassword);
+	app.get('/api/verifyemail', routes.views.user.verifyemail);
+	app.post('/api/updatepassword', routes.views.user.updatepassword);
 	app.post('/api/forgotpassword', routes.views.user.emailsender);
 
 };

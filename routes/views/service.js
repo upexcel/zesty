@@ -1,31 +1,26 @@
 var nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail')
 
 
 module.exports = {
-    emailservice: async (link, email) => {
-        var transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              user: 'youremail@gmail.com',
-              pass: 'yourpassword'
-            }
-          });
-          
-          var mailOptions = {
-            from: 'youremail@gmail.com',
-            to: email,
-            subject: 'Generate New Password.',
-            text: link
-          };
-          
-          transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-              console.log(error);
-            } else {
-              console.log('Email sent: ' + info.response);
-            }
-          });
-          return("email sent successfully");
+  newemailservice: async (link, email, subject) => {
+
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+    const msg = {
+      to: email, // Change to your recipient
+      from: process.env.EMAIL, // Change to your verified sender
+      subject: subject,
+      text: "click here to verify- " + link,
+      // html: '<strong>${link}</strong>',
     }
+    sgMail
+      .send(msg)
+      .then(() => {
+        console.log('Email sent')
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
 }
 

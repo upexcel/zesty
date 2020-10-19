@@ -9,6 +9,9 @@ let availability = keystone.list('Availability');
 let days = keystone.list('Days');
 const nodemailer = require("nodemailer");
 let passverify = require('./service');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const yourPassword = "someRandomPasswordHere";
 
 var helper = require('sendgrid').mail;
 var from_email = new helper.Email('test@example.com');
@@ -59,6 +62,8 @@ module.exports = {
             let user = await users.model.create({
                 name: req.body.name,
                 email: req.body.email,
+                emailVerified: req.body.emailVerified,
+                type: req.body.type,
                 password: req.body.password,
                 isAdmin: req.body.isAdmin,
             });
@@ -88,10 +93,10 @@ module.exports = {
 
             let token = jwt.sign({ token: { date: date , _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
             // useremail = user.email
-            
-            let link = 'http://localhost:3043/api/verifynewpassword?token=' + token;
+            let subject = "Verify /your Password"
+            let link = 'http://176.9.137.77:3043/api/verifynewpassword?token=' + token;
             console.log(link);
-            let message = passverify.emailservice(link, useremail);
+            let message = passverify.newemailservice(link, useremail, subject);
             console.log(message);
             res.json({message: "Success"});
         }
@@ -121,13 +126,38 @@ module.exports = {
 
     updatepassword: async (req, res)=> {
         try{
-            user = await users.model.findOne({_id: req.body._id});
-            if(user){
-                let newuser = await users.model.updateItem({password: req.body.password}, function (error) {
-                    
-                  });
-            }
-        }catch(error){
+            let founduser = await users.model.findOne({_id: req.body.id});
+            founduser.password = req.body.password
+            let update = await founduser.save();
+            res.json({error: 0, message: "Password Updated"});
+
+            // let givenpass = req.body.password;
+            // let mypassword;
+            // let mypass = bcrypt.genSalt(saltRounds, (err, salt) => {
+            //     console.log(salt);
+            //     bcrypt.hash(givenpass, salt, (err, hash) => {
+            //         if(err){
+            //             console.log(err);
+            //             res.json({error: 1, message: error});
+            //         }else{
+            //             console.log(hash);
+            //             mypassword = hash;
+            //              users.model.update({ _id: req.body.id }, { $set: { password: mypassword }}, function (error) {
+            //                 if(error){
+            //                     res.json({error: 1, message: error});
+            //                 }else{
+            //                     res.json({error: 0, message: "success"});
+            //                 }
+            //               });
+                        
+            //             // return mypassword
+            //         }
+            //     });
+            // });
+            // console.log(mypassword, "mmmmmmmmmmmmmmmmm");
+                
+            }catch(error){
+                console.log(error);
             res.json({error:1, message: error});
         }
     },
@@ -137,6 +167,8 @@ module.exports = {
         if (!newuser) {
             try {
                 console.log("entered");
+                let logintype = req.body.type;
+                console.log(logintype);
                 let user = await users.model.create({
                     name: req.body.name,
                     email: req.body.email,
@@ -145,6 +177,18 @@ module.exports = {
                     isAdmin: req.body.isAdmin,
                 });
                 console.log(user);
+                if(logintype == 'facebook'){
+                    let date = new Date().getTime();
+                    useremail = user.email;
+                    subject = "Verify Your Email"
+                    let token = jwt.sign({ token: { date: date , _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
+            // useremail = user.email
+            
+            let link = 'http://176.9.137.77:3043/api/verifyemail?token=' + token;
+            console.log(link);
+            passverify.newemailservice(link, useremail, subject);
+            console.log("success");
+                }
                 let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
                 console.log(token, "created to");
                 res.json({
@@ -168,9 +212,37 @@ module.exports = {
             });
         }
     },
+
+    verifyemail: async (req, res) => {
+        try{
+            let receivedtoken = req.query.token;
+        jwt.verify(receivedtoken, process.env.TOKEN_SECRET, async function(err, decoded) {
+            console.log(decoded.token._id);
+            let id  = decoded.token._id;
+            if(err){
+                res.send(err.message);
+            }else{
+                try{
+                    let founduser = await users.model.findOne({_id: id});
+                    founduser.emailVerified = true
+                    let update = await founduser.save();
+                    res.json({error: 0, message: "Email Verified"});
+                }catch(error){
+                    console.log(error);
+            res.json({error:1, message: error});
+                }
+                
+        
+        }});
+        }catch(error){
+            res.json(error);
+        } 
+    },
+
     loginuser: async (req, res) => {
         try {
             keystone.session.signin({ email: req.body.email, password: req.body.password }, req, res, function (user) {
+                console.log(user);
                 let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
                 return res.json({
                     error: 0,
@@ -178,6 +250,7 @@ module.exports = {
                     token: token
                 });
             }, function (err) {
+                console.log(err);
                 return res.json({
                     success: true,
                     session: false,
