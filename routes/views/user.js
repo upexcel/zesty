@@ -184,7 +184,7 @@ module.exports = {
                     let token = jwt.sign({ token: { date: date , _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
             // useremail = user.email
             
-            let link = 'http://176.9.137.77:3043/api/verifyemail?token=' + token;
+            let link = 'https://zestybackend.herokuapp.com/api/verifyemail?token=' + token;
             console.log(link);
             passverify.newemailservice(link, useremail, subject);
             console.log("success");
