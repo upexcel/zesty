@@ -4,6 +4,7 @@ const sgMail = require('@sendgrid/mail')
 
 module.exports = {
   newemailservice: async (link, email, subject) => {
+    console.log("entereddddddddddd in emailsender");
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY)
     const msg = {
@@ -13,13 +14,15 @@ module.exports = {
       text: "click here to verify- " + link,
       // html: '<strong>${link}</strong>',
     }
+    console.log("messageeeeeeeeee");
     sgMail
       .send(msg)
       .then(() => {
         console.log('Email sent')
       })
       .catch((error) => {
-        console.error(error)
+        console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+        console.error(error);
       })
   }
 }
