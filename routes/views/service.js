@@ -12,7 +12,7 @@ module.exports = {
           });
           
           var mailOptions = {
-            from: 'youremail',
+            from: 'youremail@gmail.com',
             to: email,
             subject: 'Generate New Password.',
             text: link
