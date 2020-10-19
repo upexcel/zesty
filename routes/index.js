@@ -40,7 +40,7 @@ exports = module.exports = function (app) {
 	app.all('/*', keystone.middleware.cors);
 
 	app.get('/', routes.views.index);
-	app.get('/api/getuser', routes.views.user.test);
+	app.get('/api/getuser', routes.views.user.getuser);
 	app.post('/api/createuser', routes.views.user.createuser);
 	app.post('/api/sociallogin', routes.views.user.sociallogin);
 	app.post('/api/loginuser', routes.views.user.loginuser);

@@ -1,4 +1,3 @@
-const { nextTick } = require('async');
 let jwt = require('jsonwebtoken');
 let keystone = require('keystone');
 let users = keystone.list('User');
@@ -7,36 +6,21 @@ let dishes = keystone.list('Dishes');
 let allergens = keystone.list('Allergens');
 let availability = keystone.list('Availability');
 let days = keystone.list('Days');
-const nodemailer = require("nodemailer");
 let passverify = require('./service');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-const yourPassword = "someRandomPasswordHere";
-
-var helper = require('sendgrid').mail;
-var from_email = new helper.Email('test@example.com');
-var to_email = new helper.Email('test@example.com');
-var subject = 'Hello World from the SendGrid Node.js Library!';
-var content = new helper.Content('text/plain', 'Hello, Email!');
-var mail = new helper.Mail(from_email, subject, to_email, content);
 
 
 module.exports = {
-    test: async function (req, res) {
+    getuser: async function (req, res) {
         try {
             let data = await users.model.find({})
             res.json(data)
         } catch (error) {
-            console.log(error);
-            res.status(500).json(error);
+            res.status(500).json({ error: 1, message: error });
         }
     },
     createcart: async (req, res) => {
         try {
-
             foodIdDetail = req.body.dishes;
-
-
             for (let item of foodIdDetail) {
                 let foodIdDetail = item.foodId;
                 let qtyDetail = item.quantity;
@@ -45,9 +29,7 @@ module.exports = {
                     foodId: foodIdDetail,
                     quantity: qtyDetail
                 });
-
             }
-            // let token = jwt.sign({ token: {name: user.name, id: user.id}}, process.env.TOKEN_SECRET, { expiresIn: "1d" });
             res.json({
                 error: 0,
                 message: "Success"
@@ -79,48 +61,37 @@ module.exports = {
     },
 
     emailsender: async (req, res) => {
-       
-        let useremail = req.body.email;
+        try{
+            let useremail = req.body.email;
         let date = new Date().getTime();
-        console.log(date);
-
         let user = await users.model.findOne({email: req.body.email});
         if(!user){
             res.send("No User with this email exists.");
         }else{
-            // var date = new Date().getMinutes;
-
-
             let token = jwt.sign({ token: { date: date , _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
-            // useremail = user.email
-            let subject = "Verify /your Password"
-            let link = 'http://176.9.137.77:3043/api/verifynewpassword?token=' + token;
-            console.log(link);
+            let subject = "Verify your Password"
+            let link = process.env.PASSWORD_LINK + token;
             let message = passverify.newemailservice(link, useremail, subject);
-            console.log(message);
-            res.json({message: "Success"});
+            res.json({error: 0, message: "Success"});
         }
-
+        }catch(error){
+            res.status(500).json({ error: 1, message: error });
+        }
     },
 
     verifypassword: async (req, res)=> {
         try{
-            console.log("Entered");
             let receivedtoken = req.query.token;
             let m = req.body;
-            console.log(receivedtoken, m);
         jwt.verify(receivedtoken, process.env.TOKEN_SECRET, async function(err, decoded) {
-            console.log(decoded);
             if(err){
                 res.send(err.message);
             }else{
-                console.log("User Expiry remaining");
-                res.send("user expiry remaining");
-        
+                res.json({message: "user expiry remaining"});      
                 }
           });
         }catch(error){
-            res.json(error);
+            res.json({ error: 1, message: error });
         } 
     },
 
@@ -129,35 +100,8 @@ module.exports = {
             let founduser = await users.model.findOne({_id: req.body.id});
             founduser.password = req.body.password
             let update = await founduser.save();
-            res.json({error: 0, message: "Password Updated"});
-
-            // let givenpass = req.body.password;
-            // let mypassword;
-            // let mypass = bcrypt.genSalt(saltRounds, (err, salt) => {
-            //     console.log(salt);
-            //     bcrypt.hash(givenpass, salt, (err, hash) => {
-            //         if(err){
-            //             console.log(err);
-            //             res.json({error: 1, message: error});
-            //         }else{
-            //             console.log(hash);
-            //             mypassword = hash;
-            //              users.model.update({ _id: req.body.id }, { $set: { password: mypassword }}, function (error) {
-            //                 if(error){
-            //                     res.json({error: 1, message: error});
-            //                 }else{
-            //                     res.json({error: 0, message: "success"});
-            //                 }
-            //               });
-                        
-            //             // return mypassword
-            //         }
-            //     });
-            // });
-            // console.log(mypassword, "mmmmmmmmmmmmmmmmm");
-                
+            res.json({error: 0, message: "Password Updated"});     
             }catch(error){
-                console.log(error);
             res.json({error:1, message: error});
         }
     },
@@ -166,45 +110,35 @@ module.exports = {
         newuser = await users.model.findOne({ email: req.body.email });
         if (!newuser) {
             try {
-                console.log("entered");
                 let logintype = req.body.type;
-                console.log(logintype);
+                let pass = process.env.PASSWORD;
                 let user = await users.model.create({
                     name: req.body.name,
                     email: req.body.email,
                     userId: req.body.userId,
-                    password: "socialaccess",
+                    password: pass,
                     isAdmin: req.body.isAdmin,
                 });
-                console.log(user);
                 if(logintype == 'facebook'){
                     let date = new Date().getTime();
                     useremail = user.email;
                     subject = "Verify Your Email"
                     let token = jwt.sign({ token: { date: date , _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
-            // useremail = user.email
             
-            let link = 'https://zestybackend.herokuapp.com/api/verifyemail?token=' + token;
-            console.log(link);
+            let link = process.env.EMAIL_LINK + token;
             passverify.newemailservice(link, useremail, subject);
-            console.log("success");
                 }
                 let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-                console.log(token, "created to");
                 res.json({
                     error: 0,
                     message: "user created",
                     token: token
                 });
             } catch (error) {
-                console.log("errr");
-                console.log(error);
                 res.status(500).json({ error: 1, message: error });
             }
         } else {
-            console.log("enter else");
             let token = jwt.sign({ token: { name: newuser.name, id: newuser.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-            console.log("token", token);
             res.json({
                 error: 0,
                 message: "login successful",
@@ -217,7 +151,6 @@ module.exports = {
         try{
             let receivedtoken = req.query.token;
         jwt.verify(receivedtoken, process.env.TOKEN_SECRET, async function(err, decoded) {
-            console.log(decoded.token._id);
             let id  = decoded.token._id;
             if(err){
                 res.send(err.message);
@@ -228,21 +161,17 @@ module.exports = {
                     let update = await founduser.save();
                     res.json({error: 0, message: "Email Verified"});
                 }catch(error){
-                    console.log(error);
             res.json({error:1, message: error});
                 }
-                
-        
         }});
         }catch(error){
-            res.json(error);
+            res.json({ error: 1, message: error });
         } 
     },
 
     loginuser: async (req, res) => {
         try {
             keystone.session.signin({ email: req.body.email, password: req.body.password }, req, res, function (user) {
-                console.log(user);
                 let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
                 return res.json({
                     error: 0,
@@ -250,7 +179,6 @@ module.exports = {
                     token: token
                 });
             }, function (err) {
-                console.log(err);
                 return res.json({
                     success: true,
                     session: false,
@@ -258,13 +186,13 @@ module.exports = {
                 });
             });
         } catch (err) {
-            console.log(error);
             res.status(500).json({ error: 1, message: error });
         }
     },
     //following api logic is on temp bases. will change it later
     listFood: async (req, res) => {
-        let spicyDetail = [];
+        try{
+            let spicyDetail = [];
         let spicyLevel = req.body.spicy;
         spicyLevel.map((item) => {
             let spice_constant;
@@ -288,6 +216,26 @@ module.exports = {
                 arrayName.push(item.id);
             })
         }
+
+        async function createDetails(receivedDetail, newObject, daysDetails) {
+            console.log("reached");
+            console.log(newObject);
+            for await (let v of receivedDetail) {
+                g = v.available_days;
+                for await (let k of g) {
+                    for await (let i of daysDetails) {
+                        if (i == k._id) {
+                            v = JSON.parse(JSON.stringify(v));
+                            delete v.allergens;
+                            delete v.availability;
+                            delete v.available_days;
+                            completeDetail[`${k.name}`].newObject.push(v);
+                        }
+                    }
+                }
+            }
+        }
+
         let allergyDetails = [];
         let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
         pushArray(newAllergens, allergyDetails);
@@ -321,6 +269,7 @@ module.exports = {
         for await (let i of daysNames) {
             completeDetail[`${i}`] = { Breakfast: [], Lunch: [], Dinner: [] };
         }
+
         for await (let v of breakfast) {
             g = v.available_days;
             for await (let k of g) {
@@ -364,6 +313,9 @@ module.exports = {
             }
         }
         res.json(completeDetail);
+        }catch(error){
+            res.json({ error: 1, message: error });
+        }
     },
     dishDetails: async (req, res) => {
         try {
@@ -374,16 +326,15 @@ module.exports = {
             });
             res.json(details);
         } catch (error) {
-            console.log(error);
-            res.status(500).json(error);
+            res.status(500).json({ error: 1, message: error });
         }
     },
     getDishDetails: async (req, res) => {
         try {
             const userfood = await carts.model.findOne({ userId: req.body.userId }).populate('foodId');
             res.status(200).json(userfood);
-        } catch (err) {
-            res.status(500).json(err);
+        } catch (error) {
+            res.status(500).json({ error: 1, message: error });
         }
     }
 };
