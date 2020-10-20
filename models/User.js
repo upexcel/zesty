@@ -13,7 +13,7 @@ User.add({
 	emailVerified: {type: Boolean, index: true},
 	type: {type: String},
 	userId: { type: String},
-	password: { type: Types.Password, initial: true, required: true },
+	password: { type: Types.Password, initial: true, required: true }
 }, 'Permissions', {
 	isAdmin: { type: Boolean, label: 'Can access Keystone', index: true },
 });

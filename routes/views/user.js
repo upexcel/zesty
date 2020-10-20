@@ -1,6 +1,7 @@
 let jwt = require('jsonwebtoken');
 let keystone = require('keystone');
 let users = keystone.list('User');
+let plans = keystone.list('Plan');
 let carts = keystone.list('Cart');
 let dishes = keystone.list('Dishes');
 let allergens = keystone.list('Allergens');
@@ -88,8 +89,9 @@ module.exports = {
             if(err){
                 res.json({error: 1, messagr: err});
             }else{
-                res.redirect("https://web-zesty-app.herokuapp.com/forgetLanding");
-                // res.json({message: "user expiry remaining"});      
+                
+                let userid = decoded.token._id;
+                res.redirect("https://web-zesty-app.herokuapp.com/forgetLanding?id ="+ userid);      
                 }
           });
         }catch(error){
@@ -107,6 +109,8 @@ module.exports = {
             res.json({error:1, message: error});
         }
     },
+
+
 
     sociallogin: async (req, res) => {
         newuser = await users.model.findOne({ email: req.body.email });
@@ -337,6 +341,15 @@ module.exports = {
             res.status(200).json(userfood);
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
+        }
+    },
+
+    listplans: async(req, res) => {
+        try{
+            let allPlans = await plans.model.find({});
+            res.json({plans: allPlans});
+        }catch(error){
+            res.json({ error: 1, message: error });
         }
     }
 };
