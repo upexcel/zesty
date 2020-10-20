@@ -66,12 +66,13 @@ module.exports = {
         let date = new Date().getTime();
         let user = await users.model.findOne({email: req.body.email});
         if(!user){
-            res.json({error: 0, message: "No User with this email exists."});
+            res.json({error: 1, message: "No User with this email exists."});
         }else{
             let token = jwt.sign({ token: { date: date , _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
             let subject = "Verify your Password"
             let link = process.env.PASSWORD_LINK + token;
             let message = passverify.newemailservice(link, useremail, subject);
+            
             res.json({error: 0, message: "Success"});
         }
         }catch(error){
@@ -85,9 +86,10 @@ module.exports = {
             let m = req.body;
         jwt.verify(receivedtoken, process.env.TOKEN_SECRET, async function(err, decoded) {
             if(err){
-                res.send(err.message);
+                res.json({error: 1, messagr: err});
             }else{
-                res.json({message: "user expiry remaining"});      
+                res.redirect("https://web-zesty-app.herokuapp.com/forgetLanding");
+                // res.json({message: "user expiry remaining"});      
                 }
           });
         }catch(error){
