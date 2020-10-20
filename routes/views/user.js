@@ -91,7 +91,7 @@ module.exports = {
             }else{
                 
                 let userid = decoded.token._id;
-                res.redirect("https://web-zesty-app.herokuapp.com/forgetLanding/?id ="+ userid);      
+                res.redirect("https://web-zesty-app.herokuapp.com/forgetLanding/"+ userid);      
                 }
           });
         }catch(error){
