@@ -66,7 +66,7 @@ module.exports = {
         let date = new Date().getTime();
         let user = await users.model.findOne({email: req.body.email});
         if(!user){
-            res.send("No User with this email exists.");
+            res.json({error: 0, message: "No User with this email exists."});
         }else{
             let token = jwt.sign({ token: { date: date , _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
             let subject = "Verify your Password"
@@ -141,7 +141,7 @@ module.exports = {
             let token = jwt.sign({ token: { name: newuser.name, id: newuser.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
             res.json({
                 error: 0,
-                message: "login successful",
+                message: "Login Successful",
                 token: token
             });
         }
