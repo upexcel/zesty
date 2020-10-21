@@ -52,6 +52,7 @@ exports = module.exports = function (app) {
 	app.get('/api/verifynewpassword', routes.views.user.verifypassword);
 	app.get('/api/verifyemail', routes.views.user.verifyemail);
 	app.post('/api/updatepassword', routes.views.user.updatepassword);
+	app.post('/api/updatesubscription', routes.views.user.updateSubscription);
 	app.post('/api/forgotpassword', routes.views.user.emailsender);
 	app.post('/api/createsubscription', routes.views.user.createsubscription);
 	app.get('/api/getsubscription', routes.views.user.getsubscription);

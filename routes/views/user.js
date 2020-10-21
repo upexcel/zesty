@@ -188,7 +188,7 @@ module.exports = {
         } else {
 
             let token = jwt.sign({ token: { name: newuser.name, id: newuser.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-            let subDetail = await subscriptions.model.findOne({userId: user.id});
+            let subDetail = await subscriptions.model.findOne({userId: newuser._id});
                 if(subDetail){
                     let plan = subDetail.planId;
                     let planDetail = await plans.model.findOne({_id: plan});
@@ -292,6 +292,19 @@ module.exports = {
     }
 },
 
+
+    updateSubscription: async (req, res)=> {
+        try{
+            let subDetail = await subscriptions.model.findOne({userId: req.body.userId});
+            subDetail.planId = req.body.planId;
+            let update = await subDetail.save();
+            res.json({error: 0, message: "Plan Updated"}); 
+        }catch(error){
+            res.json({error:1, message: error});
+        }
+        
+    },
+
     loginuser: async (req, res) => {
         try {
             keystone.session.signin({ email: req.body.email, password: req.body.password }, req, res, async function (user) {
@@ -387,6 +400,33 @@ module.exports = {
             daysNames.push(i.name);
         })
         let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
+    //     let query = { 
+    //     cuisine: { $in: cuisines }, 
+    //     // diet: { $in: req.body.foodType }, 
+    //     // spice_level: { $in: spicyDetail }, 
+    //     allergens: { $nin: allergyDetails }, 
+    //     available_days: { $in: daysDetails }, 
+    //     // availability: { $in: availableDetails } 
+    // }
+
+    // if(spicyLevel !== []){
+    //     query.spicy_level = { $in: spicyDetail };
+    // }
+
+    // let foodtype = req.body.foodType;
+
+    // if(foodtype !== []){
+    //     query.diet = { $in: req.body.foodType };
+    // }
+
+    // let mealtype = req.body.mealType;
+
+    // if(mealtype !== []){
+    //     query.availability = { $in: availableDetails };
+    // }
+
+    // console.log(query);
+
         const finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
         for await (let ele of finalfood) {
             ele = JSON.parse(JSON.stringify(ele));
