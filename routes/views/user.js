@@ -1,7 +1,9 @@
 let jwt = require('jsonwebtoken');
+let moment = require('moment');
 let keystone = require('keystone');
 let users = keystone.list('User');
 let plans = keystone.list('Plan');
+let subscriptions = keystone.list('Subscription');
 let carts = keystone.list('Cart');
 let dishes = keystone.list('Dishes');
 let allergens = keystone.list('Allergens');
@@ -42,6 +44,7 @@ module.exports = {
 
     createuser: async (req, res) => {
         try {
+
             let user = await users.model.create({
                 name: req.body.name,
                 email: req.body.email,
@@ -56,6 +59,45 @@ module.exports = {
                 message: "user created",
                 token: token
             });
+        } catch (error) {
+            res.status(500).json({ error: 1, message: error });
+        }
+    },
+
+    createsubscription: async (req, res) => {
+        try {
+
+            let validitystart = new Date();
+            planDetail = await plans.model.findOne({_id: req.body.planId});
+            if(planDetail){
+                let planTitle = planDetail.title;
+                console.log(planTitle);
+                let validityend;
+                // validityend = moment(validitystart, "YYYY-MM-DD").add('days', 365);
+                if(planTitle == 'Monthly'){
+                    validityend = moment(validitystart, "YYYY-MM-DD").add('days', 30);
+                }else if(planTitle == 'Yearly'){
+                    validityend = moment(validitystart, "YYYY-MM-DD").add('days', 365);
+                }
+
+            let subsDetail = await subscriptions.model.create({
+                userId: req.body.userId,
+                planId: req.body.planId,
+                validityPeriodStart: validitystart,
+                validityPeriodEnd: validityend,
+                subscriptionId: req.body.subscriptionId
+            });
+            res.json({detail: subsDetail})
+            }else{
+                res.json({message: "No Plan with this Email Exists"});
+            }
+            
+            // let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
+            // res.json({
+            //     error: 0,
+            //     message: "user created",
+            //     token: token
+            // });
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
         }
@@ -144,12 +186,45 @@ module.exports = {
                 res.status(500).json({ error: 1, message: error });
             }
         } else {
+
             let token = jwt.sign({ token: { name: newuser.name, id: newuser.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-            res.json({
-                error: 0,
-                message: "Login Successful",
-                token: token
-            });
+            let subDetail = await subscriptions.model.findOne({userId: user.id});
+                if(subDetail){
+                    let plan = subDetail.planId;
+                    let planDetail = await plans.model.findOne({_id: plan});
+                    console.log(planDetail.title);
+                    let remaingSubscription = subDetail.validityPeriodEnd - new Date();
+  
+                    if(remaingSubscription > 0){
+                        return res.json({
+                            error: 0,
+                            message: "login Successful",
+                            token: token,
+                            subscribed: true,
+                            remtime: remaingSubscription,
+                            title: planDetail.title
+        
+                        });
+                    }else{
+                        return res.json({
+                            error: 0,
+                            message: "login Successful",
+                            token: token,
+                            subscribed: false,
+                            remtime: remaingSubscription
+        
+                        });
+                    }
+                }else{
+                    return res.json({
+                        error: 0,
+                        message: "login Successful",
+                        token: token,
+                        subscribed: false,
+                        remtime: null
+    
+                    });
+                }
         }
     },
 
@@ -163,11 +238,16 @@ module.exports = {
             }else{
                 try{
                     let founduser = await users.model.findOne({_id: id});
-                    founduser.emailVerified = true
-                    let update = await founduser.save();
-                    res.json({error: 0, message: "Email Verified"});
+                    if(founduser){
+                        founduser.emailVerified = true
+                        let update = await founduser.save();
+                        res.json({error: 0, message: "Email Verified"});
+                    }else{
+                        res.json({error: 1, message: "No User Found With this Email."})
+                    }
+                    
                 }catch(error){
-            res.json({error:1, message: error});
+                    res.json({error:1, message: error});
                 }
         }});
         }catch(error){
@@ -175,19 +255,88 @@ module.exports = {
         } 
     },
 
+    getsubscription: async (req, res) => {
+        try{
+                let subDetail = await subscriptions.model.findOne({userId: req.body.id});
+                if(subDetail){
+                    console.log("enteredddddd");
+                    let plan = subDetail.planId;
+                    let planDetail = await plans.model.findOne({_id: plan});
+                    console.log(planDetail.title);
+                    let remaingSubscription = subDetail.validityPeriodEnd - new Date();
+
+                    if(remaingSubscription > 0){
+                        return res.json({
+                            error: 0,
+                            subscribed: true,
+                            remtime: remaingSubscription,
+                            title: planDetail.title
+        
+                        });
+                    }else{
+                        return res.json({
+                            error: 0,
+                            subscribed: false,
+                            remtime: remaingSubscription,
+                            title: null
+        
+                        });
+                }
+        }else{
+            return res.json({
+                error: 0,
+                subscribed: false
+        });
+    }}catch(error){
+        res.status(500).json({ error: 1, message: error });
+    }
+},
+
     loginuser: async (req, res) => {
         try {
-            keystone.session.signin({ email: req.body.email, password: req.body.password }, req, res, function (user) {
+            keystone.session.signin({ email: req.body.email, password: req.body.password }, req, res, async function (user) {
                 let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-                return res.json({
-                    error: 0,
-                    message: "login Successful",
-                    token: token
-                });
+                let subDetail = await subscriptions.model.findOne({userId: user.id});
+                if(subDetail){
+                    console.log("enteredddddd");
+                    let plan = subDetail.planId;
+                    let planDetail = await plans.model.findOne({_id: plan});
+                    console.log(planDetail.title);
+                    let remaingSubscription = subDetail.validityPeriodEnd - new Date();
+
+                    if(remaingSubscription > 0){
+                        return res.json({
+                            error: 0,
+                            message: "login Successful",
+                            token: token,
+                            subscribed: true,
+                            remtime: remaingSubscription,
+                            title: planDetail.title
+        
+                        });
+                    }else{
+                        return res.json({
+                            error: 0,
+                            message: "login Successful",
+                            token: token,
+                            subscribed: false,
+                            remtime: remaingSubscription
+        
+                        });
+                }}else{
+                    return res.json({
+                        error: 0,
+                        message: "login Successful",
+                        token: token,
+                        subscribed: false,
+                        remTime: null
+    
+                    });
+                }
+                
             }, function (err) {
                 return res.json({
-                    success: true,
-                    session: false,
+                    error: 1,
                     message: (err && err.message ? err.message : false) || 'Sorry, there was an issue signing you in, please try again.'
                 });
             });
@@ -223,24 +372,6 @@ module.exports = {
             })
         }
 
-        async function createDetails(receivedDetail, newObject, daysDetails) {
-            console.log("reached");
-            console.log(newObject);
-            for await (let v of receivedDetail) {
-                g = v.available_days;
-                for await (let k of g) {
-                    for await (let i of daysDetails) {
-                        if (i == k._id) {
-                            v = JSON.parse(JSON.stringify(v));
-                            delete v.allergens;
-                            delete v.availability;
-                            delete v.available_days;
-                            completeDetail[`${k.name}`].newObject.push(v);
-                        }
-                    }
-                }
-            }
-        }
 
         let allergyDetails = [];
         let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
