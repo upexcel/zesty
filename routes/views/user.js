@@ -44,6 +44,8 @@ module.exports = {
 
     createuser: async (req, res) => {
         try {
+            let dbuser = await users.model.findOne({email: req.body.email});
+            if(!dbuser){
 
             let user = await users.model.create({
                 name: req.body.name,
@@ -51,6 +53,7 @@ module.exports = {
                 emailVerified: req.body.emailVerified,
                 type: req.body.type,
                 password: req.body.password,
+                workprofile: req.body.workprofile,
                 isAdmin: req.body.isAdmin,
             });
             let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
@@ -59,7 +62,31 @@ module.exports = {
                 message: "user created",
                 token: token
             });
+        }else{
+            res.json({ error: 1, message: "This email already exists." });
+        }
         } catch (error) {
+            res.status(500).json({ error: 1, message: error });
+        }
+    },
+
+
+    updateUserProfile: async(req, res) => {
+        try{
+            let founduser = await users.model.findOne({email: req.body.email});
+            if(founduser){
+                updatedUser = await users.model.update({email: req.body.email}, req.body, async(err, data)=> {
+                    if(err){
+                        req.json({error: 1, message: err});
+                    }else{
+                        console.log(data);
+                        res.json({error: 0, message: "Your profile has been updated."});
+                    }
+                })
+            }else{
+                res.json({error: 1, message: "No User with this email exists."});
+            }
+        }catch(error){
             res.status(500).json({ error: 1, message: error });
         }
     },
@@ -259,7 +286,6 @@ module.exports = {
         try{
                 let subDetail = await subscriptions.model.findOne({userId: req.body.id});
                 if(subDetail){
-                    console.log("enteredddddd");
                     let plan = subDetail.planId;
                     let planDetail = await plans.model.findOne({_id: plan});
                     console.log(planDetail.title);
@@ -296,10 +322,35 @@ module.exports = {
     updateSubscription: async (req, res)=> {
         try{
             let subDetail = await subscriptions.model.findOne({userId: req.body.userId});
-            subDetail.planId = req.body.planId;
-            let update = await subDetail.save();
-            res.json({error: 0, message: "Plan Updated"}); 
-        }catch(error){
+            if(subDetail){
+                planDetail = await plans.model.findOne({title: req.body.title});
+                let validitystart = new Date();
+                if(planDetail){
+                    let planTitle = planDetail.title;
+                    console.log(planTitle);
+                    let validityend;
+                    // validityend = moment(validitystart, "YYYY-MM-DD").add('days', 365);
+                    if(planTitle == 'Monthly'){
+                        validityend = moment(validitystart, "YYYY-MM-DD").add('days', 30);
+                    }else if(planTitle == 'Yearly'){
+                        validityend = moment(validitystart, "YYYY-MM-DD").add('days', 365);
+                    }
+                subDetail.planId = planDetail._id;
+                subDetail.validityPeriodStart = validitystart;
+                subDetail.validityPeriodStart = validityend;
+                let update = await subDetail.save();
+                res.json({error: 0, message: "Plan Updated"}); 
+            }else{
+                console.log("eeeeeeeeeeee");
+                res.json({error: 1, message: "No Plan found with this name."});
+            }
+            }else{
+                console.log("bbbbbbbbbbbbbbb");
+                res.json({error: 1, message: "User had no plans."});
+            }
+            
+    }catch(error){
+        console.log("ggggggggggggg");
             res.json({error:1, message: error});
         }
         

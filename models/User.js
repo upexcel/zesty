@@ -8,12 +8,14 @@ var Types = keystone.Field.Types;
 var User = new keystone.List('User');
 
 User.add({
+	image: { type: Types.CloudinaryImages },
 	name: { type: Types.Name, required: true, index: true },
 	email: { type: Types.Email, initial: true, unique: true, index: true},
 	emailVerified: {type: Boolean, index: true},
 	type: {type: String},
 	userId: { type: String},
-	password: { type: Types.Password, initial: true, required: true }
+	password: { type: Types.Password, initial: true, required: true },
+	workprofile: {type: String}
 }, 'Permissions', {
 	isAdmin: { type: Boolean, label: 'Can access Keystone', index: true },
 });
