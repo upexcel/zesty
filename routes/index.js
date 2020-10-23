@@ -57,5 +57,7 @@ exports = module.exports = function (app) {
 	app.post('/api/forgotpassword', routes.views.user.emailsender);
 	app.post('/api/createsubscription', routes.views.user.createsubscription);
 	app.get('/api/getsubscription', routes.views.user.getsubscription);
+	app.post('/api/savefoodplan', routes.views.user.savefoodplan);
+	app.post('/api/showfoodplan', routes.views.user.showfoodplan);
 
 };

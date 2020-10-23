@@ -9,6 +9,7 @@ let dishes = keystone.list('Dishes');
 let allergens = keystone.list('Allergens');
 let availability = keystone.list('Availability');
 let days = keystone.list('Days');
+let foodplans = keystone.list('Foodplan');
 let passverify = require('./service');
 
 
@@ -17,26 +18,6 @@ module.exports = {
         try {
             let data = await users.model.find({})
             res.json(data)
-        } catch (error) {
-            res.status(500).json({ error: 1, message: error });
-        }
-    },
-    createcart: async (req, res) => {
-        try {
-            foodIdDetail = req.body.dishes;
-            for (let item of foodIdDetail) {
-                let foodIdDetail = item.foodId;
-                let qtyDetail = item.quantity;
-                await carts.model.create({
-                    userId: req.body.userId,
-                    foodId: foodIdDetail,
-                    quantity: qtyDetail
-                });
-            }
-            res.json({
-                error: 0,
-                message: "Success"
-            });
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
         }
@@ -100,7 +81,6 @@ module.exports = {
                 let planTitle = planDetail.title;
                 console.log(planTitle);
                 let validityend;
-                // validityend = moment(validitystart, "YYYY-MM-DD").add('days', 365);
                 if(planTitle == 'Monthly'){
                     validityend = moment(validitystart, "YYYY-MM-DD").add('days', 30);
                 }else if(planTitle == 'Yearly'){
@@ -118,13 +98,6 @@ module.exports = {
             }else{
                 res.json({message: "No Plan with this Email Exists"});
             }
-            
-            // let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-            // res.json({
-            //     error: 0,
-            //     message: "user created",
-            //     token: token
-            // });
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
         }
@@ -329,7 +302,6 @@ module.exports = {
                     let planTitle = planDetail.title;
                     console.log(planTitle);
                     let validityend;
-                    // validityend = moment(validitystart, "YYYY-MM-DD").add('days', 365);
                     if(planTitle == 'Monthly'){
                         validityend = moment(validitystart, "YYYY-MM-DD").add('days', 30);
                     }else if(planTitle == 'Yearly'){
@@ -341,16 +313,13 @@ module.exports = {
                 let update = await subDetail.save();
                 res.json({error: 0, message: "Plan Updated"}); 
             }else{
-                console.log("eeeeeeeeeeee");
                 res.json({error: 1, message: "No Plan found with this name."});
             }
             }else{
-                console.log("bbbbbbbbbbbbbbb");
                 res.json({error: 1, message: "User had no plans."});
             }
             
     }catch(error){
-        console.log("ggggggggggggg");
             res.json({error:1, message: error});
         }
         
@@ -373,6 +342,7 @@ module.exports = {
                             error: 0,
                             message: "login Successful",
                             token: token,
+                            id: user.id,
                             subscribed: true,
                             remtime: remaingSubscription,
                             title: planDetail.title
@@ -383,6 +353,7 @@ module.exports = {
                             error: 0,
                             message: "login Successful",
                             token: token,
+                            id: user.id,
                             subscribed: false,
                             remtime: remaingSubscription
         
@@ -392,6 +363,7 @@ module.exports = {
                         error: 0,
                         message: "login Successful",
                         token: token,
+                        id: user.id,
                         subscribed: false,
                         remTime: null
     
@@ -451,32 +423,6 @@ module.exports = {
             daysNames.push(i.name);
         })
         let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
-    //     let query = { 
-    //     cuisine: { $in: cuisines }, 
-    //     // diet: { $in: req.body.foodType }, 
-    //     // spice_level: { $in: spicyDetail }, 
-    //     allergens: { $nin: allergyDetails }, 
-    //     available_days: { $in: daysDetails }, 
-    //     // availability: { $in: availableDetails } 
-    // }
-
-    // if(spicyLevel !== []){
-    //     query.spicy_level = { $in: spicyDetail };
-    // }
-
-    // let foodtype = req.body.foodType;
-
-    // if(foodtype !== []){
-    //     query.diet = { $in: req.body.foodType };
-    // }
-
-    // let mealtype = req.body.mealType;
-
-    // if(mealtype !== []){
-    //     query.availability = { $in: availableDetails };
-    // }
-
-    // console.log(query);
 
         const finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
         for await (let ele of finalfood) {
@@ -573,5 +519,69 @@ module.exports = {
         }catch(error){
             res.json({ error: 1, message: error });
         }
+    },
+
+    savefoodplan: async(req, res) => {
+        try{
+            let daysObj = req.body.foodDetails;
+
+            let startday;
+            let endday;
+
+            for ( const property in daysObj){
+                let day = String(property);
+
+                let today = new Date()
+                let daynumber = today.getDay();;
+                let startdate = (7 - daynumber)+ 1;
+                let enddate = (7 - daynumber)+ 7;
+
+                startday = moment(today, "YYYY-MM-DD").add('days', startdate);
+                endday = moment(today, "YYYY-MM-DD").add('days', enddate);
+                
+            }
+            createdPlan = await foodplans.model.create({
+                userId: req.body.userId,
+                foodDetails: req.body.foodDetails,
+                startdate: startday,
+                enddate: endday
+            });
+            
+            res.send(createdPlan);
+
+        }catch(error){
+            console.log(error);
+            res.json({ error: 1, message: error });
+        }
+    },
+
+
+    showfoodplan: async(req, res) => {
+        let foundFood = await foodplans.model.findOne({userId: req.body.userId});
+        if(foundFood){
+            let days = foundFood.foodDetails;
+            let timing;    
+            let mealType;
+            let foundDishObject = {};
+            for(const property in days){
+                console.log(property);
+                foundDishObject[`${property}`] = {};
+                timing = days[`${property}`]
+                for(const item in timing){  
+                    foundDishObject[`${property}`][`${item}`] = []                 
+                    mealType = timing[`${item}`];
+                    for await (let i of mealType){
+                        let foundDish = await dishes.model.findOne({_id: i});
+                        foundDishObject[`${property}`][`${item}`].push({name: foundDish.name, _id: foundDish._id});
+                    }                   
+                }
+            }
+            foundDishObject.startdate = foundFood.startdate;
+            foundDishObject.enddate = foundFood.enddate;
+            res.json(foundDishObject);
+        }else{
+            res.json({message: "No Food Found."});
+        }
+
     }
 };

@@ -6,7 +6,8 @@ var Availability = new keystone.List(('Availability'), {
 });
 
 Availability.add({
-    name: { type: String }
+    name: { type: String },
+    
 });
 
 Availability.register();
