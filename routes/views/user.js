@@ -41,7 +41,8 @@ module.exports = {
             res.json({
                 error: 0,
                 message: "user created",
-                token: token
+                token: token,
+                id: user._id
             });
         }else{
             res.json({ error: 1, message: "This email already exists." });
@@ -180,7 +181,8 @@ module.exports = {
                 res.json({
                     error: 0,
                     message: "user created",
-                    token: token
+                    token: token,
+                    id: user._id
                 });
             } catch (error) {
                 res.status(500).json({ error: 1, message: error });
@@ -200,6 +202,7 @@ module.exports = {
                             error: 0,
                             message: "login Successful",
                             token: token,
+                            id: newuser._id,
                             subscribed: true,
                             remtime: remaingSubscription,
                             title: planDetail.title
@@ -210,6 +213,7 @@ module.exports = {
                             error: 0,
                             message: "login Successful",
                             token: token,
+                            id: newuser._id,
                             subscribed: false,
                             remtime: remaingSubscription
         
@@ -220,6 +224,7 @@ module.exports = {
                         error: 0,
                         message: "login Successful",
                         token: token,
+                        id: newuser._id,
                         subscribed: false,
                         remtime: null
     
@@ -331,7 +336,6 @@ module.exports = {
                 let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
                 let subDetail = await subscriptions.model.findOne({userId: user.id});
                 if(subDetail){
-                    console.log("enteredddddd");
                     let plan = subDetail.planId;
                     let planDetail = await plans.model.findOne({_id: plan});
                     console.log(planDetail.title);
@@ -408,6 +412,13 @@ module.exports = {
             })
         }
 
+        // async function deleteExtras(item) {
+        //     newitem = JSON.parse(JSON.stringify(item));
+        //                 delete newitem.allergens;
+        //                 delete newitem.availability;
+        //                 delete newitem.available_days;
+        // }
+
 
         let allergyDetails = [];
         let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
@@ -443,45 +454,66 @@ module.exports = {
         for await (let i of daysNames) {
             completeDetail[`${i}`] = { Breakfast: [], Lunch: [], Dinner: [] };
         }
-
+       
         for await (let v of breakfast) {
             g = v.available_days;
             for await (let k of g) {
                 for await (let i of daysDetails) {
                     if (i == k._id) {
+                        // deleteExtras(v);
                         v = JSON.parse(JSON.stringify(v));
                         delete v.allergens;
                         delete v.availability;
                         delete v.available_days;
-                        completeDetail[`${k.name}`].Breakfast.push(v);
+                        
+                            completeDetail[`${k.name}`].Breakfast.push(v);
+                        
+                        
                     }
                 }
             }
         }
+
+
+
         for await (let v of lunch) {
             g = v.available_days;
             for await (let k of g) {
                 daysDetails.map((i) => {
                     if (i == k._id) {
+                        // deleteExtras(v);
                         v = JSON.parse(JSON.stringify(v));
                         delete v.allergens;
                         delete v.availability;
                         delete v.available_days;
-                        completeDetail[`${k.name}`].Lunch.push(v);
+                        
+                            completeDetail[`${k.name}`].Lunch.push(v);
+                       
+                        
+                        
+                            
+
+                        
                     }
                 });
             }
         }
+
+
         for await (let v of dinner) {
             g = v.available_days;
             for await (let k of g) {
                 daysDetails.map((i) => {
                     if (i == k._id) {
+                        // deleteExtras(v);
                         v = JSON.parse(JSON.stringify(v));
                         delete v.allergens;
                         delete v.availability;
                         delete v.available_days;
-                        completeDetail[`${k.name}`].Dinner.push(v);
+                 
+                            completeDetail[`${k.name}`].Dinner.push(v);
+                   
+                        
                     }
                 });
             }
@@ -531,7 +563,7 @@ module.exports = {
             for ( const property in daysObj){
                 let day = String(property);
 
-                let today = new Date()
+                let today = new Date();
                 let daynumber = today.getDay();;
                 let startdate = (7 - daynumber)+ 1;
                 let enddate = (7 - daynumber)+ 7;
@@ -570,8 +602,8 @@ module.exports = {
                 for(const item in timing){  
                     foundDishObject[`${property}`][`${item}`] = []                 
                     mealType = timing[`${item}`];
-                    for await (let i of mealType){
-                        let foundDish = await dishes.model.findOne({_id: i});
+                    for await (let element of mealType){
+                        let foundDish = await dishes.model.findOne({_id: element});
                         foundDishObject[`${property}`][`${item}`].push({name: foundDish.name, _id: foundDish._id});
                     }                   
                 }

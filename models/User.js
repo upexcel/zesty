@@ -8,7 +8,7 @@ var Types = keystone.Field.Types;
 var User = new keystone.List('User');
 
 User.add({
-	image: { type: Types.CloudinaryImages },
+	// image: { type: Types.CloudinaryImages },
 	name: { type: Types.Name, required: true, index: true },
 	email: { type: Types.Email, initial: true, unique: true, index: true},
 	emailVerified: {type: Boolean, index: true},
