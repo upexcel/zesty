@@ -67,7 +67,8 @@ module.exports = {
                 error: 0,
                 message: "user created",
                 token: token,
-                id: user._id
+                id: user._id,
+                name: user.name
             });
         }else{
             res.json({ error: 1, message: "This email already exists." });
@@ -80,18 +81,21 @@ module.exports = {
 
     updateUserProfile: async(req, res) => {
         try{
-            cloudinary.uploader.upload((req.files.image.path), 
-            function(error, result) {console.log(result, error); });
+            // cloudinary.uploader.upload((req.files.image.path), 
+            // function(error, result) {console.log(result, error); });
  
             let founduser = await users.model.findOne({_id: req.body.userId});
             if(founduser){
                 uploadImage(req);
+                // if(req.body.f){
+                //     name
+                // }
                 updatedUser = await users.model.update({_id: req.body.userId}, req.body, async(err, data)=> {
                     if(err){
                         req.json({error: 1, message: err});
                     }else{
                         console.log(data);
-                        res.json({error: 0, message: "Your profile has been updated."});
+                        res.json(data);
                     }
                 })
             }else{
@@ -212,7 +216,8 @@ module.exports = {
                     error: 0,
                     message: "user created",
                     token: token,
-                    id: user._id
+                    id: user._id,
+                    name: user.name
                 });
             } catch (error) {
                 res.status(500).json({ error: 1, message: error });
@@ -233,6 +238,7 @@ module.exports = {
                             message: "login Successful",
                             token: token,
                             id: newuser._id,
+                            name: newuser.name,
                             subscribed: true,
                             remtime: remaingSubscription,
                             title: planDetail.title
@@ -244,6 +250,7 @@ module.exports = {
                             message: "login Successful",
                             token: token,
                             id: newuser._id,
+                            name: newuser.name,
                             subscribed: false,
                             remtime: remaingSubscription
         
@@ -255,6 +262,7 @@ module.exports = {
                         message: "login Successful",
                         token: token,
                         id: newuser._id,
+                        name: newuser.name,
                         subscribed: false,
                         remtime: null
     
@@ -377,6 +385,7 @@ module.exports = {
                             message: "login Successful",
                             token: token,
                             id: user.id,
+                            name: user.name,
                             subscribed: true,
                             remtime: remaingSubscription,
                             title: planDetail.title
@@ -388,6 +397,7 @@ module.exports = {
                             message: "login Successful",
                             token: token,
                             id: user.id,
+                            name: user.name,
                             subscribed: false,
                             remtime: remaingSubscription
         
@@ -398,6 +408,7 @@ module.exports = {
                         message: "login Successful",
                         token: token,
                         id: user.id,
+                        name: user.name,
                         subscribed: false,
                         remTime: null
     
