@@ -14,9 +14,13 @@ let passverify = require('./service');
 const cloudinary = require('cloudinary').v2;
 
 async function uploadImage(req, x){
+    console.log(x);
     try{
             let imageUpload = await cloudinary.uploader.upload(x);
-            updatedUser = await users.model.update({email: req.body.email}, {image: imageUpload.secure_url}, async(err, data)=> {
+            console.log(imageUpload);
+            url = imageUpload.secure_url;
+            console.log(url);
+            updatedUser = await users.model.update({_id: req.body.userId}, {image: url}, async(err, data)=> {
                 if(err){
                     req.json({error: 1, message: err});
                 }else{
@@ -80,7 +84,7 @@ module.exports = {
             let founduser = await users.model.findOne({_id: req.body.userId});
             if(founduser){
                 uploadImage(req, req.body.image);
-                updatedUser = await users.model.update({email: req.body.email}, req.body, async(err, data)=> {
+                updatedUser = await users.model.update({_id: req.body.userId}, req.body, async(err, data)=> {
                     if(err){
                         req.json({error: 1, message: err});
                     }else{
