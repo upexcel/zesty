@@ -42,6 +42,22 @@ module.exports = {
         }
     },
 
+
+
+    userdetails: async(req, res) => {
+        try{
+            let founduser = await users.model.findOne({_id: req.body.userId});
+            if(founduser){
+                res.json({name: founduser.name, image: founduser.image, email: founduser.email, id: founduser._id});
+            }else{
+                res.json({error: 1, message: "No user found with this id."});
+            }
+        }catch(error){
+            res.json({error: 1, message: error});
+        }
+    },
+
+
     createuser: async (req, res) => {
         try {
             let dbuser = await users.model.findOne({email: req.body.email});
@@ -88,8 +104,8 @@ module.exports = {
                         req.json({error: 1, message: err});
                     }else{
                         console.log(data);
-                        let updatedUser = await users.model.findOne({_id: req.body.userId});
-                        res.json({name: updatedUser.name, image: updatedUser.image, email: updatedUser.email, id: updatedUser._id});
+                        // let updatedUser = await users.model.findOne({_id: req.body.userId});
+                        res.json({error: 0, message: "Success"});
                     }
                 })
             }else{

@@ -62,5 +62,6 @@ exports = module.exports = function (app) {
 	app.get('/api/getsubscription', routes.views.user.getsubscription);
 	app.post('/api/savefoodplan', routes.views.user.savefoodplan);
 	app.post('/api/showfoodplan', routes.views.user.showfoodplan);
+	app.post('/api/userdetails', routes.views.user.userdetails);
 
 };
