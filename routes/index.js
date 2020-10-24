@@ -23,6 +23,9 @@ let middleware = require('./middleware');
 let importRoutes = keystone.importer(__dirname);
 let userauth = require('./middleware')
 let cors = require('cors')
+// const multer  = require('multer')
+// const storage = multer.memoryStorage()
+// const upload = multer({ storage: storage })
 
 // Common Middleware
 keystone.pre('routes', middleware.initLocals);

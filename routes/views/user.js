@@ -11,9 +11,31 @@ let availability = keystone.list('Availability');
 let days = keystone.list('Days');
 let foodplans = keystone.list('Foodplan');
 let passverify = require('./service');
+const cloudinary = require('cloudinary').v2;
+
+async function uploadImage(req, x){
+    try{
+            let imageUpload = await cloudinary.uploader.upload(x);
+            updatedUser = await users.model.update({email: req.body.email}, {image: imageUpload.secure_url}, async(err, data)=> {
+                if(err){
+                    req.json({error: 1, message: err});
+                }else{
+                    console.log("image updated");
+                }
+    })
+}catch(err){
+        console.log(err);
+    }
+}
+
 
 
 module.exports = {
+
+
+    
+
+
     getuser: async function (req, res) {
         try {
             let data = await users.model.find({})
@@ -55,8 +77,9 @@ module.exports = {
 
     updateUserProfile: async(req, res) => {
         try{
-            let founduser = await users.model.findOne({email: req.body.email});
+            let founduser = await users.model.findOne({_id: req.body.userId});
             if(founduser){
+                uploadImage(req, req.body.image);
                 updatedUser = await users.model.update({email: req.body.email}, req.body, async(err, data)=> {
                     if(err){
                         req.json({error: 1, message: err});
@@ -162,6 +185,7 @@ module.exports = {
                 let logintype = req.body.type;
                 let pass = process.env.PASSWORD;
                 let user = await users.model.create({
+                    image: req.body.image,
                     name: req.body.name,
                     email: req.body.email,
                     userId: req.body.userId,
