@@ -16,9 +16,7 @@ const cloudinary = require('cloudinary').v2;
 async function uploadImage(req){
     try{
             let imageUpload = await cloudinary.uploader.upload(req.files.image.path);
-            console.log(imageUpload);
             url = imageUpload.secure_url;
-            console.log(url);
             updatedUser = await users.model.update({_id: req.body.userId}, {image: url}, async(err, data)=> {
                 if(err){
                     req.json({error: 1, message: err});
@@ -34,10 +32,6 @@ async function uploadImage(req){
 
 
 module.exports = {
-
-
-    
-
 
     getuser: async function (req, res) {
         try {
@@ -81,21 +75,21 @@ module.exports = {
 
     updateUserProfile: async(req, res) => {
         try{
-            // cloudinary.uploader.upload((req.files.image.path), 
-            // function(error, result) {console.log(result, error); });
  
             let founduser = await users.model.findOne({_id: req.body.userId});
             if(founduser){
-                uploadImage(req);
-                // if(req.body.f){
-                //     name
-                // }
+                await uploadImage(req);
+                if(req.body.firstName || req.body.lastName){
+                    req.body.name = {"first": req.body.firstName, "last": req.body.lastName}
+                }
+                console.log(req.body);
                 updatedUser = await users.model.update({_id: req.body.userId}, req.body, async(err, data)=> {
                     if(err){
                         req.json({error: 1, message: err});
                     }else{
                         console.log(data);
-                        res.json(data);
+                        let updatedUser = await users.model.findOne({_id: req.body.userId});
+                        res.json({name: updatedUser.name, image: updatedUser.image, email: updatedUser.email, id: updatedUser._id});
                     }
                 })
             }else{
