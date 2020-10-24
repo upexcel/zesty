@@ -13,10 +13,9 @@ let foodplans = keystone.list('Foodplan');
 let passverify = require('./service');
 const cloudinary = require('cloudinary').v2;
 
-async function uploadImage(req, x){
-    console.log(x);
+async function uploadImage(req){
     try{
-            let imageUpload = await cloudinary.uploader.upload(x);
+            let imageUpload = await cloudinary.uploader.upload(req.files.image.path);
             console.log(imageUpload);
             url = imageUpload.secure_url;
             console.log(url);
@@ -81,9 +80,12 @@ module.exports = {
 
     updateUserProfile: async(req, res) => {
         try{
+            cloudinary.uploader.upload((req.files.image.path), 
+            function(error, result) {console.log(result, error); });
+ 
             let founduser = await users.model.findOne({_id: req.body.userId});
             if(founduser){
-                uploadImage(req, req.body.image);
+                uploadImage(req);
                 updatedUser = await users.model.update({_id: req.body.userId}, req.body, async(err, data)=> {
                     if(err){
                         req.json({error: 1, message: err});
