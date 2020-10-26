@@ -91,30 +91,39 @@ module.exports = {
 
     updateUserProfile: async(req, res) => {
         try{
- 
+            let userdata = req.body
             let founduser = await users.model.findOne({_id: req.body.userId});
             if(founduser){
                 await uploadImage(req);
                 if(req.body.firstName || req.body.lastName){
+                    console.log("jjjjjjjjjjjjjj");
+                    if(req.body.firstName != '' && req.body.lastName != ''){
+                       
                     req.body.name = {"first": req.body.firstName, "last": req.body.lastName}
+                    console.log(req.body.name);
+                    updatedUser = await users.model.update({_id: req.body.userId}, req.body, async(err, data)=> {
+                        if(err){
+                            req.json({error: 1, message: err});
+                        }else{
+                            console.log(data);
+                            // let updatedUser = await users.model.findOne({_id: req.body.userId});
+                            res.json({error: 0, message: "Success"});
+                        }
+                    })
+                }else{
+                    res.json({error: 0 ,message: "Success"});
                 }
-                console.log(req.body);
-                updatedUser = await users.model.update({_id: req.body.userId}, req.body, async(err, data)=> {
-                    if(err){
-                        req.json({error: 1, message: err});
-                    }else{
-                        console.log(data);
-                        // let updatedUser = await users.model.findOne({_id: req.body.userId});
-                        res.json({error: 0, message: "Success"});
-                    }
-                })
             }else{
-                res.json({error: 1, message: "No User with this email exists."});
+                res.json({error: 0, message: "No User with this email exists."});
             }
-        }catch(error){
-            res.status(500).json({ error: 1, message: error });
+        }else{
+            res.json({error: 1, message: "Success"});
         }
-    },
+    }catch(error){
+        console.log(error);
+        res.status(500).json({ error: 1, message: error });
+    }
+},
 
     createsubscription: async (req, res) => {
         try {
@@ -562,7 +571,8 @@ module.exports = {
                         delete v.allergens;
                         delete v.availability;
                         delete v.available_days;
-                        if(completeDetail[`${k.name}`].Lunch.length<2){
+                        if(completeDetail[`${k.name}`].Dinner.length<2){
+                            // console.log();
                             completeDetail[`${k.name}`].Dinner.push(v);
                         }
                         
@@ -570,8 +580,11 @@ module.exports = {
                 });
             }
         }
+        console.log(completeDetail.Monday.Dinner);
+        
         res.json(completeDetail);
         }catch(error){
+            console.log(error);
             res.json({ error: 1, message: error });
         }
     },
