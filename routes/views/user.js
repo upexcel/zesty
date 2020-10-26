@@ -96,7 +96,7 @@ module.exports = {
             if(founduser){
                 await uploadImage(req);
                 if(req.body.firstName || req.body.lastName){
-                    if(req.body.firstName != undefined && req.body.lastName != undefined || req.body.firstName != '' && req.body.lastName != ''){
+                    if(req.body.firstName != undefined && req.body.firstName != '' && req.body.lastName != undefined && req.body.lastName != ''){
                        
                     req.body.name = {"first": req.body.firstName, "last": req.body.lastName}
                     console.log(req.body.name);
@@ -670,6 +670,7 @@ module.exports = {
 
 
     showfoodplan: async(req, res) => {
+
         let foundFood = await foodplans.model.findOne({userId: req.body.userId});
         if(foundFood){
             let days = foundFood.foodDetails;
