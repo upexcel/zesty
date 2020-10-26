@@ -516,8 +516,9 @@ module.exports = {
                         delete v.allergens;
                         delete v.availability;
                         delete v.available_days;
-                        
+                        if(completeDetail[`${k.name}`].Breakfast.length<2){
                             completeDetail[`${k.name}`].Breakfast.push(v);
+                    }
                         
                         
                     }
@@ -537,9 +538,9 @@ module.exports = {
                         delete v.allergens;
                         delete v.availability;
                         delete v.available_days;
-                        
+                        if(completeDetail[`${k.name}`].Lunch.length<2){
                             completeDetail[`${k.name}`].Lunch.push(v);
-                       
+                        }
                         
                         
                             
@@ -561,9 +562,9 @@ module.exports = {
                         delete v.allergens;
                         delete v.availability;
                         delete v.available_days;
-                 
+                        if(completeDetail[`${k.name}`].Lunch.length<2){
                             completeDetail[`${k.name}`].Dinner.push(v);
-                   
+                        }
                         
                     }
                 });
