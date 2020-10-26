@@ -96,8 +96,7 @@ module.exports = {
             if(founduser){
                 await uploadImage(req);
                 if(req.body.firstName || req.body.lastName){
-                    console.log("jjjjjjjjjjjjjj");
-                    if(req.body.firstName != '' && req.body.lastName != ''){
+                    if(req.body.firstName != undefined && req.body.lastName != undefined || req.body.firstName != '' && req.body.lastName != ''){
                        
                     req.body.name = {"first": req.body.firstName, "last": req.body.lastName}
                     console.log(req.body.name);
@@ -114,10 +113,10 @@ module.exports = {
                     res.json({error: 0 ,message: "Success"});
                 }
             }else{
-                res.json({error: 0, message: "No User with this email exists."});
+                res.json({error: 0, message: "Success"});   
             }
         }else{
-            res.json({error: 1, message: "Success"});
+            res.json({error: 0, message: "No User with this email exists."});   
         }
     }catch(error){
         console.log(error);
@@ -580,7 +579,7 @@ module.exports = {
                 });
             }
         }
-        console.log(completeDetail.Monday.Dinner);
+        // console.log(completeDetail.Monday.Dinner);
         
         res.json(completeDetail);
         }catch(error){
@@ -637,14 +636,31 @@ module.exports = {
                 endday = moment(today, "YYYY-MM-DD").add('days', enddate);
                 
             }
-            createdPlan = await foodplans.model.create({
-                userId: req.body.userId,
-                foodDetails: req.body.foodDetails,
-                startdate: startday,
-                enddate: endday
-            });
+            let foundplan = await foodplans.model.findOne({userId: req.body.userId});
+            if(!foundplan){
+                createdPlan = await foodplans.model.create({
+                    userId: req.body.userId,
+                    foodDetails: req.body.foodDetails,
+                    startdate: startday,
+                    enddate: endday
+                });
+
+                res.json({error: 0, message: "Success"});
+            }else{
+                await foodplans.model.update({userId: req.body.userId}, req.body)
+                updatedUPlan = await foodplans.model.update({userId: req.body.userId}, {foodDetails: req.body.foodDetails, startdate: startday, enddate: endday}, async(err, data)=> {
+                    if(err){
+                        req.json({error: 1, message: err});
+                    }else{
+                        console.log(data);
+                        // let updatedUser = await users.model.findOne({_id: req.body.userId});
+                        res.json({error: 0, message: "Success"});
+                    }
+                })
+            }
             
-            res.send(createdPlan);
+            
+            
 
         }catch(error){
             console.log(error);

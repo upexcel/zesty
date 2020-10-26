@@ -1,7 +1,9 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
-var Plan = new keystone.List('Plan');
+var Plan = new keystone.List(('Plan'), {
+    hidden: true
+});
 
 Plan.add({
     planid: {type: String, index:true},
