@@ -96,11 +96,7 @@ module.exports = {
             if(founduser){
                 await uploadImage(req);
                 if(req.body.firstName || req.body.lastName){
-                    let username = founduser.name
-
                     if(req.body.firstName != undefined && req.body.firstName != "" ){
-                        username = req.body.firstName
-                    
                     req.body.name = {"first": req.body.firstName, "last": req.body.lastName}
                     console.log(req.body.name);
                     updatedUser = await users.model.update({_id: req.body.userId}, req.body, async(err, data)=> {
