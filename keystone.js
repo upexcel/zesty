@@ -50,6 +50,13 @@ keystone.set('cors allow origin', true);
 keystone.set('cors allow methods', true);
 keystone.set('cors allow headers', true);
 
+var cronSend = require('./routes/views/user')
+var CronJob = require('cron').CronJob;
+var job = new CronJob('0 0 12 * * */5', function() {
+  console.log('You will see this message every second');
+  cronSend.cronsender();
+}, null, true, 'Asia/Kolkata');
+job.start();
 
 // Configure the navigation bar in Keystone's Admin UI
 keystone.set('nav', {
