@@ -1,5 +1,7 @@
 let keystone = require('keystone');
 let Types = keystone.Field.Types;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 
 let Foodplan = new keystone.List(('Foodplan'), {
@@ -10,6 +12,14 @@ let Foodplan = new keystone.List(('Foodplan'), {
 
 Foodplan.add({
     user: {type: Types.Relationship, ref: "User", index: true},
+    Primary_Cuisine: { type: Types.TextArray },
+    Secondary_Cuisine: { type: Types.TextArray },
+    Meal_Types: { type: Types.TextArray },
+    Spice_Level: { type: Types.TextArray },
+    Allergens: { type: Types.TextArray },
+    Meal_Timing: { type: Types.TextArray },
+    Days: { type: Types.TextArray },
+
     startdate:  { type: Types.Datetime, required: true, initial: true },
     enddate:    { type: Types.Datetime, required: true, initial: true },
     Sunday_Breakfast: { type:Types.Relationship, ref: 'Dishes'},
@@ -34,6 +44,12 @@ Foodplan.add({
     Saturday_Lunch: { type:Types.Relationship, ref: 'Dishes'},
     Saturday_Dinner: { type:Types.Relationship, ref: 'Dishes'},
 
+});
+
+Foodplan.schema.add({
+	foodDetails: {
+		type: Schema.Types.Mixed
+	}
 });
 
 Foodplan.register();
