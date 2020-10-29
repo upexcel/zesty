@@ -828,6 +828,7 @@ module.exports = {
             else {
                 let selections = req.body.choices;
                 updatedPlan = await foodplans.model.update({ user: req.body.userId }, { startdate: startday, enddate: endday,
+                    foodDetails: req.body.foodDetails,
                     Primary_Cuisine: selections.primaryCuisine,
                     Secondary_Cuisine: selections.secondaryCuisine,
                     Meal_Types: selections.foodType,
