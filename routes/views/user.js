@@ -36,31 +36,16 @@ async function updateFood(req) {
     let text = '';
     let foodDayDetails = req.body.foodDetails;
 
-   
+
+    for (let item in foodDayDetails){
+
+    }
 
 
-    // let days = req.body.foodDetails;
-    //         let timing;
-    //         let mealType;
-    //         // let foundDishObject = {};
-    //         for (const property in days) {
-    //             console.log(property);
-    //             // foundDishObject[`${property}`] = {};
-    //             timing = days[`${property}`]
-    //             for (const item in timing) {
-    //                 property + "_" + item: foodDetails[`${property}`][`${item}`]
-    //                 // [`${property}`]+"_"+[`${item}`]
-    //                 mealType = timing[`${item}`];
-    //                 for await (let element of mealType) {
-    //                     let foundDish = await dishes.model.findOne({ _id: element });
-    //                     foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id });
-    //                 }
-    //             }
-    //         }
-    //         foundDishObject.startdate = foundFood.startdate;
-    //         foundDishObject.enddate = foundFood.enddate;
-    //         res.json(foundDishObject);
-        
+
+
+
+
 
 
 
@@ -706,6 +691,11 @@ module.exports = {
                 completeDetail[`${i}`] = { Breakfast: [], Lunch: [], Dinner: [] };
             }
 
+
+
+
+
+
             for await (let v of breakfast) {
                 g = v.available_days;
                 for await (let k of g) {
@@ -865,30 +855,49 @@ module.exports = {
     showfoodplan: async (req, res) => {
 
         let foundFood = await foodplans.model.findOne({ user: req.body.userId });
-        if (foundFood) {
-            let days = foundFood.foodDetails;
-            let timing;
-            let mealType;
-            let foundDishObject = {};
-            for (const property in days) {
-                console.log(property);
-                foundDishObject[`${property}`] = {};
-                timing = days[`${property}`]
-                for (const item in timing) {
-                    foundDishObject[`${property}`][`${item}`] = []
-                    mealType = timing[`${item}`];
-                    for await (let element of mealType) {
-                        let foundDish = await dishes.model.findOne({ _id: element });
-                        foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id });
-                    }
-                }
-            }
-            foundDishObject.startdate = foundFood.startdate;
-            foundDishObject.enddate = foundFood.enddate;
-            res.json(foundDishObject);
-        } else {
-            res.json({ message: "No Food Found." });
+        // let foundItem = JSON.parse(JSON.stringify(foundFood));
+        // delete foundItem._id;
+        // delete foundItem.user;
+        // delete foundItem.startdate;
+        // delete foundItem.enddate;
+
+
+        let foundDishObject = {};
+        foundDishObject.startdatiteme = foundFood.startdate;
+        foundDishObject.enddate = foundFood.enddate;
+        foundDishObject.days = {};
+        for (let item in foundFood){
+            foundDishObject.days[`${item}`]= foundFood[`${item}`];
         }
+        let foundItem = JSON.parse(JSON.stringify(foundDishObject.days));
+        delete foundItem._id;
+        delete foundItem.user;
+        console.log(foundDishObject);
+        res.json(foundDishObject);
+        // if (foundFood) {
+        //     let days = foundFood.foodDetails;
+        //     let timing;
+        //     let mealType;
+        //     let foundDishObject = {};
+        //     for (const property in days) {
+        //         console.log(property);
+        //         foundDishObject[`${property}`] = {};
+        //         timing = days[`${property}`]
+        //         for (const item in timing) {
+        //             foundDishObject[`${property}`][`${item}`] = []
+        //             mealType = timing[`${item}`];
+        //             for await (let element of mealType) {
+        //                 let foundDish = await dishes.model.findOne({ _id: element });
+        //                 foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id });
+        //             }
+        //         }
+        //     }
+        //     foundDishObject.startdate = foundFood.startdate;
+        //     foundDishObject.enddate = foundFood.enddate;
+        //     res.json(foundDishObject);
+        // } else {
+        //     res.json({ message: "No Food Found." });
+        // }
 
     },
 
