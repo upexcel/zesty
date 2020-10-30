@@ -10,6 +10,7 @@ let Foodplan = new keystone.List(('Foodplan'), {
 });
 
 Foodplan.add({
+    name: { type: Types.Name, required: true, index: true },
     user: {type: Types.Relationship, ref: "User", index: true},
     Primary_Cuisine: { type: Types.TextArray },
     Secondary_Cuisine: { type: Types.TextArray },
@@ -51,5 +52,5 @@ Foodplan.schema.add({
 	}
 });
 
-Foodplan.defaultColumns = "user, startdate, enddate"
+Foodplan.defaultColumns = "name, startdate, enddate"
 Foodplan.register();
