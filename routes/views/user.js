@@ -815,12 +815,9 @@ module.exports = {
 
 
             if (!foundplan) {
-                let foundUser = await users.model.findOne({ _id: req.body.userId });
-                
                 let selections = req.body.choices;
                 console.log(req.body.choices);
                 createdPlan = await foodplans.model.create({
-                    name: foundUser.name,
                     user: req.body.userId,
                     foodDetails: req.body.foodDetails,
                     Primary_Cuisine: selections.primaryCuisine,
