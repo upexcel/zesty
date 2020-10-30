@@ -6,8 +6,7 @@ var Schema = mongoose.Schema;
 
 let Foodplan = new keystone.List(('Foodplan'), {
     noedit: true,
-    nocreate: true,
-    nodelete: true
+    nocreate: true
 });
 
 Foodplan.add({
