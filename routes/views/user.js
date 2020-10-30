@@ -652,6 +652,7 @@ module.exports = {
     //following api logic is on temp bases. will change it later
     listFood: async (req, res) => {
         try {
+            let x = req.body.mealType;
             let spicyDetail = [];
             let spicyLevel = req.body.spicy;
             spicyLevel.map((item) => {
@@ -705,15 +706,19 @@ module.exports = {
                 ele = JSON.parse(JSON.stringify(ele));
                 let timing = ele.availability;
                 for await (let elem of timing) {
-                    if (elem.name == 'Breakfast') {
-                        breakfast.push(ele)
+                    for await (let it of x){
+                        console.log(it);
+                        if (elem.name == 'Breakfast' && it == 'Breakfast') {
+                            breakfast.push(ele)
+                        }
+                        else if (elem.name == 'Lunch' && it== 'Lunch') {
+                            lunch.push(ele)
+                        }
+                        else if (elem.name == 'Dinner' && it == 'Dinner') {
+                            dinner.push(ele)
+                        }
                     }
-                    else if (elem.name == 'Lunch') {
-                        lunch.push(ele)
-                    }
-                    else if (elem.name == 'Dinner') {
-                        dinner.push(ele)
-                    }
+                    
                 }
             }
             for await (let i of daysNames) {
@@ -777,8 +782,6 @@ module.exports = {
                             if (completeDetail[`${k.name}`].Breakfast.length < 2) {
                                 completeDetail[`${k.name}`].Breakfast.push(v);
                             }
-
-
                         }
                     }
                 }
@@ -799,11 +802,6 @@ module.exports = {
                             if (completeDetail[`${k.name}`].Lunch.length < 2) {
                                 completeDetail[`${k.name}`].Lunch.push(v);
                             }
-
-
-
-
-
                         }
                     });
                 }
