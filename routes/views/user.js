@@ -409,49 +409,56 @@ module.exports = {
         } else {
 
             let token = jwt.sign({ token: { name: newuser.name, id: newuser.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-            let subDetail = await subscriptions.model.findOne({ userId: newuser._id });
-            if (subDetail) {
-                let plan = subDetail.planId;
-                let planDetail = await plans.model.findOne({ _id: plan });
-                console.log(planDetail.title);
-                let remaingSubscription = subDetail.validityPeriodEnd - new Date();
+            return res.json({
+                error: 0,
+                message: "login Successful",
+                token: token,
+                id: newuser._id,
+                name: newuser.name
+            });
+            // let subDetail = await subscriptions.model.findOne({ userId: newuser._id });
+            // if (subDetail) {
+            //     let plan = subDetail.planId;
+            //     let planDetail = await plans.model.findOne({ _id: plan });
+            //     console.log(planDetail.title);
+            //     let remaingSubscription = subDetail.validityPeriodEnd - new Date();
 
-                if (remaingSubscription > 0) {
-                    return res.json({
-                        error: 0,
-                        message: "login Successful",
-                        token: token,
-                        id: newuser._id,
-                        name: newuser.name,
-                        subscribed: true,
-                        remtime: remaingSubscription,
-                        title: planDetail.title
+            //     if (remaingSubscription > 0) {
+            //         return res.json({
+            //             error: 0,
+            //             message: "login Successful",
+            //             token: token,
+            //             id: newuser._id,
+            //             name: newuser.name,
+            //             subscribed: true,
+            //             remtime: remaingSubscription,
+            //             title: planDetail.title
 
-                    });
-                } else {
-                    return res.json({
-                        error: 0,
-                        message: "login Successful",
-                        token: token,
-                        id: newuser._id,
-                        name: newuser.name,
-                        subscribed: false,
-                        remtime: remaingSubscription
+            //         });
+            //     } else {
+            //         return res.json({
+            //             error: 0,
+            //             message: "login Successful",
+            //             token: token,
+            //             id: newuser._id,
+            //             name: newuser.name,
+            //             subscribed: false,
+            //             remtime: remaingSubscription
 
-                    });
-                }
-            } else {
-                return res.json({
-                    error: 0,
-                    message: "login Successful",
-                    token: token,
-                    id: newuser._id,
-                    name: newuser.name,
-                    subscribed: false,
-                    remtime: null
+            //         });
+            //     }
+            // } else {
+            //     return res.json({
+            //         error: 0,
+            //         message: "login Successful",
+            //         token: token,
+            //         id: newuser._id,
+            //         name: newuser.name,
+            //         subscribed: false,
+            //         remtime: null
 
-                });
-            }
+            //     });
+            // }
         }
     },
 
@@ -558,49 +565,56 @@ module.exports = {
         try {
             keystone.session.signin({ email: req.body.email, password: req.body.password }, req, res, async function (user) {
                 let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-                let subDetail = await subscriptions.model.findOne({ userId: user.id });
-                if (subDetail) {
-                    let plan = subDetail.planId;
-                    let planDetail = await plans.model.findOne({ _id: plan });
-                    console.log(planDetail.title);
-                    let remaingSubscription = subDetail.validityPeriodEnd - new Date();
+                res.json({
+                    error: 0,
+                    message: "login Successful",
+                    token: token,
+                    id: user.id,
+                    name: user.name,
+                });
+                // let subDetail = await subscriptions.model.findOne({ userId: user.id });
+                // if (subDetail) {
+                //     let plan = subDetail.planId;
+                //     let planDetail = await plans.model.findOne({ _id: plan });
+                //     console.log(planDetail.title);
+                //     let remaingSubscription = subDetail.validityPeriodEnd - new Date();
 
-                    if (remaingSubscription > 0) {
-                        return res.json({
-                            error: 0,
-                            message: "login Successful",
-                            token: token,
-                            id: user.id,
-                            name: user.name,
-                            subscribed: true,
-                            remtime: remaingSubscription,
-                            title: planDetail.title
+                //     if (remaingSubscription > 0) {
+                //         return res.json({
+                //             error: 0,
+                //             message: "login Successful",
+                //             token: token,
+                //             id: user.id,
+                //             name: user.name,
+                //             subscribed: true,
+                //             remtime: remaingSubscription,
+                //             title: planDetail.title
 
-                        });
-                    } else {
-                        return res.json({
-                            error: 0,
-                            message: "login Successful",
-                            token: token,
-                            id: user.id,
-                            name: user.name,
-                            subscribed: false,
-                            remtime: remaingSubscription
+                //         });
+                //     } else {
+                //         return res.json({
+                //             error: 0,
+                //             message: "login Successful",
+                //             token: token,
+                //             id: user.id,
+                //             name: user.name,
+                //             subscribed: false,
+                //             remtime: remaingSubscription
 
-                        });
-                    }
-                } else {
-                    return res.json({
-                        error: 0,
-                        message: "login Successful",
-                        token: token,
-                        id: user.id,
-                        name: user.name,
-                        subscribed: false,
-                        remTime: null
+                //         });
+                //     }
+                // } else {
+                //     return res.json({
+                //         error: 0,
+                //         message: "login Successful",
+                //         token: token,
+                //         id: user.id,
+                //         name: user.name,
+                //         subscribed: false,
+                //         remTime: null
 
-                    });
-                }
+                //     });
+                // }
 
             }, function (err) {
                 return res.json({
@@ -878,7 +892,8 @@ module.exports = {
             }
             else {
                 let selections = req.body.choices;
-                updatedPlan = await foodplans.model.update({ user: req.body.userId }, { startdate: startday, enddate: endday,
+                updatedPlan = await foodplans.model.update({ user: req.body.userId }, {
+                    startdate: startday, enddate: endday,
                     foodDetails: req.body.foodDetails,
                     Primary_Cuisine: selections.primaryCuisine,
                     Secondary_Cuisine: selections.secondaryCuisine,
@@ -886,7 +901,8 @@ module.exports = {
                     Spice_Level: selections.spicy,
                     Allergens: selections.allergens,
                     Meal_Timing: selections.mealType,
-                    Days: selections.day,}, async (err, data) => {
+                    Days: selections.day,
+                }, async (err, data) => {
                     if (err) {
                         req.json({ error: 1, message: err });
                     } else {
@@ -905,55 +921,55 @@ module.exports = {
 
 
     showfoodplan: async (req, res) => {
-        try{
+        try {
             let foundFood = await foodplans.model.findOne({ user: req.body.userId });
             // console.log(foundFood);
-        if (foundFood) {
-            let days = foundFood.foodDetails;
-            let timing;
-            let mealType;
-            let foundDishObject = {};
-            for (const property in days) {
-                foundDishObject[`${property}`] = {};
-                timing = days[`${property}`]
-                for (const item in timing) {
-                    foundDishObject[`${property}`][`${item}`] = []
-                    mealType = timing[`${item}`];
-                    for await (let element of mealType) {
-                        // console.log(element);
-                        let foundDish = await dishes.model.findOne({ _id: element });
-                        if(foundDish){
-                            foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id });
-                        }else{
-                            console.log("No food Found with this id");
+            if (foundFood) {
+                let days = foundFood.foodDetails;
+                let timing;
+                let mealType;
+                let foundDishObject = {};
+                for (const property in days) {
+                    foundDishObject[`${property}`] = {};
+                    timing = days[`${property}`]
+                    for (const item in timing) {
+                        foundDishObject[`${property}`][`${item}`] = []
+                        mealType = timing[`${item}`];
+                        for await (let element of mealType) {
+                            // console.log(element);
+                            let foundDish = await dishes.model.findOne({ _id: element });
+                            if (foundDish) {
+                                foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id });
+                            } else {
+                                console.log("No food Found with this id");
+                            }
+
                         }
-                        
                     }
                 }
-            }
-            foundDishObject.startdate = foundFood.startdate;
-            foundDishObject.enddate = foundFood.enddate;
-            let choices = {};
-            choices.Primary_Cuisine = foundFood.Primary_Cuisine;
-            choices.Secondary_Cuisine = foundFood.Secondary_Cuisine;
-            choices.Meal_Types = foundFood.Meal_Types;
-            choices.Spice_Level = foundFood.Spice_Level;
-            choices.Meal_Timing = foundFood.Meal_Timing;
-            choices.Days = foundFood.Days;
-            choices.Allergens = foundFood.Allergens;
-            foundDishObject.choices = choices;
-            
+                foundDishObject.startdate = foundFood.startdate;
+                foundDishObject.enddate = foundFood.enddate;
+                let choices = {};
+                choices.Primary_Cuisine = foundFood.Primary_Cuisine;
+                choices.Secondary_Cuisine = foundFood.Secondary_Cuisine;
+                choices.Meal_Types = foundFood.Meal_Types;
+                choices.Spice_Level = foundFood.Spice_Level;
+                choices.Meal_Timing = foundFood.Meal_Timing;
+                choices.Days = foundFood.Days;
+                choices.Allergens = foundFood.Allergens;
+                foundDishObject.choices = choices;
 
-            res.json(foundDishObject);
-        } else {
-            res.json({ message: "No Food Found." });
-        }
-        }catch(error){
+
+                res.json(foundDishObject);
+            } else {
+                res.json({ message: "No Food Found." });
+            }
+        } catch (error) {
             console.log(error);
             res.json({ error: 1, message: error });
         }
 
-        
+
 
     },
 
