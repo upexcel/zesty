@@ -895,13 +895,15 @@ module.exports = {
             }
             foundDishObject.startdate = foundFood.startdate;
             foundDishObject.enddate = foundFood.enddate;
-            foundDishObject.Primary_Cuisine = foundFood.Primary_Cuisine;
-            foundDishObject.Secondary_Cuisine = foundFood.Secondary_Cuisine;
-            foundDishObject.Meal_Types = foundFood.Meal_Types;
-            foundDishObject.Spice_Level = foundFood.Spice_Level;
-            foundDishObject.Meal_Timing = foundFood.Meal_Timing;
-            foundDishObject.Days = foundFood.Days;
-            foundDishObject.Allergens = foundFood.Allergens;
+            let choices = {};
+            choices.Primary_Cuisine = foundFood.Primary_Cuisine;
+            choices.Secondary_Cuisine = foundFood.Secondary_Cuisine;
+            choices.Meal_Types = foundFood.Meal_Types;
+            choices.Spice_Level = foundFood.Spice_Level;
+            choices.Meal_Timing = foundFood.Meal_Timing;
+            choices.Days = foundFood.Days;
+            choices.Allergens = foundFood.Allergens;
+            foundDishObject.choices = choices;
             
 
             res.json(foundDishObject);
