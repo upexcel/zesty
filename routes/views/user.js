@@ -118,7 +118,7 @@ async function updateFood(req) {
             if (foodDayDetails.Wednesday.Lunch) {
                 let founditem = await dishes.model.findOne({ _id: foodDayDetails.Wednesday.Lunch[0] });
                 let wedtextl = "Wednesday_Lunch- " + founditem.name;
-                text = text + "\n" + wedtextbl;
+                text = text + "\n" + wedtextl;
                 await foodplans.model.update({ user: req.body.userId }, { Wednesday_Lunch: foodDayDetails.Wednesday.Lunch[0] })
             }
             if (foodDayDetails.Wednesday.Dinner) {
