@@ -44,156 +44,163 @@ async function uploadImage(req) {
 // }
 
 async function updateFood(req) {
-    let text = '';
-    let foodDayDetails = req.body.foodDetails;
-
-    if (foodDayDetails.Sunday) {
-        let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Breakfast[0] });
-        let suntextb = "Sunday_Breakfast- " + founditem.name;
-        text = text + "\n" + suntextb;
-        if (foodDayDetails.Sunday.Breakfast) {
-            await foodplans.model.update({ user: req.body.userId }, { Sunday_Breakfast: foodDayDetails.Sunday.Breakfast[0] })
+    try{
+        let text = '';
+        let foodDayDetails = req.body.foodDetails;
+    
+        if (foodDayDetails.Sunday) {
+            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Breakfast[0] });
+            let suntextb = "Sunday_Breakfast- " + founditem.name;
+            text = text + "\n" + suntextb;
+            if (foodDayDetails.Sunday.Breakfast) {
+                await foodplans.model.update({ user: req.body.userId }, { Sunday_Breakfast: foodDayDetails.Sunday.Breakfast[0] })
+            }
+            if (foodDayDetails.Sunday.Lunch) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Lunch[0] });
+                let suntextl = "Sunday_Lunch- " + founditem.name;
+                text = text + "\n" + suntextl;
+                await foodplans.model.update({ user: req.body.userId }, { Sunday_Lunch: foodDayDetails.Sunday.Lunch[0] })
+            }
+            if (foodDayDetails.Sunday.Dinner) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Dinner[0] });
+                let suntextd = "Sunday_Dinner- " + founditem.name;
+                text = text + "\n" + suntextd;
+                await foodplans.model.update({ user: req.body.userId }, { Sunday_Dinner: foodDayDetails.Sunday.Dinner[0] })
+            }
         }
-        if (foodDayDetails.Sunday.Lunch) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Lunch[0] });
-            let suntextl = "Sunday_Lunch- " + founditem.name;
-            text = text + "\n" + suntextl;
-            await foodplans.model.update({ user: req.body.userId }, { Sunday_Lunch: foodDayDetails.Sunday.Lunch[0] })
+        if (foodDayDetails.Monday) {
+            if (foodDayDetails.Monday.Breakfast) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Monday.Breakfast[0] });
+                let montextb = "Monday_Breakfast- " + founditem.name;
+                text = text + "\n" + montextb;
+                await foodplans.model.update({ user: req.body.userId }, { Monday_Breakfast: foodDayDetails.Monday.Breakfast[0] })
+            }
+            if (foodDayDetails.Monday.Lunch) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Monday.Lunch[0] });
+                let montextl = "Monday_Lunch- " + founditem.name;
+                text = text + "\n" + montextl;
+                await foodplans.model.update({ user: req.body.userId }, { Monday_Lunch: foodDayDetails.Monday.Lunch[0] })
+            }
+            if (foodDayDetails.Monday.Dinner) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Monday.Dinner[0] });
+                let montextd = "Monday_Dinner- " + founditem.name;
+                text = text + "\n" + montextd;
+                await foodplans.model.update({ user: req.body.userId }, { Monday_Dinner: foodDayDetails.Monday.Dinner[0] })
+            }
         }
-        if (foodDayDetails.Sunday.Dinner) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Dinner[0] });
-            let suntextd = "Sunday_Dinner- " + founditem.name;
-            text = text + "\n" + suntextd;
-            await foodplans.model.update({ user: req.body.userId }, { Sunday_Dinner: foodDayDetails.Sunday.Dinner[0] })
+        if (foodDayDetails.Tuesday) {
+            if (foodDayDetails.Tuesday.Breakfast) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Tuesday.Breakfast[0] });
+                let tuetextb = "Tuesday_Breakfast- " + founditem.name;
+                text = text + "\n" + tuetextb;
+                await foodplans.model.update({ user: req.body.userId }, { Tuesday_Breakfast: foodDayDetails.Tuesday.Breakfast[0] })
+            }
+            if (foodDayDetails.Tuesday.Lunch) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Tuesday.Lunch[0] });
+                let tuetextl = "Tuesday_Lunch- " + founditem.name;
+                text = text + "\n" + tuetextl;
+                await foodplans.model.update({ user: req.body.userId }, { Tuesday_Lunch: foodDayDetails.Tuesday.Lunch[0] })
+            }
+            if (foodDayDetails.Tuesday.Dinner) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Tuesday.Dinner[0] });
+                let tuetextd = "Tuesday_Dinner- " + founditem.name;
+                text = text + "\n" + tuetextd;
+                await foodplans.model.update({ user: req.body.userId }, { Tuesday_Dinner: foodDayDetails.Tuesday.Dinner[0] })
+            }
         }
+        if (foodDayDetails.Wednesday) {
+            if (foodDayDetails.Wednesday.Breakfast) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Wednesday.Breakfast[0] });
+                let wedtextb = "Wednesday_Breakfast- " + founditem.name;
+                text = text + "\n" + wedtextb;
+                await foodplans.model.update({ user: req.body.userId }, { Wednesday_Breakfast: foodDayDetails.Wednesday.Breakfast[0] })
+            }
+            if (foodDayDetails.Wednesday.Lunch) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Wednesday.Lunch[0] });
+                let wedtextl = "Wednesday_Lunch- " + founditem.name;
+                text = text + "\n" + wedtextbl;
+                await foodplans.model.update({ user: req.body.userId }, { Wednesday_Lunch: foodDayDetails.Wednesday.Lunch[0] })
+            }
+            if (foodDayDetails.Wednesday.Dinner) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Wednesday.Dinner[0] });
+                let wedtextd = "Wednesday_Dinner- " + founditem.name;
+                text = text + "\n" + wedtextd;
+                await foodplans.model.update({ user: req.body.userId }, { Wednesday_Dinner: foodDayDetails.Wednesday.Dinner[0] })
+            }
+        }
+        if (foodDayDetails.Thursday) {
+    
+            if (foodDayDetails.Thursday.Breakfast) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Thursday.Breakfast[0] });
+                let thutextb = "Thursday_Breakfast- " + founditem.name;
+                text = text + "\n" + thutextb;
+                await foodplans.model.update({ user: req.body.userId }, { Thursday_Breakfast: foodDayDetails.Thursday.Breakfast[0] })
+            }
+            if (foodDayDetails.Thursday.Lunch) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Thursday.Lunch[0] });
+                let thutextl = "Thursday_Lunch- " + founditem.name;
+                text = text + "\n" + thutextl;
+                await foodplans.model.update({ user: req.body.userId }, { Thursday_Lunch: foodDayDetails.Thursday.Lunch[0] })
+            }
+            if (foodDayDetails.Thursday.Dinner) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Thursday.Dinner[0] });
+                let thutextd = "Thursday_Dinner- " + founditem.name;
+                text = text + "\n" + thutextd;
+                await foodplans.model.update({ user: req.body.userId }, { Thursday_Dinner: foodDayDetails.Thursday.Dinner[0] })
+            }
+        }
+        if (foodDayDetails.Friday) {
+            if (foodDayDetails.Friday.Breakfast) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Friday.Breakfast[0] });
+                let fritextb = "Friday_Breakfast- " + founditem.name;
+                text = text + "\n" + fritextb;
+                await foodplans.model.update({ user: req.body.userId }, { Friday_Breakfast: foodDayDetails.Friday.Breakfast[0] })
+            }
+            if (foodDayDetails.Friday.Lunch) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Friday.Lunch[0] });
+                let fritextl = "Friday_Lunch- " + founditem.name;
+                text = text + "\n" + fritextl;
+                await foodplans.model.update({ user: req.body.userId }, { Friday_Lunch: foodDayDetails.Friday.Lunch[0] })
+            }
+            if (foodDayDetails.Friday.Dinner) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Friday.Dinner[0] });
+                let fritextd = "Friday_Dinner- " + founditem.name;
+                text = text + "\n" + fritextd;
+                await foodplans.model.update({ user: req.body.userId }, { Friday_Dinner: foodDayDetails.Friday.Dinner[0] })
+            }
+        }
+        if (foodDayDetails.Saturday) {
+            if (foodDayDetails.Saturday.Breakfast) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Saturday.Breakfast[0] });
+                let sattextb = "Saturday_Breakfast- " + founditem.name;
+                text = text + "\n" + sattextb;
+                await foodplans.model.update({ user: req.body.userId }, { Saturday_Breakfast: foodDayDetails.Saturday.Breakfast[0] })
+            }
+            if (foodDayDetails.Saturday.Lunch) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Saturday.Lunch[0] });
+                let sattextl = "Saturday_Lunch- " + founditem.name;
+                text = text + "\n" + sattextl;
+                await foodplans.model.update({ user: req.body.userId }, { Saturday_Lunch: foodDayDetails.Saturday.Lunch[0] })
+            }
+            if (foodDayDetails.Saturday.Dinner) {
+                let founditem = await dishes.model.findOne({ _id: foodDayDetails.Saturday.Dinner[0] });
+                let sattextd = "Saturday_Dinner- " + founditem.name;
+                text = text + "\n" + sattextd;
+                await foodplans.model.update({ user: req.body.userId }, { Saturday_Dinner: foodDayDetails.Saturday.Dinner[0] })
+            }
+        }
+    
+        let foundUser = await users.model.findOne({ _id: req.body.userId });
+        let email = foundUser.email;
+        let subject = "Your Order Details."
+        await passverify.reminderservice(text, email, subject);
+    
+    }catch(error){
+        console.log(error);
+        throw error;
+        // res.status(500).json({error: 1, message: error});
     }
-    if (foodDayDetails.Monday) {
-        if (foodDayDetails.Monday.Breakfast) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Monday.Breakfast[0] });
-            let montextb = "Monday_Breakfast- " + founditem.name;
-            text = text + "\n" + montextb;
-            await foodplans.model.update({ user: req.body.userId }, { Monday_Breakfast: foodDayDetails.Monday.Breakfast[0] })
-        }
-        if (foodDayDetails.Monday.Lunch) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Monday.Lunch[0] });
-            let montextl = "Monday_Lunch- " + founditem.name;
-            text = text + "\n" + montextl;
-            await foodplans.model.update({ user: req.body.userId }, { Monday_Lunch: foodDayDetails.Monday.Lunch[0] })
-        }
-        if (foodDayDetails.Monday.Dinner) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Monday.Dinner[0] });
-            let montextd = "Monday_Dinner- " + founditem.name;
-            text = text + "\n" + montextd;
-            await foodplans.model.update({ user: req.body.userId }, { Monday_Dinner: foodDayDetails.Monday.Dinner[0] })
-        }
-    }
-    if (foodDayDetails.Tuesday) {
-        if (foodDayDetails.Tuesday.Breakfast) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Tuesday.Breakfast[0] });
-            let tuetextb = "Tuesday_Breakfast- " + founditem.name;
-            text = text + "\n" + tuetextb;
-            await foodplans.model.update({ user: req.body.userId }, { Tuesday_Breakfast: foodDayDetails.Tuesday.Breakfast[0] })
-        }
-        if (foodDayDetails.Tuesday.Lunch) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Tuesday.Lunch[0] });
-            let tuetextl = "Tuesday_Lunch- " + founditem.name;
-            text = text + "\n" + tuetextl;
-            await foodplans.model.update({ user: req.body.userId }, { Tuesday_Lunch: foodDayDetails.Tuesday.Lunch[0] })
-        }
-        if (foodDayDetails.Tuesday.Dinner) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Tuesday.Dinner[0] });
-            let tuetextl = "Tuesday_Dinner- " + founditem.name;
-            text = text + "\n" + tuetextd;
-            await foodplans.model.update({ user: req.body.userId }, { Tuesday_Dinner: foodDayDetails.Tuesday.Dinner[0] })
-        }
-    }
-    if (foodDayDetails.Wednesday) {
-        if (foodDayDetails.Wednesday.Breakfast) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Wednesday.Breakfast[0] });
-            let wedtextb = "Wednesday_Breakfast- " + founditem.name;
-            text = text + "\n" + wedtextb;
-            await foodplans.model.update({ user: req.body.userId }, { Wednesday_Breakfast: foodDayDetails.Wednesday.Breakfast[0] })
-        }
-        if (foodDayDetails.Wednesday.Lunch) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Wednesday.Lunch[0] });
-            let wedtextl = "Wednesday_Lunch- " + founditem.name;
-            text = text + "\n" + wedtextbl;
-            await foodplans.model.update({ user: req.body.userId }, { Wednesday_Lunch: foodDayDetails.Wednesday.Lunch[0] })
-        }
-        if (foodDayDetails.Wednesday.Dinner) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Wednesday.Dinner[0] });
-            let wedtextd = "Wednesday_Dinner- " + founditem.name;
-            text = text + "\n" + wedtextd;
-            await foodplans.model.update({ user: req.body.userId }, { Wednesday_Dinner: foodDayDetails.Wednesday.Dinner[0] })
-        }
-    }
-    if (foodDayDetails.Thursday) {
-
-        if (foodDayDetails.Thursday.Breakfast) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Thursday.Breakfast[0] });
-            let thutextb = "Thursday_Breakfast- " + founditem.name;
-            text = text + "\n" + thutextb;
-            await foodplans.model.update({ user: req.body.userId }, { Thursday_Breakfast: foodDayDetails.Thursday.Breakfast[0] })
-        }
-        if (foodDayDetails.Thursday.Lunch) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Thursday.Lunch[0] });
-            let thutextl = "Thursday_Lunch- " + founditem.name;
-            text = text + "\n" + thutextl;
-            await foodplans.model.update({ user: req.body.userId }, { Thursday_Lunch: foodDayDetails.Thursday.Lunch[0] })
-        }
-        if (foodDayDetails.Thursday.Dinner) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Thursday.Dinner[0] });
-            let thutextd = "Thursday_Dinner- " + founditem.name;
-            text = text + "\n" + thutextd;
-            await foodplans.model.update({ user: req.body.userId }, { Thursday_Dinner: foodDayDetails.Thursday.Dinner[0] })
-        }
-    }
-    if (foodDayDetails.Friday) {
-        if (foodDayDetails.Friday.Breakfast) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Friday.Breakfast[0] });
-            let fritextb = "Friday_Breakfast- " + founditem.name;
-            text = text + "\n" + fritextb;
-            await foodplans.model.update({ user: req.body.userId }, { Friday_Breakfast: foodDayDetails.Friday.Breakfast[0] })
-        }
-        if (foodDayDetails.Friday.Lunch) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Friday.Lunch[0] });
-            let fritextl = "Friday_Lunch- " + founditem.name;
-            text = text + "\n" + fritextl;
-            await foodplans.model.update({ user: req.body.userId }, { Friday_Lunch: foodDayDetails.Friday.Lunch[0] })
-        }
-        if (foodDayDetails.Friday.Dinner) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Friday.Dinner[0] });
-            let fritextd = "Friday_Dinner- " + founditem.name;
-            text = text + "\n" + fritextd;
-            await foodplans.model.update({ user: req.body.userId }, { Friday_Dinner: foodDayDetails.Friday.Dinner[0] })
-        }
-    }
-    if (foodDayDetails.Saturday) {
-        if (foodDayDetails.Saturday.Breakfast) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Saturday.Breakfast[0] });
-            let sattextb = "Saturday_Breakfast- " + founditem.name;
-            text = text + "\n" + sattextb;
-            await foodplans.model.update({ user: req.body.userId }, { Saturday_Breakfast: foodDayDetails.Saturday.Breakfast[0] })
-        }
-        if (foodDayDetails.Saturday.Lunch) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Saturday.Lunch[0] });
-            let sattextl = "Saturday_Lunch- " + founditem.name;
-            text = text + "\n" + sattextl;
-            await foodplans.model.update({ user: req.body.userId }, { Saturday_Lunch: foodDayDetails.Saturday.Lunch[0] })
-        }
-        if (foodDayDetails.Saturday.Dinner) {
-            let founditem = await dishes.model.findOne({ _id: foodDayDetails.Saturday.Dinner[0] });
-            let sattextd = "Saturday_Dinner- " + founditem.name;
-            text = text + "\n" + sattextd;
-            await foodplans.model.update({ user: req.body.userId }, { Saturday_Dinner: foodDayDetails.Saturday.Dinner[0] })
-        }
-    }
-
-    let foundUser = await users.model.findOne({ _id: req.body.userId });
-    let email = foundUser.email;
-    let subject = "Your Order Details."
-    await passverify.reminderservice(text, email, subject);
-
+    
 
 }
 
@@ -220,7 +227,7 @@ module.exports = {
                 res.json({ error: 1, message: "No user found with this id." });
             }
         } catch (error) {
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
     },
 
