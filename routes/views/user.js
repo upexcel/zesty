@@ -829,7 +829,7 @@ module.exports = {
                     });
                 }
             }
-            console.log(completeDetail.Monday.Dinner);
+            // console.log(completeDetail.Monday.Dinner);
 
             res.json(completeDetail);
         } catch (error) {
