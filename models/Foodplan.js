@@ -52,4 +52,5 @@ Foodplan.schema.add({
 	}
 });
 
+Foodplan.defaultColumns = "user, startdate, enddate"
 Foodplan.register();

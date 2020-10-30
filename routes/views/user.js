@@ -32,6 +32,17 @@ async function uploadImage(req) {
     }
 }
 
+
+// async function foodLogic(req, foodDayDetails, dayname) {
+//     for(let item in foodDayDetails){
+//         if(foodDayDetails[`${item}`]){
+//             if (foodDayDetails[`${item}`].Breakfast) {
+//                 await foodplans.model.update({ user: req.body.userId }, { Sunday_Breakfast: foodDayDetails.Sunday.Breakfast[0] })
+//             }
+//         }
+//     }
+// }
+
 async function updateFood(req) {
     let text = '';
     let foodDayDetails = req.body.foodDetails;
@@ -804,10 +815,12 @@ module.exports = {
 
 
             if (!foundplan) {
+                let foundUser = await users.model.findOne({ _id: req.body.userId });
+                
                 let selections = req.body.choices;
                 console.log(req.body.choices);
                 createdPlan = await foodplans.model.create({
-
+                    name: foundUser.name,
                     user: req.body.userId,
                     foodDetails: req.body.foodDetails,
                     Primary_Cuisine: selections.primaryCuisine,
@@ -856,6 +869,7 @@ module.exports = {
     showfoodplan: async (req, res) => {
         try{
             let foundFood = await foodplans.model.findOne({ user: req.body.userId });
+            // console.log(foundFood);
         if (foundFood) {
             let days = foundFood.foodDetails;
             let timing;
@@ -868,13 +882,28 @@ module.exports = {
                     foundDishObject[`${property}`][`${item}`] = []
                     mealType = timing[`${item}`];
                     for await (let element of mealType) {
+                        // console.log(element);
                         let foundDish = await dishes.model.findOne({ _id: element });
-                        foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id });
+                        if(foundDish){
+                            foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id });
+                        }else{
+                            console.log("No food Found with this id");
+                        }
+                        
                     }
                 }
             }
             foundDishObject.startdate = foundFood.startdate;
             foundDishObject.enddate = foundFood.enddate;
+            foundDishObject.Primary_Cuisine = foundFood.Primary_Cuisine;
+            foundDishObject.Secondary_Cuisine = foundFood.Secondary_Cuisine;
+            foundDishObject.Meal_Types = foundFood.Meal_Types;
+            foundDishObject.Spice_Level = foundFood.Spice_Level;
+            foundDishObject.Meal_Timing = foundFood.Meal_Timing;
+            foundDishObject.Days = foundFood.Days;
+            foundDishObject.Allergens = foundFood.Allergens;
+            
+
             res.json(foundDishObject);
         } else {
             res.json({ message: "No Food Found." });
