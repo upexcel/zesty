@@ -11,6 +11,7 @@ let availability = keystone.list('Availability');
 let days = keystone.list('Days');
 let foodplans = keystone.list('Foodplan');
 let passverify = require('./service');
+const { select } = require('async');
 const cloudinary = require('cloudinary').v2;
 var CronJob = require('cron').CronJob;
 
@@ -36,8 +37,23 @@ async function uploadImage(req) {
 // async function foodLogic(req, foodDayDetails, dayname) {
 //     for(let item in foodDayDetails){
 //         if(foodDayDetails[`${item}`]){
-//             if (foodDayDetails[`${item}`].Breakfast) {
+//             if (foodDayDetails[`${item}`].Breakfast.length) {
+//              let founditem = await dishes.model.findOne({ _id: foodDayDetails[`${item}`].Breakfast[0] });
+//                 let suntextb = "Sunday_Breakfast- " + founditem.name;
+//                 text = text + "\n" + suntextb;
 //                 await foodplans.model.update({ user: req.body.userId }, { Sunday_Breakfast: foodDayDetails.Sunday.Breakfast[0] })
+//             }
+//             if (foodDayDetails[`${item}`].Lunch.length) {
+//                 let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Lunch[0] });
+//                 let suntextl = "Sunday_Lunch- " + founditem.name;
+//                 text = text + "\n" + suntextl;
+//                 await foodplans.model.update({ user: req.body.userId }, { Sunday_Lunch: foodDayDetails.Sunday.Lunch[0] })
+//             }
+//             if (foodDayDetails[`${item}`].Dinner.length) {
+//                 let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Dinner[0] });
+//                 let suntextd = "Sunday_Dinner- " + founditem.name;
+//                 text = text + "\n" + suntextd;
+//                 await foodplans.model.update({ user: req.body.userId }, { Sunday_Dinner: foodDayDetails.Sunday.Dinner[0] })
 //             }
 //         }
 //     }
@@ -52,8 +68,8 @@ async function updateFood(req) {
             
             if (foodDayDetails.Sunday.Breakfast.length) {
                 let founditem = await dishes.model.findOne({ _id: foodDayDetails.Sunday.Breakfast[0] });
-            let suntextb = "Sunday_Breakfast- " + founditem.name;
-            text = text + "\n" + suntextb;
+                let suntextb = "Sunday_Breakfast- " + founditem.name;
+                text = text + "\n" + suntextb;
                 await foodplans.model.update({ user: req.body.userId }, { Sunday_Breakfast: foodDayDetails.Sunday.Breakfast[0] })
             }
             if (foodDayDetails.Sunday.Lunch.length) {
@@ -722,15 +738,11 @@ module.exports = {
                     
                 }
             }
+
+            console.log(breakfast);
             for await (let i of daysNames) {
                 completeDetail[`${i}`] = { Breakfast: [], Lunch: [], Dinner: [] };
             }
-
-
-
-
-
-
             // async function listfood(food, type, completeDetail, daysDetails){
             //     for await (let value of food) {
             //         let gotDays = value.available_days;
@@ -886,7 +898,7 @@ module.exports = {
 
             }
             let foundplan = await foodplans.model.findOne({ user: req.body.userId });
-
+            // let selections = req.body.choices;
 
 
             if (!foundplan) {
@@ -903,6 +915,11 @@ module.exports = {
                     Spice_Level: selections.spicy,
                     Allergens: selections.allergens,
                     Meal_Timing: selections.mealType,
+                    Order_For: selections.Order_For,
+                    Other_Mentions: selections.Other_Mentions,
+                    Breakfast_Time_Interval: selections.Breakfast_Time_Interval,
+                    Lunch_Time_Interval: selections.Lunch_Time_Interval,
+                    Dinner_Time_Interval: selections.Dinner_Time_Interval,
                     Days: selections.day,
 
                     startdate: startday,
@@ -923,6 +940,11 @@ module.exports = {
                     Spice_Level: selections.spicy,
                     Allergens: selections.allergens,
                     Meal_Timing: selections.mealType,
+                    Order_For: selections.Order_For,
+                    Other_Mentions: selections.Other_Mentions,
+                    Breakfast_Time_Interval: selections.Breakfast_Time_Interval,
+                    Lunch_Time_Interval: selections.Lunch_Time_Interval,
+                    Dinner_Time_Interval: selections.Dinner_Time_Interval,
                     Days: selections.day,
                 }, async (err, data) => {
                     if (err) {
@@ -979,6 +1001,11 @@ module.exports = {
                 choices.Meal_Timing = foundFood.Meal_Timing;
                 choices.Days = foundFood.Days;
                 choices.Allergens = foundFood.Allergens;
+                choices.Order_For = foundFood.Order_For;
+                choices.Other_Mentions = foundFood.Other_Mentions;
+                choices.Breakfast_Time_Interval = foundFood.Breakfast_Time_Interval;
+                choices.Lunch_Time_Interval = foundFood.Lunch_Time_Interval;
+                choices.Dinner_Time_Interval = foundFood.Dinner_Time_Interval;
                 foundDishObject.choices = choices;
 
 

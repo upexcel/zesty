@@ -19,6 +19,11 @@ Foodplan.add({
     Allergens: { type: Types.TextArray },
     Meal_Timing: { type: Types.TextArray },
     Days: { type: Types.TextArray },
+    Order_For: {type: String},
+    Other_Mentions: {type: String},
+    Breakfast_Time_Interval: {type: String},
+    Lunch_Time_Interval: {type: String},
+    Dinner_Time_Interval: {type: String},
 
     startdate:  { type: Types.Datetime, required: true, initial: true },
     enddate:    { type: Types.Datetime, required: true, initial: true },
