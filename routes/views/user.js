@@ -516,7 +516,8 @@ module.exports = {
                         if (founduser) {
                             founduser.emailVerified = true
                             let update = await founduser.save();
-                            res.json({ error: 0, message: "Email Verified" });
+                            
+                            res.redirect("https://web-zesty-app.herokuapp.com");
                         } else {
                             res.json({ error: 1, message: "No User Found With this Email." })
                         }
