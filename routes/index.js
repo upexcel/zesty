@@ -63,6 +63,7 @@ exports = module.exports = function (app) {
 	app.post('/api/savefoodplan', routes.views.user.savefoodplan);
 	app.post('/api/showfoodplan', routes.views.user.showfoodplan);
 	app.post('/api/userdetails', routes.views.user.userdetails);
+	app.post('/api/test', routes.views.user.test);
 	// app.post('/api/sendreminder', routes.views.user.sendreminder);
 
 

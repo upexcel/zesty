@@ -12,6 +12,7 @@ let days = keystone.list('Days');
 let foodplans = keystone.list('Foodplan');
 let passverify = require('./service');
 const { select } = require('async');
+const { indexOf } = require('lodash');
 const cloudinary = require('cloudinary').v2;
 var CronJob = require('cron').CronJob;
 
@@ -695,14 +696,6 @@ module.exports = {
                 })
             }
 
-            // async function deleteExtras(item) {
-            //     newitem = JSON.parse(JSON.stringify(item));
-            //                 delete newitem.allergens;
-            //                 delete newitem.availability;
-            //                 delete newitem.available_days;
-            // }
-
-
             let allergyDetails = [];
             let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
             pushArray(newAllergens, allergyDetails);
@@ -724,7 +717,6 @@ module.exports = {
                 let timing = ele.availability;
                 for await (let elem of timing) {
                     for await (let it of x){
-                        console.log(it);
                         if (elem.name == 'Breakfast' && it == 'Breakfast') {
                             breakfast.push(ele)
                         }
@@ -739,107 +731,106 @@ module.exports = {
                 }
             }
 
-            console.log(breakfast);
+
+            breakfast = breakfast.sort(() => Math.random() - 0.5);
+            lunch = lunch.sort(() => Math.random() - 0.5);
+            dinner = dinner.sort(() => Math.random() - 0.5);
+
             for await (let i of daysNames) {
                 completeDetail[`${i}`] = { Breakfast: [], Lunch: [], Dinner: [] };
             }
-            // async function listfood(food, type, completeDetail, daysDetails){
-            //     for await (let value of food) {
-            //         let gotDays = value.available_days;
-            //         for await (let k of g) {
-            //             for await (let i of daysDetails) {
-            //                 if (i == k._id) {
-            //                     console.log(typeof(i));
-            //                     v = JSON.parse(JSON.stringify(v));
-            //                     console.log("heroo");
-            //                     delete v.allergens;
-            //                     delete v.availability;
-            //                     delete v.available_days;
-            //                     let m = String(food);
-            //                     console.log(m);
-            //                     if (completeDetail[`${k.name}`].Breakfast.length < 2 && type == 'breakfast') {
-            //                         console.log("doneeeeee");
-            //                         completeDetail[`${k.name}`].Breakfast.push(v);
-            //                         console.log(completeDetail);
-            //                     }
-            //                     else if (completeDetail[`${k.name}`].Lunch.length < 2 && type == 'lunch') {
-            //                         console.log("hhhhh");
-            //                         completeDetail[`${k.name}`].Lunch.push(v);
-            //                     }
-            //                     else if (completeDetail[`${k.name}`].Dinner.length < 2 && type == 'dinner') {
-            //                         console.log("hhhhhhhhhnnnnnnnnnnn");
-            //                         completeDetail[`${k.name}`].Dinner.push(v);
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-            // await listfood(breakfast,'breakfast', completeDetail, daysDetails);
-            // await listfood(lunch,'lunch', completeDetail, daysDetails);
-            // await listfood(dinner,'dinner', completeDetail, daysDetails);
 
 
-
-
-            for await (let v of breakfast) {
-                g = v.available_days;
-                for await (let k of g) {
-                    for await (let i of daysDetails) {
-                        if (i == k._id) {
-                            // deleteExtras(v);
-                            v = JSON.parse(JSON.stringify(v));
-                            delete v.allergens;
-                            delete v.availability;
-                            delete v.available_days;
-                            if (completeDetail[`${k.name}`].Breakfast.length < 2) {
-                                completeDetail[`${k.name}`].Breakfast.push(v);
+            async function listfood(food, type, completeDetail, daysDetails){
+                for await (let value of food) {
+                    let gotDays = value.available_days;
+                    for await (let day of gotDays) {
+                        for await (let item of daysDetails) {
+                            if (item == day._id) {
+                             
+                                value = JSON.parse(JSON.stringify(value));
+                                delete value.allergens;
+                                delete value.availability;
+                                delete value.available_days;
+                                if (completeDetail[`${day.name}`].Breakfast.length < 2 && type == 'breakfast') {
+                                    completeDetail[`${day.name}`].Breakfast.push(value);
+                                }
+                                else if (completeDetail[`${day.name}`].Lunch.length < 2 && type == 'lunch') {
+                                    completeDetail[`${day.name}`].Lunch.push(value);
+                                }
+                                else if (completeDetail[`${day.name}`].Dinner.length < 2 && type == 'dinner') {
+                                    completeDetail[`${day.name}`].Dinner.push(value);
+                                }
                             }
                         }
                     }
                 }
             }
+            await listfood(breakfast,'breakfast', completeDetail, daysDetails);
+            await listfood(lunch,'lunch', completeDetail, daysDetails);
+            await listfood(dinner,'dinner', completeDetail, daysDetails);
 
 
 
-            for await (let v of lunch) {
-                g = v.available_days;
-                for await (let k of g) {
-                    daysDetails.map((i) => {
-                        if (i == k._id) {
-                            // deleteExtras(v);
-                            v = JSON.parse(JSON.stringify(v));
-                            delete v.allergens;
-                            delete v.availability;
-                            delete v.available_days;
-                            if (completeDetail[`${k.name}`].Lunch.length < 2) {
-                                completeDetail[`${k.name}`].Lunch.push(v);
-                            }
-                        }
-                    });
-                }
-            }
+
+            // for await (let v of breakfast) {
+            //     g = v.available_days;
+            //     for await (let k of g) {
+            //         for await (let i of daysDetails) {
+            //             if (i == k._id) {
+            //                 // deleteExtras(v);
+            //                 v = JSON.parse(JSON.stringify(v));
+            //                 delete v.allergens;
+            //                 delete v.availability;
+            //                 delete v.available_days;
+            //                 if (completeDetail[`${k.name}`].Breakfast.length < 2) {
+            //                     completeDetail[`${k.name}`].Breakfast.push(v);
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
 
 
-            for await (let v of dinner) {
-                g = v.available_days;
-                for await (let k of g) {
-                    daysDetails.map((i) => {
-                        if (i == k._id) {
-                            // deleteExtras(v);
-                            v = JSON.parse(JSON.stringify(v));
-                            delete v.allergens;
-                            delete v.availability;
-                            delete v.available_days;
-                            if (completeDetail[`${k.name}`].Dinner.length < 2) {
-                                // console.log();
-                                completeDetail[`${k.name}`].Dinner.push(v);
-                            }
 
-                        }
-                    });
-                }
-            }
+            // for await (let v of lunch) {
+            //     g = v.available_days;
+            //     for await (let k of g) {
+            //         daysDetails.map((i) => {
+            //             if (i == k._id) {
+            //                 // deleteExtras(v);
+            //                 v = JSON.parse(JSON.stringify(v));
+            //                 delete v.allergens;
+            //                 delete v.availability;
+            //                 delete v.available_days;
+            //                 if (completeDetail[`${k.name}`].Lunch.length < 2) {
+            //                     completeDetail[`${k.name}`].Lunch.push(v);
+            //                 }
+            //             }
+            //         });
+            //     }
+            // }
+
+
+            // for await (let v of dinner) {
+            //     g = v.available_days;
+            //     for await (let k of g) {
+            //         daysDetails.map((i) => {
+            //             if (i == k._id) {
+            //                 // deleteExtras(v);
+            //                 v = JSON.parse(JSON.stringify(v));
+            //                 delete v.allergens;
+            //                 delete v.availability;
+            //                 delete v.available_days;
+            //                 if (completeDetail[`${k.name}`].Dinner.length < 2) {
+            //                     // console.log();
+            //                     completeDetail[`${k.name}`].Dinner.push(v);
+            //                 }
+
+            //             }
+            //         });
+            //     }
+            // }
             // console.log(completeDetail.Monday.Dinner);
 
             res.json(completeDetail);
@@ -1039,5 +1030,7 @@ module.exports = {
         }
     },
 
-
+    test:  async (req, res) => {
+        res.json({success: true});
+    }
 }
