@@ -907,8 +907,8 @@ module.exports = {
                     Spice_Level: selections.spicy,
                     Allergens: selections.allergens,
                     Meal_Timing: selections.mealType,
-                    Order_For: selections.Order_For,
-                    Other_Mentions: selections.Other_Mentions,
+                    Order_For: selections.orderFor,
+                    Other_Mentions: selections.extraMention,
                     Breakfast_Time_Interval: selections.Breakfast_Time_Interval,
                     Lunch_Time_Interval: selections.Lunch_Time_Interval,
                     Dinner_Time_Interval: selections.Dinner_Time_Interval,
@@ -932,8 +932,8 @@ module.exports = {
                     Spice_Level: selections.spicy,
                     Allergens: selections.allergens,
                     Meal_Timing: selections.mealType,
-                    Order_For: selections.Order_For,
-                    Other_Mentions: selections.Other_Mentions,
+                    Order_For: selections.orderFor,
+                    Other_Mentions: selections.extraMention,
                     Breakfast_Time_Interval: selections.Breakfast_Time_Interval,
                     Lunch_Time_Interval: selections.Lunch_Time_Interval,
                     Dinner_Time_Interval: selections.Dinner_Time_Interval,
@@ -959,7 +959,7 @@ module.exports = {
     showfoodplan: async (req, res) => {
         try {
             let foundFood = await foodplans.model.findOne({ user: req.body.userId });
-            // console.log(foundFood);
+            console.log(foundFood);
             if (foundFood) {
                 let days = foundFood.foodDetails;
                 let timing;
