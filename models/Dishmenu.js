@@ -14,8 +14,31 @@ Dishes.add({
     allergens: {type: Types.Relationship, ref: 'Allergens', many: true, index: true},
     availability: { type: Types.Relationship, ref: 'Availability', many: true, index: true },
     available_days: { type: Types.Relationship, ref: 'Days', many: true, index: true},
-    chef: { type: Types.Relationship, ref: 'Chef', index:true}
+    chef: { type: Types.Relationship, ref: 'Chef', index:true},
+    make_duplicate: { type: Types.Boolean }
 });
+
+
+Dishes.schema.pre('save', async function (next) {
+    if(this.make_duplicate){
+        this.make_duplicate = false;
+        let duplicateItem = await this.constructor.create({
+            images: this.images,
+            name: this.name,
+            description: this.description,
+            cuisine: this.cuisine,
+            diet: this.diet,
+            spice_level: this.spice_level,
+            allergens: this.allergens,
+            availability: this.availability,
+            available_days: this.available_days,
+            chef: this.chef
+        });
+        console.log("Duplicate Item Created");
+    }
+    next();
+});
+
 
 Dishes.defaultColumns = "name, chef"
 Dishes.register();

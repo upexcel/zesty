@@ -1,6 +1,5 @@
 var nodemailer = require('nodemailer');
-const sgMail = require('@sendgrid/mail')
-
+const sgMail = require('@sendgrid/mail');
 
 module.exports = {
   newemailservice: async (link, email, subject) => {
@@ -39,6 +38,7 @@ module.exports = {
       .catch((error) => {
         console.error(error);
       })
-  }
+  },
+  
 }
 

@@ -1048,5 +1048,14 @@ module.exports = {
 
     test:  async (req, res) => {
         res.json({success: true});
+    },
+
+    listAllergens: async function (req, res) {
+        try {
+            let data = await allergens.model.find({});
+            res.json(data)
+        } catch (error) {
+            res.status(500).json({ error: 1, message: error });
+        }
     }
 }
