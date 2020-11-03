@@ -58,7 +58,7 @@ async function updateFood(req) {
             }
             if (foodDayDetails[`${item}`].Dinner.length) {
                 let founditem = await dishes.model.findOne({ _id: foodDayDetails[`${item}`].Dinner[0] });
-                let suntextd = [`${item}`] + "_Dinner- -" +founditem.name;
+                let suntextd = [`${item}`] + "_Dinner- " +founditem.name;
                 itemToUpdate3 = [`${item}`] + "_Dinner";
                 text = text + "\n" + suntextd;
                 await foodplans.model.update({ user: req.body.userId }, { itemToUpdate3: foodDayDetails[`${item}`].Dinner[0] })
@@ -772,15 +772,24 @@ module.exports = {
                                 delete value.allergens;
                                 delete value.availability;
                                 delete value.available_days;
-                                if (completeDetail[`${day.name}`].Breakfast.length < 2 && type == 'breakfast') {
+                                if (type == 'breakfast') {
                                     completeDetail[`${day.name}`].Breakfast.push(value);
                                 }
-                                else if (completeDetail[`${day.name}`].Lunch.length < 2 && type == 'lunch') {
+                                else if (type == 'lunch') {
                                     completeDetail[`${day.name}`].Lunch.push(value);
                                 }
-                                else if (completeDetail[`${day.name}`].Dinner.length < 2 && type == 'dinner') {
+                                else if (type == 'dinner') {
                                     completeDetail[`${day.name}`].Dinner.push(value);
                                 }
+                                completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
+                                completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
+                                completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);
+                                let numberOfItems = completeDetail[`${day.name}`].Breakfast.length;
+                                completeDetail[`${day.name}`].Breakfast.splice(2, numberOfItems);
+                                let numberOfItems2 = completeDetail[`${day.name}`].Lunch.length;
+                                completeDetail[`${day.name}`].Lunch.splice(2, numberOfItems2);
+                                let numberOfItems3 = completeDetail[`${day.name}`].Dinner.length;
+                                completeDetail[`${day.name}`].Dinner.splice(2, numberOfItems3);
                             }
                         }
                     }
@@ -852,7 +861,12 @@ module.exports = {
             //     }
             // }
             // console.log(completeDetail.Monday.Dinner);
-
+            // let numberOfItems = completeDetail[`${day.name}`].Breakfast.length();
+            // completeDetail[`${day.name}`].Breakfast.splice(2, numberOfItems);
+            // let numberOfItems2 = completeDetail[`${day.name}`].Lunch.length();
+            // completeDetail[`${day.name}`].Lunch.splice(2, numberOfItems2);
+            // let numberOfItems3 = completeDetail[`${day.name}`].Dinner.length();
+            // completeDetail[`${day.name}`].Dinner.splice(2, numberOfItems3);
             res.json(completeDetail);
         } catch (error) {
             console.log(error);
@@ -1057,5 +1071,6 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
         }
-    }
+    },
+
 }
