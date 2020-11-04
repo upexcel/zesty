@@ -1090,27 +1090,78 @@ module.exports = {
                 console.log(token);
                 
                 if(response.data.accessToken){
-                    
+
                     axios({
                         method: 'post',
-                        url: 'https://api.dapi.co/v1/payment/transfer/create',
+                        url: 'https://api.dapi.co/v1/data/accounts/get',
                         headers: {'Authorization': 'Bearer ' + token},
                         data: {
                             "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
                             "userSecret": req.body.userSecret,
                             "sync": true,
-                             "amount": 1,
-                            "senderID":  process.env.SENDER_ID,
-                            "receiverID": process.env.RECEIVER_ID,
-                            "remark": "remarks for transaction"
                         }
                       }).then(function (response) {
-                        console.log(response);
-                        res.json({data: response, token: token, userSecret: req.body.userSecret});
+                        console.log(response.data);
+                        if(response.data.status){
+                            let senderId = response.data.accounts[0].id
+                            axios({
+                                method: 'post',
+                                url: 'https://api.dapi.co/v1/payment/transfer/create',
+                                headers: {'Authorization': 'Bearer ' + token},
+                                data: {
+                                    "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
+                                    "userSecret": req.body.userSecret,
+                                    "sync": true,
+                                     "amount": 1,
+                                     "senderID": senderId,
+                                    // "senderID":  process.env.SENDER_ID,
+                                    "receiverID": process.env.RECEIVER_ID,
+                                    "remark": "remarks for transaction"
+                                }
+                              }).then(function (response) {
+                                console.log(response.data);
+                                let finalResponse = {};
+                                finalResponse.data = response.data;
+                                finalResponse.token = token;
+                                finalResponse.userSecret = req.body.userSecret;
+                                res.json(finalResponse);
+                                // res.json({data: response.data, token: token, userSecret: req.body.userSecret});
+                              }).catch(function (error) {
+                                console.log(error);
+                                res.status(500).json({ error: 1, message: error });
+                              });
+                        }else{
+                            console.log(error);
+                            res.status(500).json({ error: 1, message: error });
+                        }
                       }).catch(function (error) {
                         console.log(error);
                         res.status(500).json({ error: 1, message: error });
                       });
+                    
+                    // axios({
+                    //     method: 'post',
+                    //     url: 'https://api.dapi.co/v1/payment/transfer/create',
+                    //     headers: {'Authorization': 'Bearer ' + token},
+                    //     data: {
+                    //         "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
+                    //         "userSecret": req.body.userSecret,
+                    //         "sync": true,
+                    //          "amount": 1,
+                    //         "senderID":  process.env.SENDER_ID,
+                    //         "receiverID": process.env.RECEIVER_ID,
+                    //         "remark": "remarks for transaction"
+                    //     }
+                    //   }).then(function (response) {
+                    //     console.log(response);
+                    //     res.json({data: response, token: token, userSecret: req.body.userSecret});
+                    //   }).catch(function (error) {
+                    //     console.log(error);
+                    //     res.status(500).json({ error: 1, message: error });
+                    //   });
+                }else{
+                    console.log(error);
+                    res.status(500).json({ error: 1, message: error });
                 }
               })
               .catch(function (error) {
