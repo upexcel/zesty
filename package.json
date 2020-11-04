@@ -6,6 +6,7 @@
     "@keystonejs/fields": "^19.0.0",
     "@sendgrid/mail": "^7.3.0",
     "async": "2.1.4",
+    "axios": "^0.21.0",
     "bcrypt": "^5.0.0",
     "cloudinary": "^1.23.0",
     "cors": "^2.8.5",

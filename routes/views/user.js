@@ -15,6 +15,7 @@ const { select } = require('async');
 const { indexOf } = require('lodash');
 const cloudinary = require('cloudinary').v2;
 var CronJob = require('cron').CronJob;
+const axios = require('axios');
 
 
 
@@ -261,7 +262,7 @@ module.exports = {
             if (founduser) {
                 res.json({ name: founduser.name, image: founduser.image, email: founduser.email, id: founduser._id });
             } else {
-                res.json({ error: 1, message: "No user found with this id." });
+                res.status(500).json({ error: 1, message: "No user found with this id." });
             }
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
@@ -292,7 +293,7 @@ module.exports = {
                     name: user.name
                 });
             } else {
-                res.json({ error: 1, message: "This email already exists." });
+                res.status(500).json({ error: 1, message: "This email already exists." });
             }
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
@@ -366,7 +367,7 @@ module.exports = {
                 });
                 res.json({ detail: subsDetail })
             } else {
-                res.json({ message: "No Plan with this Email Exists" });
+                res.json({ error: 0, message: "No Plan with this Email Exists" });
             }
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
@@ -379,7 +380,7 @@ module.exports = {
             let date = new Date().getTime();
             let user = await users.model.findOne({ email: req.body.email });
             if (!user) {
-                res.json({ error: 1, message: "No User with this email exists." });
+                res.status(500).json({ error: 1, message: "No User with this email exists." });
             } else {
                 let token = jwt.sign({ token: { date: date, _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
                 let subject = "Verify your Password"
@@ -407,7 +408,7 @@ module.exports = {
                 }
             });
         } catch (error) {
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
     },
 
@@ -418,7 +419,7 @@ module.exports = {
             let update = await founduser.save();
             res.json({ error: 0, message: "Password Updated" });
         } catch (error) {
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
     },
 
@@ -538,16 +539,16 @@ module.exports = {
                             
                             res.redirect("https://web-zesty-app.herokuapp.com");
                         } else {
-                            res.json({ error: 1, message: "No User Found With this Email." })
+                            res.status(500).json({ error: 1, message: "No User Found With this Email." })
                         }
 
                     } catch (error) {
-                        res.json({ error: 1, message: error });
+                        res.status(500).json({ error: 1, message: error });
                     }
                 }
             });
         } catch (error) {
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
     },
 
@@ -610,14 +611,14 @@ module.exports = {
                     let update = await subDetail.save();
                     res.json({ error: 0, message: "Plan Updated" });
                 } else {
-                    res.json({ error: 1, message: "No Plan found with this name." });
+                    res.status(500).json({ error: 1, message: "No Plan found with this name." });
                 }
             } else {
-                res.json({ error: 1, message: "User had no plans." });
+                res.status(500).json({ error: 1, message: "User had no plans." });
             }
 
         } catch (error) {
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
 
     },
@@ -678,7 +679,7 @@ module.exports = {
                 // }
 
             }, function (err) {
-                return res.json({
+                return res.status(500).json({
                     error: 1,
                     message: (err && err.message ? err.message : false) || 'Sorry, there was an issue signing you in, please try again.'
                 });
@@ -752,9 +753,9 @@ module.exports = {
             }
 
 
-            breakfast = breakfast.sort(() => Math.random() - 0.5);
-            lunch = lunch.sort(() => Math.random() - 0.5);
-            dinner = dinner.sort(() => Math.random() - 0.5);
+            // breakfast = breakfast.sort(() => Math.random() - 0.5);
+            // lunch = lunch.sort(() => Math.random() - 0.5);
+            // dinner = dinner.sort(() => Math.random() - 0.5);
 
             for await (let i of daysNames) {
                 completeDetail[`${i}`] = { Breakfast: [], Lunch: [], Dinner: [] };
@@ -870,7 +871,7 @@ module.exports = {
             res.json(completeDetail);
         } catch (error) {
             console.log(error);
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
     },
     dishDetails: async (req, res) => {
@@ -899,7 +900,7 @@ module.exports = {
             let allPlans = await plans.model.find({});
             res.json({ plans: allPlans });
         } catch (error) {
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
     },
 
@@ -984,7 +985,7 @@ module.exports = {
 
         } catch (error) {
             console.log(error);
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
     },
 
@@ -1034,11 +1035,11 @@ module.exports = {
 
                 res.json(foundDishObject);
             } else {
-                res.json({ message: "No Food Found." });
+                res.status(500).json({ error: 1, message: "No Food Found." });
             }
         } catch (error) {
             console.log(error);
-            res.json({ error: 1, message: error });
+            res.status(500).json({ error: 1, message: error });
         }
 
 
@@ -1072,5 +1073,76 @@ module.exports = {
             res.status(500).json({ error: 1, message: error });
         }
     },
+
+    paymentStart: async (req, res) => {
+        try{
+            axios({
+                method: 'post',
+                url: 'https://api.dapi.co/v1/auth/ExchangeToken',
+                data: {
+                    "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
+                    "accessCode": req.body.accessCode,
+                    "connectionID": req.body.connectionID
+                }
+              }).then(function (response) {
+                console.log(response.data);
+                let token = response.data.accessToken;
+                console.log(token);
+                
+                if(response.data.accessToken){
+                    
+                    axios({
+                        method: 'post',
+                        url: 'https://api.dapi.co/v1/payment/transfer/create',
+                        headers: {'Authorization': 'Bearer ' + token},
+                        data: {
+                            "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
+                            "userSecret": req.body.userSecret,
+                            "sync": true,
+                             "amount": 1,
+                            "senderID":  process.env.SENDER_ID,
+                            "receiverID": process.env.RECEIVER_ID,
+                            "remark": "remarks for transaction"
+                        }
+                      }).then(function (response) {
+                        console.log(response);
+                        res.json({data: response, token: token, userSecret: req.body.userSecret});
+                      }).catch(function (error) {
+                        console.log(error);
+                        res.status(500).json({ error: 1, message: error });
+                      });
+                }
+              })
+              .catch(function (error) {
+                console.log(error);
+                res.status(500).json({ error: 1, message: error });
+              });
+        }catch(error){
+            console.log(error);
+            res.status(500).json({ error: 1, message: error });
+        }
+    },
+
+    resumeJobs: async (req, res) => {
+        axios({
+            method: 'post',
+            url: 'https://api.dapi.co/v1/job/resume',
+            headers: {"Authorization": "Bearer " + req.body.token},
+            data: {
+                "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
+                "userSecret": req.body.userSecret,
+                "sync": true,
+                "jobID": req.body.jobID,
+                "userInputs": req.body.userInputs
+            }
+          }).then(function (response) {
+            console.log(response.data);
+            res.json(response.data);
+          }).catch(function (error) {
+              console.log("jjjjjjjjjjjjjjjj");
+            console.log(error);
+            res.status(500).json({ error: 1, message: error });
+          });
+    }
 
 }
