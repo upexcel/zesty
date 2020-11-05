@@ -761,6 +761,8 @@ module.exports = {
                 completeDetail[`${i}`] = { Breakfast: [], Lunch: [], Dinner: [] };
             }
 
+            let foodContainer = [];
+            let newfoodcontainer = [];
 
             async function listfood(food, type, completeDetail, daysDetails){
                 for await (let value of food) {
@@ -768,29 +770,46 @@ module.exports = {
                     for await (let day of gotDays) {
                         for await (let item of daysDetails) {
                             if (item == day._id) {
+                                // console.log(value.cuisine);
                              
-                                value = JSON.parse(JSON.stringify(value));
-                                delete value.allergens;
-                                delete value.availability;
-                                delete value.available_days;
+                                // value = JSON.parse(JSON.stringify(value));
+                                // delete value.allergens;
+                                // delete value.availability;
+                                // delete value.available_days;
                                 if (type == 'breakfast') {
-                                    completeDetail[`${day.name}`].Breakfast.push(value);
+                                    let foundbreakf = foodContainer.find((element22)=> element22 == value);
+                                    if(!foundbreakf){
+                                        foodContainer.push(value);
+                                    }
+                                    // completeDetail[`${day.name}`].Breakfast.push(value);
+                                    
                                 }
                                 else if (type == 'lunch') {
-                                    completeDetail[`${day.name}`].Lunch.push(value);
+                                    // completeDetail[`${day.name}`].Lunch.push(value);
+                                    let foundbreakf = foodContainer.find((element22)=> element22 == value);
+                                    if(!foundbreakf){
+                                        foodContainer.push(value);
+                                    }
                                 }
                                 else if (type == 'dinner') {
-                                    completeDetail[`${day.name}`].Dinner.push(value);
+                                    // completeDetail[`${day.name}`].Dinner.push(value);
+                                    let foundbreakf = foodContainer.find((element22)=> element22 == value);
+                                    if(!foundbreakf){
+                                        foodContainer.push(value);
+                                    }
                                 }
-                                completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
-                                completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
-                                completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);
-                                let numberOfItems = completeDetail[`${day.name}`].Breakfast.length;
-                                completeDetail[`${day.name}`].Breakfast.splice(2, numberOfItems);
-                                let numberOfItems2 = completeDetail[`${day.name}`].Lunch.length;
-                                completeDetail[`${day.name}`].Lunch.splice(2, numberOfItems2);
-                                let numberOfItems3 = completeDetail[`${day.name}`].Dinner.length;
-                                completeDetail[`${day.name}`].Dinner.splice(2, numberOfItems3);
+                                // completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
+                                // completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
+                                // completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);    
+                                // let numberOfItems = completeDetail[`${day.name}`].Breakfast.length;
+                                // completeDetail[`${day.name}`].Breakfast.splice(2, numberOfItems);
+
+                                // let numberOfItems2 = completeDetail[`${day.name}`].Lunch.length;
+                                // completeDetail[`${day.name}`].Lunch.splice(2, numberOfItems2);
+                                // let numberOfItems3 = completeDetail[`${day.name}`].Dinner.length;
+                                // completeDetail[`${day.name}`].Dinner.splice(2, numberOfItems3);Breakfast
+
+
                             }
                         }
                     }
@@ -799,68 +818,255 @@ module.exports = {
             await listfood(breakfast,'breakfast', completeDetail, daysDetails);
             await listfood(lunch,'lunch', completeDetail, daysDetails);
             await listfood(dinner,'dinner', completeDetail, daysDetails);
+            
+            // for await (let value of foodContainer){
+            //     if(value.cuisine == req.body.secondaryCuisine && newfoodcontainer.length < 2){
+            //         newfoodcontainer.push(value);
+            //     }
+            // }
+            console.log(req.body.mealType);
+            let length = req.body.mealType.length;
+            
+            foodContainer = foodContainer.sort(() => Math.random() - 0.5);
+            for await (let value of foodContainer){
+                for await(let item of req.body.primaryCuisine){
+                    
+                if(value.cuisine == item && newfoodcontainer.length < 4 && length == 3){
+                    console.log(item);
+                    let found = newfoodcontainer.find((element11)=> element11 == value);
+                                    if(!found){
+                                        newfoodcontainer.push(value);
+                                    }
+                    
+                }
+                else if(value.cuisine == item && newfoodcontainer.length < 3 && length == 2){
+                    console.log(item);
+                    let found1 = newfoodcontainer.find((element11)=> element11 == value);
+                                    if(!found1){
+                                        newfoodcontainer.push(value);
+                                    }
+                }
+                else if(value.cuisine == item && newfoodcontainer.length < 1 && length == 1){
+                    console.log(item);
+                    let found3 = newfoodcontainer.find((element11)=> element11 == value);
+                                    if(!found3){
+                                        newfoodcontainer.push(value);
+                                    }
+                }
+            }}
+
+            for await (let value of foodContainer){
+                for await(let item of req.body.secondaryCuisine){
+                if(value.cuisine == item && newfoodcontainer.length < 6 && length == 3){
+                    console.log(item);
+                    let foundnewfood = newfoodcontainer.find((element11)=> element11 == value);
+                                    if(!foundnewfood){
+                                        newfoodcontainer.push(value);
+                                    }
+                }
+                else if(value.cuisine == item && newfoodcontainer.length < 4 && length == 2){
+                    console.log(item);
+                    let foundnewfood = newfoodcontainer.find((element11)=> element11 == value);
+                                    if(!foundnewfood){
+                                        newfoodcontainer.push(value);
+                                    }
+                }
+                else if(value.cuisine == item && newfoodcontainer.length < 2 && length == 1){
+                    console.log(item);
+                    let foundnewfood = newfoodcontainer.find((element11)=> element11 == value);
+                                    if(!foundnewfood){
+                                        newfoodcontainer.push(value);
+                                    }
+                }
+            }}
+
+
+            // for await (let ele of newfoodcontainer) {
+            //     ele = JSON.parse(JSON.stringify(ele));
+            //     let timing = ele.availability;
+            //     for await (let elem of timing) {
+            //         for await (let it of x){
+            //             if (elem.name == 'Breakfast' && it == 'Breakfast') {
+            //                 newbreakfast.push(ele)
+            //             }
+            //             else if (elem.name == 'Lunch' && it== 'Lunch') {
+            //                 newlunch.push(ele)
+            //             }
+            //             else if (elem.name == 'Dinner' && it == 'Dinner') {
+            //                 newdinner.push(ele)
+            //             }
+            //         }
+                    
+            //     }
+            // }
+
+
+           
+            // console.log(newfoodcontainer);
+            async function listfinalfood(food, type, completeDetail, daysDetails){
+            for (let value of newfoodcontainer) {
+                for  (let v of food) {
+                    if(v._id == value._id){
+                        let gotDay = value.available_days;
+                        // console.log(gotDay);
+                        for (let day of gotDay) {
+                            for (let item of daysDetails) {
+                                if (item == day._id) {
+                                    // console.log(value.cuisine);
+                                    let gotmealTime = value.availability;
+                                    // for (let time of gotmealTime){
+                                    //     if
+                                    // }
+                                    value = JSON.parse(JSON.stringify(value));
+                                    delete value.allergens;
+                                    delete value.availability;
+                                    delete value.available_days;
+                                    if (type == 'breakfast') {
+                                        
+                                        // let foundnewdish = completeDetail[`${day.name}`].Breakfast.find((element11)=> element11 == value);
+                                        // let foundolddish = completeDetail[`${day.name}`].Lunch.find((element11)=> element11 == value);
+                                        // let founddinnerdish = completeDetail[`${day.name}`].Dinner.find((element11)=> element11 == value);
+                                        // if(!foundnewdish && !foundolddish && !founddinnerdish){
+                                            completeDetail[`${day.name}`].Breakfast.push(value);
+                                        
+                                         let index = newfoodcontainer.indexOf(value);
+                                        let removed = newfoodcontainer.splice(1, index);
+                                        // foodContainer.push(value);
+                                    }
+                                    else if (type == 'lunch') {
+                                        
+                                        // let foundnewdish = completeDetail[`${day.name}`].Breakfast.find((element11)=> element11 == value);
+                                        // let foundolddish = completeDetail[`${day.name}`].Lunch.find((element11)=> element11 == value);
+                                        // let founddinnerdish = completeDetail[`${day.name}`].Dinner.find((element11)=> element11 == value);
+                                        // if(!foundnewdish && !foundolddish && !founddinnerdish){
+                                            completeDetail[`${day.name}`].Lunch.push(value);
+                                        // }
+                                        
+                                        let index = newfoodcontainer.indexOf(value);
+                                        let removed = newfoodcontainer.splice(1, index);
+                                        // foodContainer.push(value);
+                                    }
+                                    else if (type == 'dinner') {
+                                        // let foundnewdish = completeDetail[`${day.name}`].Breakfast.find((element11)=> element11 == value);
+                                        // let foundolddish = completeDetail[`${day.name}`].Lunch.find((element11)=> element11 == value);
+                                        // let founddinnerdish = completeDetail[`${day.name}`].Dinner.find((element11)=> element11 == value);
+                                        // if(!foundnewdish && !foundolddish && !founddinnerdish){
+                                            completeDetail[`${day.name}`].Dinner.push(value);
+                                        // }
+                                        
+                                        let index = newfoodcontainer.indexOf(value);
+                                        let removed = newfoodcontainer.splice(1, index);
+                                    //     foodContainer.push(value);
+                                    }
+                                    completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
+                                    completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
+                                    completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);    
+                                    let numberOfItems = completeDetail[`${day.name}`].Breakfast.length;
+                                    completeDetail[`${day.name}`].Breakfast.splice(2, numberOfItems);
+        
+                                    let numberOfItems2 = completeDetail[`${day.name}`].Lunch.length;
+                                    completeDetail[`${day.name}`].Lunch.splice(2, numberOfItems2);
+                                    let numberOfItems3 = completeDetail[`${day.name}`].Dinner.length;
+                                    completeDetail[`${day.name}`].Dinner.splice(2, numberOfItems3);
+        
+        
+                                }
+                            }
+                        }
+                    }
+                // console.log(value);
+                
+            }
+        }
+        }
+
+        await listfinalfood(breakfast,'breakfast', completeDetail, daysDetails);
+        await listfinalfood(lunch,'lunch', completeDetail, daysDetails);
+        await listfinalfood(dinner,'dinner', completeDetail, daysDetails);
 
 
 
+            
 
-            // for await (let v of breakfast) {
-            //     g = v.available_days;
-            //     for await (let k of g) {
-            //         for await (let i of daysDetails) {
+
+            // for (let m of newfoodcontainer){
+            // for  (let v of breakfast) {
+                
+            //         if(v._id == m._id){
+            //             console.log(v);
+            //             g = v.available_days;
+            //     for  (let k of g) {
+            //         for  (let i of daysDetails) {
             //             if (i == k._id) {
             //                 // deleteExtras(v);
-            //                 v = JSON.parse(JSON.stringify(v));
-            //                 delete v.allergens;
-            //                 delete v.availability;
-            //                 delete v.available_days;
+            //                 // v = JSON.parse(JSON.stringify(v));
+            //                 // delete v.allergens;
+            //                 // delete v.availability;
+            //                 // delete v.available_days;
             //                 if (completeDetail[`${k.name}`].Breakfast.length < 2) {
-            //                     completeDetail[`${k.name}`].Breakfast.push(v);
+            //                     completeDetail[`${k.name}`].Breakfast.push(m);
+            //                     // let index = newfoodcontainer.indexOf(m);
+            //                     // let removed = newfoodcontainer.splice(index, 1);
             //                 }
             //             }
             //         }
             //     }
-            // }
+            //         }
+                
+            // }}
+            // newfoodcontainer = newfoodcontainer.sort(() => Math.random() - 0.5);
 
-
-
-            // for await (let v of lunch) {
-            //     g = v.available_days;
-            //     for await (let k of g) {
+            // for (let m of newfoodcontainer){
+            // for (let v of lunch) {
+                
+            //         if(v._id == m._id){
+            //             g = v.available_days;
+            //     for (let k of g) {
             //         daysDetails.map((i) => {
             //             if (i == k._id) {
             //                 // deleteExtras(v);
-            //                 v = JSON.parse(JSON.stringify(v));
-            //                 delete v.allergens;
-            //                 delete v.availability;
-            //                 delete v.available_days;
+            //                 // v = JSON.parse(JSON.stringify(v));
+            //                 // delete v.allergens;
+            //                 // delete v.availability;
+            //                 // delete v.available_days;
             //                 if (completeDetail[`${k.name}`].Lunch.length < 2) {
-            //                     completeDetail[`${k.name}`].Lunch.push(v);
+            //                     completeDetail[`${k.name}`].Lunch.push(m);
+                               
             //                 }
             //             }
             //         });
             //     }
-            // }
+            //         }
+                
+            // }}
 
 
-            // for await (let v of dinner) {
-            //     g = v.available_days;
-            //     for await (let k of g) {
+            // newfoodcontainer = newfoodcontainer.sort(() => Math.random() - 0.5);
+            // for (let m of newfoodcontainer){
+            // for (let v of dinner) {
+                
+            //         if(v._id == m._id){
+            //             g = v.available_days;
+            //     for (let k of g) {
             //         daysDetails.map((i) => {
             //             if (i == k._id) {
             //                 // deleteExtras(v);
-            //                 v = JSON.parse(JSON.stringify(v));
-            //                 delete v.allergens;
-            //                 delete v.availability;
-            //                 delete v.available_days;
+            //                 // v = JSON.parse(JSON.stringify(v));
+            //                 // delete v.allergens;
+            //                 // delete v.availability;
+            //                 // delete v.available_days;
             //                 if (completeDetail[`${k.name}`].Dinner.length < 2) {
             //                     // console.log();
-            //                     completeDetail[`${k.name}`].Dinner.push(v);
+            //                     completeDetail[`${k.name}`].Dinner.push(m);
+                                
             //                 }
 
             //             }
             //         });
             //     }
-            // }
+            //         }
+                
+            // }}
             // console.log(completeDetail.Monday.Dinner);
             // let numberOfItems = completeDetail[`${day.name}`].Breakfast.length();
             // completeDetail[`${day.name}`].Breakfast.splice(2, numberOfItems);
@@ -868,7 +1074,10 @@ module.exports = {
             // completeDetail[`${day.name}`].Lunch.splice(2, numberOfItems2);
             // let numberOfItems3 = completeDetail[`${day.name}`].Dinner.length();
             // completeDetail[`${day.name}`].Dinner.splice(2, numberOfItems3);
+            // res.json(newfoodcontainer);
+            console.log(req.body.primaryCuisine);
             res.json(completeDetail);
+            
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: 1, message: error });
