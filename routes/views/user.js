@@ -807,8 +807,8 @@ module.exports = {
                                 // if(meallength == 3){
 
                                 
-                                if (type == 'breakfast' && count < percentage && completeDetail[`${day.name}`].Breakfast.length < 2) {
-                                    
+                                if (type == 'breakfast') {
+                                    // && count < percentage && completeDetail[`${day.name}`].Breakfast.length < 2
                                     // let nowcuisine = value.cuisine;
                                     // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
                                     // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
@@ -829,7 +829,8 @@ module.exports = {
                                     completeDetail[`${day.name}`].Breakfast.push(value);
                                     count ++;
                                 }
-                                else if (type == 'lunch' && count < percentage && completeDetail[`${day.name}`].Lunch.length < 2) {
+                                else if (type == 'lunch') {
+                                    // && count < percentage && completeDetail[`${day.name}`].Lunch.length < 2
                                     // console.log(value._id);
                                     // let nowcuisine = value.cuisine;
                                     // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
@@ -843,7 +844,8 @@ module.exports = {
                                     completeDetail[`${day.name}`].Lunch.push(value);
                                     count ++;
                                 }
-                                else if (type == 'dinner' && count < percentage && completeDetail[`${day.name}`].Dinner.length < 2) {
+                                else if (type == 'dinner' ) {
+                                    // && count < percentage && completeDetail[`${day.name}`].Dinner.length < 2
                                     // let nowcuisine = value.cuisine;
                                     // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
                                     // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
@@ -914,9 +916,9 @@ module.exports = {
                             //     }
 
                             // }
-                                // completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
-                                // completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
-                                // completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);
+                                completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
+                                completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
+                                completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);
                                 let numberOfItems = completeDetail[`${day.name}`].Breakfast.length;
                                 completeDetail[`${day.name}`].Breakfast.splice(2, numberOfItems);
                                 let numberOfItems2 = completeDetail[`${day.name}`].Lunch.length;
@@ -931,47 +933,49 @@ module.exports = {
             await listfood(breakfast,'breakfast', completeDetail, daysDetails);
             console.log();
 
-            for(let day of selectedday){
-                // console.log(day);
-                for await (let eachitem of completeDetail[`${day}`].Breakfast){
-                    let found_item_in_lunch = lunch.find((element)=> element.id == eachitem.id);
-                    console.log(found_item_in_lunch);
-                    if(found_item_in_lunch){
-                        for( var i = 0; i < lunch.length; i++){
-                             if ( lunch[i] === found_item_in_lunch) {
-                                 console.log("hchsjgchjsgcgj"); 
-                                lunch.splice(i, 1); 
-                            }}
-                    }
-                }
-            }
+            // for(let day of selectedday){
+            //     // console.log(day);
+            //     for await (let eachitem of completeDetail[`${day}`].Breakfast){
+            //         let found_item_in_lunch = lunch.find((element)=> element.id == eachitem.id);
+            //         // console.log(found_item_in_lunch);
+            //         if(found_item_in_lunch){
+            //             for( var i = 0; i < lunch.length; i++){
+            //                  if ( lunch[i] === found_item_in_lunch) {
+            //                      console.log("hchsjgchjsgcgj"); 
+            //                     lunch.splice(i, 1); 
+            //                 }}
+            //         }
+            //     }
+            // }
 
             
             await listfood(lunch,'lunch', completeDetail, daysDetails);
 
-            for(let day of selectedday){
-            for await (let eachitem of completeDetail[`${day}`].Breakfast){
-                let found_item_in_dinner = dinner.find((element)=> element.id == eachitem.id);
-                console.log(found_item_in_dinner);
-                if(found_item_in_dinner){
-                    for( var i = 0; i < dinner.length; i++){
-                         if ( dinner[i] === found_item_in_dinner) { 
-                            dinner.splice(i, 1); 
-                        }}
-                }
-            }
+            // for(let day of selectedday){
+            // for await (let eachitem of completeDetail[`${day}`].Breakfast){
+            //     let found_item_in_dinner = dinner.find((element)=> element.id == eachitem.id);
+            //     console.log(found_item_in_dinner);
+            //     if(found_item_in_dinner){
+            //         for( var i = 0; i < dinner.length; i++){
+            //              if ( dinner[i] === found_item_in_dinner) { 
+            //                  console.log("iiiiiiiiiiiiiiiii");
+            //                 dinner.splice(i, 1); 
+            //             }}
+            //     }
+            // }
 
-            for await (let eachitem of completeDetail[`${day}`].Lunch){
-                let founded_item_in_dinner = dinner.find((element)=> element.id == eachitem.id);
-                console.log(founded_item_in_dinner);
-                if(founded_item_in_dinner){
-                    for( var i = 0; i < dinner.length; i++){
-                         if ( dinner[i] === founded_item_in_dinner) { 
-                            dinner.splice(i, 1); 
-                        }}
-                }
-            }
-        }
+            // for await (let eachitem of completeDetail[`${day}`].Lunch){
+            //     let founded_item_in_dinner = dinner.find((element)=> element.id == eachitem.id);
+            //     // console.log(founded_item_in_dinner);
+            //     if(founded_item_in_dinner){
+            //         for( var i = 0; i < dinner.length; i++){
+            //              if ( dinner[i] === founded_item_in_dinner) { 
+            //                  console.log("uuuuuuuuuuuuuuuuu");
+            //                 dinner.splice(i, 1); 
+            //             }}
+            //     }
+        //     }
+        // }
             await listfood(dinner,'dinner', completeDetail, daysDetails);
             
             res.json(completeDetail);
