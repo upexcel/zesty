@@ -720,7 +720,7 @@ module.exports = {
                 })
             }
             let allergyDetails = [];
-            let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
+           let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
             pushArray(newAllergens, allergyDetails);
             let availableDetails = [];
             let newAvailable = await availability.model.find({ name: { $in: req.body.mealType } });
@@ -931,16 +931,20 @@ module.exports = {
                 }
             }
 
-
+            // breakfast = breakfast.sort(() => Math.random() - 0.5);
             await listfood(breakfast,'breakfast', completeDetail, daysDetails);
             console.log(lunch.length);
             for(let day of selectedday){
-            console.log(completeDetail[`${day}`].Breakfast.length);
+              let numberOfItems = completeDetail[`${day}`].Breakfast.length;
+              completeDetail[`${day}`].Breakfast.splice(2, numberOfItems);  
+            //   console.log(completeDetail[`${day}`].Breakfast.length);
+            // console.log(completeDetail[`${day}`].Breakfast.length);
             }
             for(let day of selectedday){
                 // console.log(day);
                 for await (let eachitem of completeDetail[`${day}`].Breakfast){
-                    let found_item_in_lunch = lunch.find((element)=> element.id == eachitem.id);
+                    console.log(eachitem._id);
+                    let found_item_in_lunch = lunch.find((element)=> element._id == eachitem._id);
                     // console.log(found_item_in_lunch);
                     if(found_item_in_lunch){
                         for( var i = 0; i < lunch.length; i++){
@@ -952,16 +956,23 @@ module.exports = {
                 }
             }
 
-            console.log(lunch.length);
+            // console.log(lunch.length);
+            // lunch = lunch.sort(() => Math.random() - 0.5);
             await listfood(lunch,'lunch', completeDetail, daysDetails);
 
             for(let day of selectedday){
+                let numberOfItems2 = completeDetail[`${day}`].Breakfast.length;
+                 completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
+                 let numberOfItems3 = completeDetail[`${day}`].Lunch.length;
+                 completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
+                //  console.log(completeDetail[`${day}`].Breakfast.length);
+                //  console.log(completeDetail[`${day}`].Lunch.length);
             for await (let eachitem of completeDetail[`${day}`].Breakfast){
-                let found_item_in_dinner = dinner.find((element)=> element.id == eachitem.id);
+                let found_item_in_dinner = dinner.find((element)=> element._id == eachitem._id);
                 // console.log(found_item_in_dinner);
                 if(found_item_in_dinner){
                     for( var i = 0; i < dinner.length; i++){
-                         if ( dinner[i] === found_item_in_dinner) { 
+                         if ( dinner[i] == found_item_in_dinner) { 
                             //  console.log("iiiiiiiiiiiiiiiii");
                             dinner.splice(i, 1); 
                         }}
@@ -969,18 +980,25 @@ module.exports = {
             }
 
             for await (let eachitem of completeDetail[`${day}`].Lunch){
-                let founded_item_in_dinner = dinner.find((element)=> element.id == eachitem.id);
+                // let numberOfItems2 = completeDetail[`${day}`].Lunch.length;
+                //  completeDetail[`${day}`].Lunch.splice(2, numberOfItems2);
+                let founded_item_in_dinner = dinner.find((element)=> element._id == eachitem._id);
                 // console.log(founded_item_in_dinner);
                 if(founded_item_in_dinner){
                     for( var i = 0; i < dinner.length; i++){
-                         if ( dinner[i] === founded_item_in_dinner) { 
+                         if ( dinner[i] == founded_item_in_dinner) { 
                              console.log("uuuuuuuuuuuuuuuuu");
                             dinner.splice(i, 1); 
                         }}
                 }
             }
         }
+        // dinner = dinner.sort(() => Math.random() - 0.5);
             await listfood(dinner,'dinner', completeDetail, daysDetails);
+            for(let day of selectedday){
+            let numberOfItems3 = completeDetail[`${day}`].Dinner.length;
+            completeDetail[`${day}`].Dinner.splice(2, numberOfItems3);
+            }
             
             res.json(completeDetail);
         } catch (error) {
