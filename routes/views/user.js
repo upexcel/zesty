@@ -965,6 +965,8 @@ module.exports = {
                  completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
                  let numberOfItems3 = completeDetail[`${day}`].Lunch.length;
                  completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
+            }
+            for(let day of selectedday){
                 //  console.log(completeDetail[`${day}`].Breakfast.length);
                 //  console.log(completeDetail[`${day}`].Lunch.length);
             for await (let eachitem of completeDetail[`${day}`].Breakfast){
