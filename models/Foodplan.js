@@ -48,6 +48,12 @@ Foodplan.add({
     Saturday_Breakfast: { type:Types.Relationship, ref: 'Dishes'},
     Saturday_Lunch: { type:Types.Relationship, ref: 'Dishes'},
     Saturday_Dinner: { type:Types.Relationship, ref: 'Dishes'},
+    Receiver_Name: { type: Types.Name, required: true, index: true },
+    Receiver_Email: { type: Types.Email },
+    Shipping_Address: {type: String},
+    Shipping_State: {type: String},
+    Shipping_Zipcode: {type: Number}
+
 
 });
 

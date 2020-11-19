@@ -732,12 +732,10 @@ module.exports = {
             newDays.map((i) => {
                 daysNames.push(i.name);
             })
-
             let selectedday = req.body.day;
             let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
             const finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
             
-
             
             for await (let elemoffinalfood of finalfood) {
                 elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
@@ -794,7 +792,6 @@ module.exports = {
                     let count = 0;
                     let gotDays = value.available_days;
                     for await (let day of gotDays) {
-
                         let founddday = selectedday.find((elem)=> elem == day.name);
                         // for await (let item of daysDetails) {
                             if (founddday ) {
@@ -805,7 +802,6 @@ module.exports = {
                                 delete value.availability;
                                 delete value.available_days;
                                 // if(meallength == 3){
-
                                 
                                 if (type == 'breakfast') {
                                     // && count < percentage && completeDetail[`${day.name}`].Breakfast.length < 2
@@ -854,23 +850,18 @@ module.exports = {
                                     // }
                                     completeDetail[`${day.name}`].Dinner.push(value);
                                     // count ++;
-
                                 }
                             // }
                             // else if(meallength == 2 || meallength == 1 ){
-
-
                             //     if (type == 'breakfast') {
                                     
                             //         // let nowcuisine = value.cuisine;
                             //         // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
                             //         // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
-
                             //         // if(nowprimarycuisine && completeDetail[`${day.name}`].Breakfast.length <= 1){
                                         
                                 
                             //         //     completeDetail[`${day.name}`].Breakfast.push(value);
-
                             //         // }
                             //         // if(nowsecondarycuisine  && completeDetail[`${day.name}`].Breakfast.length <= 2){
                             //         //     // if(!nowbreakfast && !nowlunch && !nowdinner){
@@ -914,7 +905,6 @@ module.exports = {
                             //         // // }
                             //         completeDetail[`${day.name}`].Dinner.push(value);
                             //     }
-
                             // }
                                 completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
                                 completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
@@ -930,7 +920,6 @@ module.exports = {
                     }
                 }
             }
-
             // breakfast = breakfast.sort(() => Math.random() - 0.5);
             await listfood(breakfast,'breakfast', completeDetail, daysDetails);
             console.log(lunch.length);
@@ -955,11 +944,9 @@ module.exports = {
                     }
                 }
             }
-
             // console.log(lunch.length);
             // lunch = lunch.sort(() => Math.random() - 0.5);
             await listfood(lunch,'lunch', completeDetail, daysDetails);
-
             for(let day of selectedday){
                 let numberOfItems2 = completeDetail[`${day}`].Breakfast.length;
                  completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
@@ -980,7 +967,6 @@ module.exports = {
                         }}
                 }
             }
-
             for await (let eachitem of completeDetail[`${day}`].Lunch){
                 // let numberOfItems2 = completeDetail[`${day}`].Lunch.length;
                 //  completeDetail[`${day}`].Lunch.splice(2, numberOfItems2);
@@ -1065,6 +1051,7 @@ module.exports = {
             if (!foundplan) {
                 let foundUser = await users.model.findOne({ _id: req.body.userId });
                 let selections = req.body.choices;
+                let deliveryDetails = req.body.deliveryInfo;
                 console.log(req.body.choices);
                 createdPlan = await foodplans.model.create({
                     name: foundUser.name,
@@ -1084,7 +1071,15 @@ module.exports = {
                     Days: selections.day,
 
                     startdate: startday,
-                    enddate: endday
+                    enddate: endday,
+                    Receiver_Name: deliveryDetails.receiverName,
+                    Receiver_Email: deliveryDetails.receiverEmail,
+                    Shipping_Address: deliveryDetails.shippingAddress,
+                    Shipping_State: deliveryDetails.shippingState,
+                    Shipping_Zipcode: deliveryDetails.shippingZipcode
+
+
+
                 });
                 await updateFood(req);
 
@@ -1092,6 +1087,7 @@ module.exports = {
             }
             else {
                 let selections = req.body.choices;
+                let deliveryDetails = req.body.deliveryInfo;
                 updatedPlan = await foodplans.model.update({ user: req.body.userId }, {
                     startdate: startday, enddate: endday,
                     foodDetails: req.body.foodDetails,
@@ -1107,6 +1103,11 @@ module.exports = {
                     Lunch_Time_Interval: selections.Lunch_Time_Interval,
                     Dinner_Time_Interval: selections.Dinner_Time_Interval,
                     Days: selections.day,
+                    Receiver_Name: deliveryDetails.receiverName,
+                    Receiver_Email: deliveryDetails.receiverEmail,
+                    Shipping_Address: deliveryDetails.shippingAddress,
+                    Shipping_State: deliveryDetails.shippingState,
+                    Shipping_Zipcode: deliveryDetails.shippingZipcode
                 }, async (err, data) => {
                     if (err) {
                         req.json({ error: 1, message: err });
@@ -1153,6 +1154,7 @@ module.exports = {
                 foundDishObject.startdate = foundFood.startdate;
                 foundDishObject.enddate = foundFood.enddate;
                 let choices = {};
+                let deliveryDetails = {};
                 choices.Primary_Cuisine = foundFood.Primary_Cuisine;
                 choices.Secondary_Cuisine = foundFood.Secondary_Cuisine;
                 choices.Meal_Types = foundFood.Meal_Types;
@@ -1165,7 +1167,14 @@ module.exports = {
                 choices.Breakfast_Time_Interval = foundFood.Breakfast_Time_Interval;
                 choices.Lunch_Time_Interval = foundFood.Lunch_Time_Interval;
                 choices.Dinner_Time_Interval = foundFood.Dinner_Time_Interval;
+                
+                deliveryDetails.Receiver_Name = foundFood.Receiver_Name;
+                deliveryDetails.Receiver_Email = foundFood.Receiver_Email;
+                deliveryDetails.Shipping_Address = foundFood.Shipping_Address;
+                deliveryDetails.Shipping_State = foundFood.Shipping_State;
+                deliveryDetails.Shipping_Zipcode = foundFood.Shipping_Zipcode;
                 foundDishObject.choices = choices;
+                foundDishObject.deliveryDetails = deliveryDetails;
 
 
                 res.json(foundDishObject);
