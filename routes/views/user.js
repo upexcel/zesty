@@ -9,6 +9,7 @@ let dishes = keystone.list('Dishes');
 let allergens = keystone.list('Allergens');
 let availability = keystone.list('Availability');
 let days = keystone.list('Days');
+let spicelevels = keystone.list('Spicelevel');
 let foodplans = keystone.list('Foodplan');
 let passverify = require('./service');
 const { select } = require('async');
@@ -1404,5 +1405,37 @@ module.exports = {
     //         res.status(500).json({ error: 1, message: error });
     //     }
     // }
+
+    updatespice: async(req, res) => {
+        try{
+        const finalfood = await dishes.model.find({ spice_level: { $in: ['1','2','3']} }).populate("available_days").populate("availability");
+        console.log(finalfood);
+        for await(let item of finalfood){
+            if(item.spice_level == '1'){
+                let foundspicelevel = await spicelevels.model.findOne({ name: '1' });
+                console.log(foundspicelevel._id);
+                if(foundspicelevel){
+                    item.spice_level == foundspicelevel._id;
+                }
+            }
+            if(item.spice_level == '2'){
+                let foundspicelevel1 = await spicelevels.model.findOne({ name: '2' });
+                if(foundspicelevel1){
+                    item.spice_level == foundspicelevel1._id;
+                }
+            }
+            if(item.spice_level == '3'){
+                let foundspicelevel2 = await spicelevels.model.findOne({ name: '3' });
+                if(foundspicelevel2){
+                    item.spice_level == foundspicelevel2._id;
+                }
+            }
+        }
+        res.json({success: "true"});
+        }catch(error){
+            console.log(error);
+            res.json({error: "true"});
+        }
+    }
 
 }

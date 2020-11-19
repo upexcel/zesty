@@ -67,6 +67,7 @@ exports = module.exports = function (app) {
 	app.post('/api/test', routes.views.user.test);
 	app.post('/api/payment', routes.views.user.paymentStart);
 	app.post('/api/resumejob', routes.views.user.resumeJobs);
+	app.get('/api/updatespice', routes.views.user.updatespice);
 	// app.post('/api/paymentsender', routes.views.user.paymentSender);
 	// app.post('/api/sendreminder', routes.views.user.sendreminder);
 
