@@ -683,7 +683,7 @@ module.exports = {
                 // }
 
             }, function (err) {
-                return res.status(500).json({
+                return res.status(401).json({
                     error: 1,
                     message: (err && err.message ? err.message : false) || 'Sorry, there was an issue signing you in, please try again.'
                 });
