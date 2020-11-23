@@ -294,7 +294,7 @@ module.exports = {
                     name: user.name
                 });
             } else {
-                res.status(500).json({ error: 1, message: "This email already exists." });
+                res.status(409).json({ error: 1, message: "This email already exists." });
             }
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
