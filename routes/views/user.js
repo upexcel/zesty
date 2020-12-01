@@ -145,17 +145,8 @@ module.exports = {
             if (founduser) {
                 await uploadImage(req);
                 if (req.body.firstName || req.body.lastName) {
-                    if (req.body.firstName != undefined && req.body.firstName != "undefined" && req.body.firstName != "" && req.body.lastName != undefined && req.body.lastName != "undefined" && req.body.lastName != "") {
+                    if (req.body.firstName || req.body.lastName) {
                         req.body.name = { "first": req.body.firstName, "last": req.body.lastName }
-                        // console.log(req.body.name);
-                        // let name = {};
-                        // if(req.body.firstname){
-                        //     name.first = req.body.firstName;
-                        // }
-                        // if(req.body.lastName){
-                        //     name.last = req.body.lastName;
-                        // }
-                        console.log(req.body.name);
                         updatedUser = await users.model.update({ _id: req.body.userId }, { name: req.body.name}, async (err, data) => {
                             if (err) {
                                 req.json({ error: 1, message: err });
