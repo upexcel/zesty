@@ -29,7 +29,7 @@ Foodplan.add({
     enddate:    { type: Types.Datetime, required: true, initial: true },
     Sunday_Breakfast: { type:Types.Relationship, ref: 'Dishes'},
     Sunday_Lunch: { type:Types.Relationship, ref: 'Dishes'},
-    Sunday_dinner: { type:Types.Relationship, ref: 'Dishes'},
+    Sunday_Dinner: { type:Types.Relationship, ref: 'Dishes'},
     Monday_Breakfast: { type:Types.Relationship, ref: 'Dishes'},
     Monday_Lunch: { type:Types.Relationship, ref: 'Dishes'},
     Monday_Dinner: { type:Types.Relationship, ref: 'Dishes'},
@@ -51,10 +51,7 @@ Foodplan.add({
     Receiver_Name: { type: Types.Name, required: true, index: true },
     Receiver_Email: { type: Types.Email },
     Shipping_Address: {type: String},
-    Shipping_State: {type: String},
-    Shipping_Zipcode: {type: Number}
-
-
+    Shipping_State: {type: String}
 });
 
 Foodplan.schema.add({
