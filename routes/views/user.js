@@ -10,6 +10,7 @@ let allergens = keystone.list('Allergens');
 let availability = keystone.list('Availability');
 let days = keystone.list('Days');
 let spicelevels = keystone.list('Spicelevel');
+let dietary_requirement = keystone.list('dietary_requirement');
 let foodplans = keystone.list('Foodplan');
 let passverify = require('./service');
 const { select } = require('async');
@@ -258,94 +259,94 @@ module.exports = {
 
     sociallogin: async (req, res) => {
         try{
-            let newuser = await users.model.findOne({ email: req.body.email });
-            if (!newuser) {
-                try {
-                    let logintype = req.body.type;
-                    let pass = process.env.PASSWORD;
-                    let user = await users.model.create({
-                        image: req.body.image,
-                        name: req.body.name,
-                        email: req.body.email,
-                        userId: req.body.userId,
-                        password: pass,
-                        isAdmin: req.body.isAdmin,
-                    });
-                    if (logintype == 'facebook') {
-                        let date = new Date().getTime();
-                        useremail = user.email;
-                        subject = "Verify Your Email"
-                        let token = jwt.sign({ token: { date: date, _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
-
-                        let link = process.env.EMAIL_LINK + token;
-                        passverify.newemailservice(link, useremail, subject);
-                    }
-                    let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-                    res.json({
-                        error: 0,
-                        message: "user created",
-                        token: token,
-                        id: user._id,
-                        name: user.name
-                    });
-                } catch (error) {
-                    console.log(error);
-                    res.status(500).json({ error: 1, message: error });
-                }
-            } else {
-
-                let token = jwt.sign({ token: { name: newuser.name, id: newuser.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-                return res.json({
-                    error: 0,
-                    message: "login Successful",
-                    token: token,
-                    id: newuser._id,
-                    name: newuser.name
+        let newuser = await users.model.findOne({ email: req.body.email });
+        if (!newuser) {
+            try {
+                let logintype = req.body.type;
+                let pass = process.env.PASSWORD;
+                let user = await users.model.create({
+                    image: req.body.image,
+                    name: req.body.name,
+                    email: req.body.email,
+                    userId: req.body.userId,
+                    password: pass,
+                    isAdmin: req.body.isAdmin,
                 });
-                // let subDetail = await subscriptions.model.findOne({ userId: newuser._id });
-                // if (subDetail) {
-                //     let plan = subDetail.planId;
-                //     let planDetail = await plans.model.findOne({ _id: plan });
-                //     console.log(planDetail.title);
-                //     let remaingSubscription = subDetail.validityPeriodEnd - new Date();
+                if (logintype == 'facebook') {
+                    let date = new Date().getTime();
+                    useremail = user.email;
+                    subject = "Verify Your Email"
+                    let token = jwt.sign({ token: { date: date, _id: user._id } }, process.env.TOKEN_SECRET, { expiresIn: "1h" });
 
-                //     if (remaingSubscription > 0) {
-                //         return res.json({
-                //             error: 0,
-                //             message: "login Successful",
-                //             token: token,
-                //             id: newuser._id,
-                //             name: newuser.name,
-                //             subscribed: true,
-                //             remtime: remaingSubscription,
-                //             title: planDetail.title
-
-                //         });
-                //     } else {
-                //         return res.json({
-                //             error: 0,
-                //             message: "login Successful",
-                //             token: token,
-                //             id: newuser._id,
-                //             name: newuser.name,
-                //             subscribed: false,
-                //             remtime: remaingSubscription
-
-                //         });
-                //     }
-                // } else {
-                //     return res.json({
-                //         error: 0,
-                //         message: "login Successful",
-                //         token: token,
-                //         id: newuser._id,
-                //         name: newuser.name,
-                //         subscribed: false,
-                //         remtime: null
-
-                //     });
-                // }
+                    let link = process.env.EMAIL_LINK + token;
+                    passverify.newemailservice(link, useremail, subject);
+                }
+                let token = jwt.sign({ token: { name: user.name, id: user.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
+                res.json({
+                    error: 0,
+                    message: "user created",
+                    token: token,
+                    id: user._id,
+                    name: user.name
+                });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({ error: 1, message: error });
             }
+        } else {
+
+            let token = jwt.sign({ token: { name: newuser.name, id: newuser.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
+            return res.json({
+                error: 0,
+                message: "login Successful",
+                token: token,
+                id: newuser._id,
+                name: newuser.name
+            });
+            // let subDetail = await subscriptions.model.findOne({ userId: newuser._id });
+            // if (subDetail) {
+            //     let plan = subDetail.planId;
+            //     let planDetail = await plans.model.findOne({ _id: plan });
+            //     console.log(planDetail.title);
+            //     let remaingSubscription = subDetail.validityPeriodEnd - new Date();
+
+            //     if (remaingSubscription > 0) {
+            //         return res.json({
+            //             error: 0,
+            //             message: "login Successful",
+            //             token: token,
+            //             id: newuser._id,
+            //             name: newuser.name,
+            //             subscribed: true,
+            //             remtime: remaingSubscription,
+            //             title: planDetail.title
+
+            //         });
+            //     } else {
+            //         return res.json({
+            //             error: 0,
+            //             message: "login Successful",
+            //             token: token,
+            //             id: newuser._id,
+            //             name: newuser.name,
+            //             subscribed: false,
+            //             remtime: remaingSubscription
+
+            //         });
+            //     }
+            // } else {
+            //     return res.json({
+            //         error: 0,
+            //         message: "login Successful",
+            //         token: token,
+            //         id: newuser._id,
+            //         name: newuser.name,
+            //         subscribed: false,
+            //         remtime: null
+
+            //     });
+            // }
+        }
         }catch(error){
             console.log(error);
             res.status(500).json({ error: 1, message: error });
@@ -525,19 +526,8 @@ module.exports = {
             let alltime = req.body.mealType;
             let spicyDetail = [];
             let spicyLevel = req.body.spicy;
-            spicyLevel.map((item) => {
-                let spice_constant;
-                if (item === 'Mild') {
-                    spice_constant = '1';
-                }
-                else if (item === 'Medium') {
-                    spice_constant = '2';
-                }
-                else {
-                    spice_constant = '3';
-                }
-                spicyDetail.push(spice_constant);
-            })
+            let data = await spicelevels.model.findOne({spice_level:spicyLevel[0]})
+            spicyDetail.push(`${data._id}`);
             let breakfast = [];
             let lunch = [];
             let dinner = [];
@@ -545,11 +535,11 @@ module.exports = {
             async function pushArray(foundItem, arrayName) {
                 await foundItem.map((item) => {
                     arrayName.push(item.id);
-                })
+                })  
             }
             let allergyDetails = [];
            let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
-            pushArray(newAllergens, allergyDetails);
+           pushArray(newAllergens, allergyDetails);
             let availableDetails = [];
             let newAvailable = await availability.model.find({ name: { $in: req.body.mealType } });
             pushArray(newAvailable, availableDetails);
@@ -560,10 +550,15 @@ module.exports = {
             newDays.map((i) => {
                 daysNames.push(i.name);
             })
+            let dietaryRequirement = await dietary_requirement.model.find({name:{$in:req.body.foodType}})
+            let foodType = dietaryRequirement.map(val=>{
+                return `${val._id}`;
+            })
+            req.body.foodType = foodType;
             let selectedday = req.body.day;
             let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
             const finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
-            
+
             
             for await (let elemoffinalfood of finalfood) {
                 elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
@@ -889,8 +884,8 @@ module.exports = {
                 Spice_Level: selections.spicy,
                 Allergens: selections.allergens,
                 Meal_Timing: selections.mealType,
-                Order_For: selections.Order_For,
-                Other_Mentions: selections.Other_Mentions,
+                Order_For: selections.orderFor,
+                Other_Mentions: selections.extraMention,
                 Breakfast_Time_Interval: selections.Breakfast_Time_Interval,
                 Lunch_Time_Interval: selections.Lunch_Time_Interval,
                 Dinner_Time_Interval: selections.Dinner_Time_Interval,

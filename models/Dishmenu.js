@@ -9,9 +9,9 @@ Dishes.add({
     // name: { type: Types.Name, required: true, index: true },
     description: { type: String },
     cuisine: { type: Types.Select, options: 'North Indian, South Indian, Chinese, Italian', index: true },
-    diet: { type: Types.Select, options: 'Vegetarian, Vegan, Non Vegetarian', index: true },
-    
-    spice_level: { type: Types.Select, options: '1,2,3', index: true },
+    // diet: { type: Types.Select, options: 'Vegetarian, Vegan, Non Vegetarian', index: true },
+    diet:{ type: Types.Relationship, ref: 'dietary_requirement', many: true, index: true },
+    spice_level: { type: Types.Relationship, ref: 'Spicelevel', many: true, index: true },
     sweet_level: { type: Types.Relationship, ref: 'Sweetlevel', many: true, index: true },
     allergens: {type: Types.Relationship, ref: 'Allergens', many: true, index: true},
     availability: { type: Types.Relationship, ref: 'Availability', many: true, index: true },
