@@ -10,6 +10,8 @@ Dishes.add({
     description: { type: String },
     cuisine: { type: Types.Select, options: 'North Indian, South Indian, Chinese, Italian', index: true },
     // diet: { type: Types.Select, options: 'Vegetarian, Vegan, Non Vegetarian', index: true },
+    type_of_food:{ type: Types.Relationship, ref: 'type_of_food', many: true, index: true },
+    primary_ingredeints:{ type: Types.Relationship, ref: 'primary_ingredeints', many: true, index: true },
     diet:{ type: Types.Relationship, ref: 'dietary_requirement', many: true, index: true },
     spice_level: { type: Types.Relationship, ref: 'Spicelevel', many: true, index: true },
     sweet_level: { type: Types.Relationship, ref: 'Sweetlevel', many: true, index: true },

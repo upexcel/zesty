@@ -933,11 +933,10 @@ module.exports = {
                         for await (let element of mealType) {
                             let foundDish = await dishes.model.findOne({ _id: element });
                             if (foundDish) {
-                                foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id });
+                                foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id, images: foundDish.images });
                             } else {
                                 console.log("No food Found with this id");
                             }
-
                         }
                     }
                 }
