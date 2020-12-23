@@ -68,7 +68,12 @@ exports = module.exports = function (app) {
 	app.post('/api/payment', routes.views.user.paymentStart);
 	app.post('/api/resumejob', routes.views.user.resumeJobs);
 	app.get('/api/updatespice', routes.views.user.updatespice);
-	// app.post('/api/paymentsender', routes.views.user.paymentSender);
+	app.get('/api/test', routes.views.user.test);
+	app.post('/api/showPastAndCurrentfoodplan', routes.views.user.showPastAndCurrentfoodplan);
+	app.post('/api/saveSamefoodplanAsLastWeek', routes.views.user.saveSamefoodplanAsLastWeek);
+	app.get('/api/getPreviousWeekData/:userId', routes.views.user.getPreviousWeekData);
+	app.post('/api/getDishesByMealTime', routes.views.user.getDishesByMealTime);
+	app.get('/api/listPrimaryIngredeints', routes.views.user.listPrimaryIngredeints);
 	// app.post('/api/sendreminder', routes.views.user.sendreminder);
 
 

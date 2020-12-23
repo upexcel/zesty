@@ -21,14 +21,13 @@ module.exports = {
       })
   },
 
-  reminderservice: async (text, email, subject) => {
+  reminderservice: async (html, email, subject) => {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY)
     const msg = {
       to: email, 
       from: process.env.EMAIL, 
       subject: subject,
-      text: text
-      // html: '<strong>${link}</strong>',
+      html: html
     }
     sgMail
       .send(msg)

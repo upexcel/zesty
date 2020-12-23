@@ -7,11 +7,13 @@ let users = keystone.list('User');
 // let carts = keystone.list('Cart');
 let dishes = keystone.list('Dishes');
 let allergens = keystone.list('Allergens');
+let primary_ingredeints = keystone.list('primary_ingredeints');
 let availability = keystone.list('Availability');
 let days = keystone.list('Days');
 let spicelevels = keystone.list('Spicelevel');
 let dietary_requirement = keystone.list('dietary_requirement');
 let foodplans = keystone.list('Foodplan');
+let otherChoicesModel = keystone.list('otherChoices');
 let passverify = require('./service');
 const { select } = require('async');
 const { indexOf } = require('lodash');
@@ -72,7 +74,7 @@ async function updateFood(req) {
         let foundUser = await users.model.findOne({ _id: req.body.userId });
         let email = foundUser.email;
         let subject = "Your Order Details."
-        await passverify.reminderservice(text, email, subject);
+        await passverify.reminderservice(text, email, subject, null);
         return dataToReturn;
     }catch(error){
         console.log(error);
@@ -80,6 +82,7 @@ async function updateFood(req) {
     }
     
 }
+
 
 module.exports = {
 
@@ -560,6 +563,7 @@ module.exports = {
             const finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
 
             
+            const preferredIngredientsDishesFinal = await dishes.model.find({ primary_ingredeints: { $in: req.body.primary_ingredeints }, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
             for await (let elemoffinalfood of finalfood) {
                 elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
                 let timing = elemoffinalfood.availability;
@@ -807,11 +811,40 @@ module.exports = {
         // dinner = dinner.sort(() => Math.random() - 0.5);
             await listfood(dinner,'dinner', completeDetail, daysDetails);
             for(let day of selectedday){
-            let numberOfItems3 = completeDetail[`${day}`].Dinner.length;
-            completeDetail[`${day}`].Dinner.splice(2, numberOfItems3);
+                let numberOfItems3 = completeDetail[`${day}`].Dinner.length;
+                completeDetail[`${day}`].Dinner.splice(2, numberOfItems3);
             }
-            
+            for(let day of selectedday){
+                pushPreferredIngredientDish("Breakfast",completeDetail[`${day}`].Breakfast,preferredIngredientsDishesFinal)
+                pushPreferredIngredientDish("Lunch",completeDetail[`${day}`].Lunch,preferredIngredientsDishesFinal)
+                pushPreferredIngredientDish("Dinner",completeDetail[`${day}`].Dinner,preferredIngredientsDishesFinal)
+            }
+
             res.json(completeDetail);
+
+            function pushPreferredIngredientDish(mealTime,data,preferredIngredientsDishesFinal){
+                let foundIndex = preferredIngredientsDishesFinal.findIndex(value=>{
+                    return value.availability.find(item=>{
+                        return item.name==mealTime
+                    })
+                })
+                if(foundIndex!= -1){
+                    let dataToInsert = preferredIngredientsDishesFinal[foundIndex]
+                    let findData = data.find(val=>{
+                        return val._id==dataToInsert._id
+                    })
+                    if(!findData){
+                        if(data.length>=2){
+                            data.splice(0,1)
+                            data.push(dataToInsert)
+                            preferredIngredientsDishesFinal.splice(foundIndex,1)
+                        }else{
+                            data.push(dataToInsert)
+                            preferredIngredientsDishesFinal.splice(foundIndex,1)
+                        }
+                    }
+                } 
+            }
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: 1, message: error });
@@ -863,11 +896,12 @@ module.exports = {
                 let startdate = (7 - daynumber) + 1;
                 let enddate = (7 - daynumber) + 7;
 
-                startday = moment(today, "YYYY-MM-DD").add('days', startdate);
-                endday = moment(today, "YYYY-MM-DD").add('days', enddate);
+                startday = moment(today, "YYYY-MM-DD").add('days', startdate).set("hour", 0).set("minute", 0).set("seconds", 0);
+                endday = moment(today, "YYYY-MM-DD").add('days', enddate).set("hour", 0).set("minute", 0).set("seconds", 0);
 
             }
-            let foundplan = await foodplans.model.findOne({ user: req.body.userId });
+            let foundplan = await foodplans.model.findOne({user: req.body.userId,startdate:{$gt:new Date()}});
+            
             let foundPlanForReference = JSON.parse(JSON.stringify(foundplan))
             // let selections = req.body.choices;
             let fieldsToUpdate =  await updateFood(req);
@@ -897,16 +931,62 @@ module.exports = {
                 Shipping_Address: deliveryDetails.shippingAddress,
                 Shipping_State: deliveryDetails.shippingState,
                 Shipping_Zipcode: deliveryDetails.shippingZipcode
-            }   
+            }
+            if(req.body.other_breakfast_choices_data){
+                let otherChoices = await otherChoicesModel.model.create(req.body.other_breakfast_choices_data);
+                dataToCreate.other_breakfast_choices = otherChoices._id;
+            }
+            if(req.body.other_lunch_choices_data){
+                let otherChoices = await otherChoicesModel.model.create(req.body.other_lunch_choices_data);
+                dataToCreate.other_lunch_choices = otherChoices._id;
+            }
+            if(req.body.other_dinner_choices_data){
+                let otherChoices = await otherChoicesModel.model.create(req.body.other_dinner_choices_data);
+                dataToCreate.other_dinner_choices = otherChoices._id;
+            }
+            console.log(dataToCreate,"----------------")
             let completeDataToCreate = Object.assign(dataToCreate,fieldsToUpdate)
             if (!foundplan) {
                 let createdPlan = await foodplans.model.create(completeDataToCreate);
                 res.json({ error: 0, message: "Success" });
             }
             else {
-                let removeOld = await foodplans.model.remove({ user: req.body.userId })
+                let removeOld = await foodplans.model.remove({ user: req.body.userId, startdate:{$gt:new Date()}})
                 let newRecord = await foodplans.model.create(completeDataToCreate)
                 res.json({ error: 0, message: "Success" });
+            }
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: 1, message: error });
+        }
+    },
+
+    saveSamefoodplanAsLastWeek: async (req, res) => {
+        try {
+            let today = new Date();
+            let daynumber = today.getDay();;
+            let startdate = (7 - daynumber) + 1;
+            let enddate = (7 - daynumber) + 7;
+            let startday = moment(today, "YYYY-MM-DD").add('days', startdate).set("hour", 0).set("minute", 0).set("seconds", 0);
+            let endday = moment(today, "YYYY-MM-DD").add('days', enddate).set("hour", 0).set("minute", 0).set("seconds", 0);
+            let currentPlan = await foodplans.model.findOne({ _id:req.body.planId});
+            let foundplan = await foodplans.model.findOne({user: req.body.userId,startdate:{$gt:new Date()}});
+
+            let completeDataToCreate = JSON.parse(JSON.stringify(currentPlan))
+            delete completeDataToCreate._id
+            completeDataToCreate.startdate = startday;
+            completeDataToCreate.enddate = endday;
+            if (!foundplan) {
+                console.log("sldkkfdslkfslsfdslkaaaa")
+                let createdPlan = await foodplans.model.create(completeDataToCreate);
+                res.json({ error: 0, message: "Success" ,completeDataToCreate});
+            }
+            else {
+                console.log("ttttttttttttttttttttt")
+                let removeOld = await foodplans.model.remove({ user: req.body.userId, startdate:{$gt:new Date()}})
+                let newRecord = await foodplans.model.create(completeDataToCreate)
+                res.json({ error: 0, message: "Success",completeDataToCreate });
             }
 
         } catch (error) {
@@ -918,7 +998,9 @@ module.exports = {
 
     showfoodplan: async (req, res) => {
         try {
-            let foundFood = await foodplans.model.findOne({ user: req.body.userId });
+            let dateToFind = new Date()
+            let query = req.body.current?{user: req.body.userId, startdate:{$lt:dateToFind}, enddate:{$gt:dateToFind} }:{user: req.body.userId, startdate:{$gt:dateToFind} }
+            let foundFood = await foodplans.model.findOne(query);
             if (foundFood) {
                 let days = foundFood.foodDetails;
                 let timing;
@@ -937,6 +1019,7 @@ module.exports = {
                             } else {
                                 console.log("No food Found with this id");
                             }
+
                         }
                     }
                 }
@@ -964,9 +1047,81 @@ module.exports = {
                 deliveryDetails.Shipping_Zipcode = foundFood.Shipping_Zipcode;
                 foundDishObject.choices = choices;
                 foundDishObject.deliveryDetails = deliveryDetails;
+                foundDishObject._id=foundFood._id
 
 
                 res.json(foundDishObject);
+            } else {
+                res.status(500).json({ error: 1, message: "No Food Found." });
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: 1, message: error });
+        }
+
+
+
+    },
+
+    showPastAndCurrentfoodplan: async (req, res) => {
+        try {
+            let dateToFind = new Date();
+            let finalData = [];
+            let foundFoodData = await foodplans.model.find({user: req.body.userId,startdate:{$lt:dateToFind}});
+            if (foundFoodData.length) {
+                for await (let foundFood of foundFoodData){
+                    console.log(new Date(foundFood.startdate))
+                    let days = foundFood.foodDetails;
+                    let timing;
+                    let mealType;
+                    let foundDishObject = {};
+                    for (const property in days) {
+                        foundDishObject[`${property}`] = {};
+                        timing = days[`${property}`]
+                        for (const item in timing) {
+                            foundDishObject[`${property}`][`${item}`] = []
+                            mealType = timing[`${item}`];
+                            for await (let element of mealType) {
+                                let foundDish = await dishes.model.findOne({ _id: element });
+                                if (foundDish) {
+                                    foundDishObject[`${property}`][`${item}`].push({ name: foundDish.name, _id: foundDish._id, images: foundDish.images });
+                                } else {
+                                    console.log("No food Found with this id");
+                                }
+
+                            }
+                        }
+                    }
+                    foundDishObject.startdate = foundFood.startdate;
+                    foundDishObject.enddate = foundFood.enddate;
+                    let choices = {};
+                    let deliveryDetails = {};
+                    choices.Primary_Cuisine = foundFood.Primary_Cuisine;
+                    choices.Secondary_Cuisine = foundFood.Secondary_Cuisine;
+                    choices.Meal_Types = foundFood.Meal_Types;
+                    choices.Spice_Level = foundFood.Spice_Level;
+                    choices.Meal_Timing = foundFood.Meal_Timing;
+                    choices.Days = foundFood.Days;
+                    choices.Allergens = foundFood.Allergens;
+                    choices.Order_For = foundFood.Order_For;
+                    choices.Other_Mentions = foundFood.Other_Mentions;
+                    choices.Breakfast_Time_Interval = foundFood.Breakfast_Time_Interval;
+                    choices.Lunch_Time_Interval = foundFood.Lunch_Time_Interval;
+                    choices.Dinner_Time_Interval = foundFood.Dinner_Time_Interval;
+                    
+                    deliveryDetails.Receiver_Name = foundFood.Receiver_Name;
+                    deliveryDetails.Receiver_Email = foundFood.Receiver_Email;
+                    deliveryDetails.Shipping_Address = foundFood.Shipping_Address;
+                    deliveryDetails.Shipping_State = foundFood.Shipping_State;
+                    deliveryDetails.Shipping_Zipcode = foundFood.Shipping_Zipcode;
+                    foundDishObject.choices = choices;
+                    foundDishObject.deliveryDetails = deliveryDetails;
+
+
+                    // res.json(foundDishObject);
+                    finalData.push({startdate:foundDishObject.startdate,enddate:foundDishObject.enddate,data:foundDishObject})
+                }
+                res.json(finalData)
             } else {
                 res.status(500).json({ error: 1, message: "No Food Found." });
             }
@@ -984,10 +1139,12 @@ module.exports = {
             let data = await users.model.find({});
             for await (let element of data) {
                 let email = element.email;
-                let text = "Hello, Select delicious food on Zesty to kill your hunger."
+                let html = `Hello, Select delicious food on Zesty to kill your hunger.
+                you can select your next week's menu from here -
+                ${process.env.webBaseUrl}/subscribe?_id=${element._id}`
                 let subject = "Get Delocious Dishes."
-
-                passverify.reminderservice(text, email, subject);
+                console.log(`${process.env.webBaseUrl}/subscribe?_id=${element._id}`,"a-s-as-as-as-as-as-as-")
+                passverify.reminderservice(html, email, subject);
             }
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
@@ -1224,6 +1381,225 @@ module.exports = {
             console.log(error);
             res.json({error: "true"});
         }
+    },
+
+    getPreviousWeekData: async (req, res) => {
+        try {
+            let dateToFind = new Date()
+
+            let foundFood = await foodplans.model.findOne({
+				user: req.params.userId,
+				startdate: {
+					$lt: dateToFind
+				},
+				enddate: {
+					$gt: dateToFind
+				}
+            });
+            if(foundFood){
+                let response = {
+                    primaryCuisine: foundFood.Primary_Cuisine,
+                    secondaryCuisine:foundFood.Secondary_Cuisine,
+                    foodType: foundFood.Meal_Types,
+                    allergens:foundFood.Allergens,
+                    spicy: foundFood.Spice_Level,
+                    mealType:foundFood.Meal_Timing,
+                    day:foundFood.Days,
+                    Breakfast_Time_Interval: foundFood.Breakfast_Time_Interval,
+                    Lunch_Time_Interval: foundFood.Lunch_Time_Interval,
+                    Dinner_Time_Interval: foundFood.Dinner_Time_Interval,
+                    orderFor:foundFood.Order_For,
+                    extraMention:foundFood.Other_Mentions
+                }
+                res.json({response})
+            }else{
+                res.json(null)
+            }
+        } catch (error) {
+            res.status(500).json({ error: 1, message: error });
+        }
+    },
+
+    getDishesByMealTime: async (req, res) => {
+		try {
+			let spicyDetail = [];
+			let spicyLevel = req.body.spicy;
+			let data = await spicelevels.model.findOne({
+				spice_level: spicyLevel[0]
+			})
+			spicyDetail.push(`${data._id}`);
+			async function pushArray(foundItem, arrayName) {
+				await foundItem.map((item) => {
+					arrayName.push(item.id);
+				})
+			}
+			let allergyDetails = [];
+			let newAllergens = await allergens.model.find({
+				name: {
+					$in: req.body.allergens
+				}
+			});
+			pushArray(newAllergens, allergyDetails);
+			let availableDetails = [];
+			let newAvailable = await availability.model.find({
+				name: req.body.mealType
+			});
+			pushArray(newAvailable, availableDetails);
+			let daysDetails = [];
+			let daysNames = [];
+			let newDays = await days.model.find({
+				name: {
+					$in: req.body.day
+				}
+			});
+			pushArray(newDays, daysDetails);
+			newDays.map((i) => {
+				daysNames.push(i.name);
+			})
+			let dietaryRequirement;
+			let foodTypeQuery;
+			if (req.body.foodType.includes("Vegetarian") && !req.body.foodType.includes("Non Vegetarian")) {
+				foodTypeQuery = {
+					$in: ["Vegan"]
+				}
+			} else if (req.body.foodType.includes("Non Vegetarian")) {
+				foodTypeQuery = {
+					$nin: ["Vegan", "Vegetarian"]
+				}
+			} else if (req.body.foodType.includes("Vegan") && req.body.foodType.length === 1) {
+				foodTypeQuery = {
+					$in: ["Vegan"]
+				}
+			} else {
+				foodTypeQuery = {
+					$nin: []
+				}
+			}
+			console.log("111111111111111111111111111111222222222222", req.body.foodType)
+			dietaryRequirement = await dietary_requirement.model.find({
+				name: {
+					$in: req.body.foodType
+				}
+			})
+			console.log(foodTypeQuery, "askalsaklasalk")
+			let foodType = dietaryRequirement.map(val => {
+				return `${val._id}`;
+			})
+
+			console.log(foodType, "askaslasalsalslk")
+			let otherDiets = await dietary_requirement.model.find({
+				name: foodTypeQuery
+			})
+			let other_diets = otherDiets.map(val => {
+				return `${val._id}`;
+			})
+			// console.log(other_diets,"111111111111111111111111111111")
+
+			let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
+			// console.ll
+			console.log(availableDetails, "=======")
+			let otherDishesQuery = {
+				allergens: {
+					$nin: allergyDetails
+				},
+				diet: {
+					$in: other_diets
+				},
+				spice_level: {
+					$nin: spicyDetail
+				},
+				availability: {
+					$in: availableDetails
+				},
+				spice_level: {
+					$in: spicyDetail
+				}
+			}
+			if (cuisines.length < 4) {
+				console.log("---------------------------------------------")
+				otherDishesQuery.cuisine = {
+					$nin: cuisines
+				}
+			}
+			// if(req.body.foodType<3){
+			//     otherDishesQuery.diet= { $nin: req.body.foodType }
+            // }
+            // console.log(otherDishesQuery,"other dishes queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
+			let dishesOtherThenPrefrences = await dishes.model.find(otherDishesQuery).populate("availability").select('-available_days');
+			// console.log(dishesOtherThenPrefrences.length,"asldsaldadkakaaaaappppppppppppppppppppppppppppppppppppppppppppppppppppppp")
+			let query = {
+				cuisine: {
+					$in: cuisines
+				},
+				diet: {
+					$in: foodType
+				},
+				spice_level: {
+					$in: spicyDetail
+				},
+				allergens: {
+					$nin: allergyDetails
+				},
+				availability: {
+					$in: availableDetails
+				}
+			}
+			// console.log(query, "main food details")
+			const finalfood = await dishes.model.find(query).populate("availability").select('-available_days');
+            console.log( dishesOtherThenPrefrences.length,finalfood.length, "kkkkkkkkkkkkkkkkkkkkkkkkkkk")
+
+			let extraDishesCount = dishesOtherThenPrefrences.length>=4?4:dishesOtherThenPrefrences.length;
+			if (finalfood.length < 12) {
+				extraDishesCount = 20 - finalfood.length;
+				if (dishesOtherThenPrefrences.length < extraDishesCount) {
+					extraDishesCount = dishesOtherThenPrefrences.length;
+				}
+			}
+			let extraDishes = await getRandom(dishesOtherThenPrefrences, extraDishesCount);
+            let dishesToFetch = 20 - extraDishes.length;
+            // console.log(extraDishesCount,dishesToFetch,"aksaksas21212212121212")
+            console.log(extraDishesCount, (finalfood.length >= dishesToFetch) ? dishesToFetch : finalfood.length,"jjjjjjjjjjjjjjjjj")
+			let resp = await getRandom(finalfood, (finalfood.length >= dishesToFetch) ? dishesToFetch : finalfood.length)
+			// console.log(resp.length, "-------")
+			let finalResponse = [...resp, ...extraDishes]
+			console.log(finalResponse.length, "============")
+			res.json({
+				[`${req.body.mealType}`]: finalResponse
+			})
+		} catch (error) {
+			console.log(error)
+			res.status(500).json({
+				error: 1,
+				message: error
+			});
+		}
+    },
+    
+    listPrimaryIngredeints: async (req, res) => {
+        try{
+            let data = await primary_ingredeints.model.find({appear_on_favourite:true});
+            res.json(data);
+        }catch(err){
+            console.log(err);
+            res.status(500).json(err);
+        }
     }
 
+}
+
+async function getRandom(arr, n) {
+    var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+        console.log(n,len,"=-=---=")
+    if (n > len)
+        // n=len;
+        throw new RangeError("getRandom: more elements taken than available");
+    while (n--) {
+        // console.log(n,"================")
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
 }

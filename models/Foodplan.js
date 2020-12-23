@@ -51,7 +51,11 @@ Foodplan.add({
     Receiver_Name: { type: Types.Name, required: true, index: true },
     Receiver_Email: { type: Types.Email },
     Shipping_Address: {type: String},
-    Shipping_State: {type: String}
+    Shipping_State: {type: String},
+    other_breakfast_choices: {type: Types.Relationship, ref: "otherChoices", index: true},
+    other_lunch_choices: {type: Types.Relationship, ref: "otherChoices", index: true},
+    other_dinner_choices: {type: Types.Relationship, ref: "otherChoices", index: true},
+
 });
 
 Foodplan.schema.add({
