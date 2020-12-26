@@ -1380,7 +1380,12 @@ module.exports = {
 			// console.log(other_diets,"111111111111111111111111111111")
 
 			let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
-			// console.ll
+            // console.ll
+            let cusineData = await cuisine.model.find({name:{$in:cuisines}})
+            let cusineIds = cusineData.map(val=>{
+                return val._id;
+            })
+            cuisines = cusineIds;
 			console.log(availableDetails, "=======")
 			let otherDishesQuery = {
 				allergens: {
