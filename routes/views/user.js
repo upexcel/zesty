@@ -11,8 +11,10 @@ let primary_ingredeints = keystone.list('primary_ingredeints');
 let availability = keystone.list('Availability');
 let days = keystone.list('Days');
 let spicelevels = keystone.list('Spicelevel');
+let cuisine = keystone.list('cuisine');
 let dietary_requirement = keystone.list('dietary_requirement');
 let foodplans = keystone.list('Foodplan');
+let typeOfFood = keystone.list('type_of_food');
 let otherChoicesModel = keystone.list('otherChoices');
 let passverify = require('./service');
 const { select } = require('async');
@@ -262,7 +264,7 @@ module.exports = {
 
     sociallogin: async (req, res) => {
         try{
-        let newuser = await users.model.findOne({ email: req.body.email });
+            newuser = await users.model.findOne({ email: req.body.email });
         if (!newuser) {
             try {
                 let logintype = req.body.type;
@@ -560,41 +562,33 @@ module.exports = {
             req.body.foodType = foodType;
             let selectedday = req.body.day;
             let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
-            const finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
-
-            
-            const preferredIngredientsDishesFinal = await dishes.model.find({ primary_ingredeints: { $in: req.body.primary_ingredeints }, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability");
+            let cusineData = await cuisine.model.find({name:{$in:cuisines}})
+            let cusineIds = cusineData.map(val=>{
+                return val._id;
+            })
+            cuisines = cusineIds;
+            // console.log(req.body.mealType,"=========")
+            let finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
+            if(req.body.mealType.includes("Breakfast")){
+                let type_of_food_id = await typeOfFood.model.findOne({name:"Breakfast"});
+                type_of_food_id = [type_of_food_id._id];
+                const dishesWithOutcuisines = await dishes.model.find({ type_of_food:{$in:type_of_food_id},cuisine: { $nin: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails } }).populate("available_days").populate("availability").lean();
+                finalfood = [...finalfood, ...dishesWithOutcuisines]
+            }
+            const preferredIngredientsDishesFinal = await dishes.model.find({ primary_ingredeints: { $in: req.body.primary_ingredeints }, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
             for await (let elemoffinalfood of finalfood) {
                 elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
                 let timing = elemoffinalfood.availability;
                 for await (let elem of timing) {
                     for await (let time of alltime ){
                         if (elem.name == 'Breakfast' && time == 'Breakfast' ) {
-                            // let nowbreakfast = breakfast.find((element)=> element == elemoffinalfood);
-                            // let nowlunch = lunch.find((element)=> element == elemoffinalfood);
-                            // let nowdinner = dinner.find((element)=> element == elemoffinalfood);
-                            //         if(!nowbreakfast && !nowlunch && !nowdinner && breakfast.length < 5){
-                                        breakfast.push(elemoffinalfood )
-                                    // }
-                            
+                            breakfast.push(elemoffinalfood )                            
                         }
                         else if (elem.name == 'Lunch' && time== 'Lunch' ) {
-                            // let nowbreakfast = breakfast.find((element)=> element == elemoffinalfood);
-                            // let nowlunch = lunch.find((element)=> element == elemoffinalfood);
-                            // let nowdinner = dinner.find((element)=> element == elemoffinalfood);
-                            //         if(!nowbreakfast && !nowlunch && !nowdinner && lunch.length < 5){
-                                        lunch.push(elemoffinalfood);
-                                    // }
-                            
+                            lunch.push(elemoffinalfood);                            
                         }
                         else if (elem.name == 'Dinner' && time == 'Dinner') {
-                            // let nowbreakfast = breakfast.find((element)=> element == elemoffinalfood);
-                            // let nowlunch = lunch.find((element)=> element == elemoffinalfood);
-                            // let nowdinner = dinner.find((element)=> element == elemoffinalfood);
-                            //         if(!nowbreakfast && !nowlunch && !nowdinner){
-                                        dinner.push(elemoffinalfood);
-                                    // }
-                            
+                            dinner.push(elemoffinalfood);                            
                         }
                     }
                 }
@@ -602,10 +596,7 @@ module.exports = {
             for await (let itemofbreakfast of daysNames) {
                 completeDetail[`${itemofbreakfast}`] = { Breakfast: [], Lunch: [], Dinner: [] };
             }
-            // let secondarycuisinelength = [];
-            // // nowbreakfast = [];
-            // // nowlunch = [];
-            // // nowdinner = [];
+
             let meallength = req.body.mealType.length;
             let newlength = meallength * 2;
             let daylength = daysNames.length;
@@ -620,134 +611,29 @@ module.exports = {
                     let gotDays = value.available_days;
                     for await (let day of gotDays) {
                         let founddday = selectedday.find((elem)=> elem == day.name);
-                        // for await (let item of daysDetails) {
                             if (founddday ) {
-                                // 
-                                
                                 value = JSON.parse(JSON.stringify(value));
                                 delete value.allergens;
                                 delete value.availability;
                                 delete value.available_days;
-                                // if(meallength == 3){
-                                
+
                                 if (type == 'breakfast') {
-                                    // && count < percentage && completeDetail[`${day.name}`].Breakfast.length < 2
-                                    // let nowcuisine = value.cuisine;
-                                    // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
-                                    // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
-                                    // // let nowbreakfast = completeDetail[`${day.name}`].Breakfast.find((element)=> element == value);
-                                    // //     let nowlunch = completeDetail[`${day.name}`].Lunch.find((element)=> element == value);
-                                    // //     let nowdinner = completeDetail[`${day.name}`].Dinner.find((element)=> element == value);
-                                    // if(nowprimarycuisine && completeDetail[`${day.name}`].Breakfast.length <= 1){
-                                        
-                                    //     // if(!nowbreakfast && !nowlunch && !nowdinner){
-                                    //     completeDetail[`${day.name}`].Breakfast.push(value);
-                                    //     // }
-                                    // }
-                                    // if(nowsecondarycuisine  && completeDetail[`${day.name}`].Breakfast.length <= 2){
-                                    //     // if(!nowbreakfast && !nowlunch && !nowdinner){
-                                    //     completeDetail[`${day.name}`].Breakfast.push(value);
-                                    //     // }
-                                    // }
                                     completeDetail[`${day.name}`].Breakfast.push(value);
-                                    // count ++;
                                 }
                                 else if (type == 'lunch') {
-                                    // && count < percentage && completeDetail[`${day.name}`].Lunch.length < 2
-                                    // console.log(value._id);
-                                    // let nowcuisine = value.cuisine;
-                                    // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
-                                    // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
-                                    // if(nowprimarycuisine  && completeDetail[`${day.name}`].Lunch.length <= 1){
-                                    //     completeDetail[`${day.name}`].Lunch.push(value);
-                                    // }
-                                    // if(nowsecondarycuisine && completeDetail[`${day.name}`].Lunch.length <= 2){
-                                    //     completeDetail[`${day.name}`].Lunch.push(value);
-                                    // }
                                     completeDetail[`${day.name}`].Lunch.push(value);
-                                    // count ++;
                                 }
                                 else if (type == 'dinner' ) {
-                                    // && count < percentage && completeDetail[`${day.name}`].Dinner.length < 2
-                                    // let nowcuisine = value.cuisine;
-                                    // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
-                                    // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
-                                    // if(nowprimarycuisine  && completeDetail[`${day.name}`].Breakfast.length <= 2){
-                                    //     completeDetail[`${day.name}`].Dinner.push(value);
-                                    // }
                                     completeDetail[`${day.name}`].Dinner.push(value);
-                                    // count ++;
                                 }
-                            // }
-                            // else if(meallength == 2 || meallength == 1 ){
-                            //     if (type == 'breakfast') {
-                                    
-                            //         // let nowcuisine = value.cuisine;
-                            //         // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
-                            //         // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
-                            //         // if(nowprimarycuisine && completeDetail[`${day.name}`].Breakfast.length <= 1){
-                                        
-                                
-                            //         //     completeDetail[`${day.name}`].Breakfast.push(value);
-                            //         // }
-                            //         // if(nowsecondarycuisine  && completeDetail[`${day.name}`].Breakfast.length <= 2){
-                            //         //     // if(!nowbreakfast && !nowlunch && !nowdinner){
-                            //         //     completeDetail[`${day.name}`].Breakfast.push(value);
-                            //         //     // }
-                            //         // }
-                            //         // completeDetail[`${day.name}`].Breakfast.push(value);
-                            //         completeDetail[`${day.name}`].Breakfast.push(value);
-                            //     }
-                            //     else if (type == 'lunch') {
-                            //         // let nowcuisine = value.cuisine;
-                            //         // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
-                            //         // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
-                            //         // // let nowbreakfast = completeDetail[`${day.name}`].Breakfast.find((element)=> element == value);
-                            //         // //     let nowlunch = completeDetail[`${day.name}`].Lunch.find((element)=> element == value);
-                            //         // //     let nowdinner = completeDetail[`${day.name}`].Dinner.find((element)=> element == value);
-                            //         // if(nowprimarycuisine  && completeDetail[`${day.name}`].Lunch.length <= 2){
-                            //         //     // if(!nowbreakfast && !nowlunch && !nowdinner){
-                            //         //     completeDetail[`${day.name}`].Lunch.push(value);
-                            //         // }
-                            //         // // if(nowsecondarycuisine && completeDetail[`${day.name}`].Lunch.length <= 2){
-                            //         // //     if(!nowbreakfast && !nowlunch && !nowdinner){
-                            //         // //     completeDetail[`${day.name}`].Lunch.push(value);
-                            //         // // }}
-                            //         completeDetail[`${day.name}`].Lunch.push(value);
-                            //     }
-                            //     else if (type == 'dinner') {
-                            //         // let nowcuisine = value.cuisine;
-                            //         // let nowprimarycuisine = req.body.primaryCuisine.find((elementofprimarycuisine)=> elementofprimarycuisine == nowcuisine);
-                            //         // let nowsecondarycuisine = req.body.secondaryCuisine.find((elementofsecondarycuisine)=> elementofsecondarycuisine == nowcuisine);
-                            //         // // let nowbreakfast = completeDetail[`${day.name}`].Breakfast.find((element)=> element == value);
-                            //         // //     let nowlunch = completeDetail[`${day.name}`].Lunch.find((element)=> element == value);
-                            //         // //     console.log(completeDetail[`${day.name}`].Lunch);
-                            //         // //     let nowdinner = completeDetail[`${day.name}`].Dinner.find((element)=> element == value);
-                            //         // if(nowprimarycuisine  && completeDetail[`${day.name}`].Breakfast.length <= 2){
-                            //         //     // if(!nowbreakfast && !nowlunch && !nowdinner){
-                            //         //     completeDetail[`${day.name}`].Dinner.push(value);
-                            //         // }
-                            //         // // if(nowsecondarycuisine){
-                            //         // //     completeDetail[`${day.name}`].Dinner.push(value);
-                            //         // // }
-                            //         completeDetail[`${day.name}`].Dinner.push(value);
-                            //     }
-                            // }
                                 completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
                                 completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
                                 completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);
-                                // let numberOfItems = completeDetail[`${day.name}`].Breakfast.length;
-                                // completeDetail[`${day.name}`].Breakfast.splice(2, numberOfItems);
-                                // let numberOfItems2 = completeDetail[`${day.name}`].Lunch.length;
-                                // completeDetail[`${day.name}`].Lunch.splice(2, numberOfItems2);
-                                // let numberOfItems3 = completeDetail[`${day.name}`].Dinner.length;
-                                // completeDetail[`${day.name}`].Dinner.splice(2, numberOfItems3);
                             }
-                        // }
                     }
                 }
             }
-            // breakfast = breakfast.sort(() => Math.random() - 0.5);
+
             await listfood(breakfast,'breakfast', completeDetail, daysDetails);
             console.log(lunch.length);
             for(let day of selectedday){
@@ -771,8 +657,7 @@ module.exports = {
                     }
                 }
             }
-            // console.log(lunch.length);
-            // lunch = lunch.sort(() => Math.random() - 0.5);
+            
             await listfood(lunch,'lunch', completeDetail, daysDetails);
             for(let day of selectedday){
                 let numberOfItems2 = completeDetail[`${day}`].Breakfast.length;
@@ -781,8 +666,6 @@ module.exports = {
                  completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
             }
             for(let day of selectedday){
-                //  console.log(completeDetail[`${day}`].Breakfast.length);
-                //  console.log(completeDetail[`${day}`].Lunch.length);
             for await (let eachitem of completeDetail[`${day}`].Breakfast){
                 let found_item_in_dinner = dinner.find((element)=> element._id == eachitem._id);
                 // console.log(found_item_in_dinner);
@@ -908,6 +791,7 @@ module.exports = {
             let selections = req.body.choices;
             let deliveryDetails = req.body.deliveryInfo;
             let foundUser = await users.model.findOne({ _id: req.body.userId });
+            
             let dataToCreate = {
                 name: foundUser.name,
                 user: req.body.userId,
