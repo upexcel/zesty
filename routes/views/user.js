@@ -543,8 +543,8 @@ module.exports = {
                 })  
             }
             let allergyDetails = [];
-           let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
-           pushArray(newAllergens, allergyDetails);
+            let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
+            pushArray(newAllergens, allergyDetails);
             let availableDetails = [];
             let newAvailable = await availability.model.find({ name: { $in: req.body.mealType } });
             pushArray(newAvailable, availableDetails);
@@ -567,15 +567,32 @@ module.exports = {
                 return val._id;
             })
             cuisines = cusineIds;
-            // console.log(req.body.mealType,"=========")
-            let finalfood = await dishes.model.find({ cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
+            let primary_ingredeints_data = []
+
+            if(req.body.breakfast_primary_ingredient){
+                primary_ingredeints_data.push(req.body.breakfast_primary_ingredient)
+            }
+            if(req.body.lunch_primary_ingredient){
+                primary_ingredeints_data.push(req.body.lunch_primary_ingredient)
+            }
+            if(req.body.dinner_primary_ingredient){
+                primary_ingredeints_data.push(req.body.dinner_primary_ingredient)
+            }
+            primary_ingredeints_data = [...primary_ingredeints_data, ...req.body.primary_ingredeints]
+            console.log(primary_ingredeints_data,"aksalksalksalksaslalksaskl")
+
+            // let lunchMatchingWithPrimaryIngredient = await dishes.model.find({ primary_ingredeints: {$in:primary_ingredeints_data}, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
+            let finalfood = await dishes.model.find({ primary_ingredeints: {$nin:primary_ingredeints_data}, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
+            console.log(finalfood.length,"--aa--aa--aa--aa--aa")
             if(req.body.mealType.includes("Breakfast")){
                 let type_of_food_id = await typeOfFood.model.findOne({name:"Breakfast"});
                 type_of_food_id = [type_of_food_id._id];
                 const dishesWithOutcuisines = await dishes.model.find({ type_of_food:{$in:type_of_food_id},cuisine: { $nin: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails } }).populate("available_days").populate("availability").lean();
                 finalfood = [...finalfood, ...dishesWithOutcuisines]
             }
-            const preferredIngredientsDishesFinal = await dishes.model.find({ primary_ingredeints: { $in: req.body.primary_ingredeints }, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
+            console.log(availableDetails)
+            const preferredIngredientsDishesFinal = await dishes.model.find({ primary_ingredeints: { $in: primary_ingredeints_data }, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
+            console.log(preferredIngredientsDishesFinal.length,"------------")
             for await (let elemoffinalfood of finalfood) {
                 elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
                 let timing = elemoffinalfood.availability;
@@ -604,7 +621,6 @@ module.exports = {
             if(percentage == 0){
                 percentage = 1;
             }
-            console.log(percentage, "fffffffff");
             async function listfood(food, type, completeDetail, daysDetails){
                 for await (let value of food) {
                     let count = 0;
@@ -638,7 +654,7 @@ module.exports = {
             console.log(lunch.length);
             for(let day of selectedday){
               let numberOfItems = completeDetail[`${day}`].Breakfast.length;
-              completeDetail[`${day}`].Breakfast.splice(2, numberOfItems);  
+              completeDetail[`${day}`].Breakfast.splice(2, numberOfItems);
             //   console.log(completeDetail[`${day}`].Breakfast.length);
             // console.log(completeDetail[`${day}`].Breakfast.length);
             }
@@ -697,12 +713,22 @@ module.exports = {
                 let numberOfItems3 = completeDetail[`${day}`].Dinner.length;
                 completeDetail[`${day}`].Dinner.splice(2, numberOfItems3);
             }
-            for(let day of selectedday){
-                pushPreferredIngredientDish("Breakfast",completeDetail[`${day}`].Breakfast,preferredIngredientsDishesFinal)
-                pushPreferredIngredientDish("Lunch",completeDetail[`${day}`].Lunch,preferredIngredientsDishesFinal)
-                pushPreferredIngredientDish("Dinner",completeDetail[`${day}`].Dinner,preferredIngredientsDishesFinal)
-            }
 
+            for(let day of selectedday){
+                console.log(day,"----------",req.body.mealType)
+                if(req.body.mealType.includes("Breakfast")){
+                    pushPreferredIngredientDish("Breakfast",completeDetail[`${day}`].Breakfast,preferredIngredientsDishesFinal)
+                    console.log(preferredIngredientsDishesFinal.length)
+                }
+                if(req.body.mealType.includes("Lunch")){
+                    pushPreferredIngredientDish("Lunch",completeDetail[`${day}`].Lunch,preferredIngredientsDishesFinal)
+                    console.log(preferredIngredientsDishesFinal.length)
+                }
+                if(req.body.mealType.includes("Dinner")){
+                    pushPreferredIngredientDish("Dinner",completeDetail[`${day}`].Dinner,preferredIngredientsDishesFinal)
+                    console.log(preferredIngredientsDishesFinal.length)
+                }
+            }
             res.json(completeDetail);
 
             function pushPreferredIngredientDish(mealTime,data,preferredIngredientsDishesFinal){
@@ -729,7 +755,7 @@ module.exports = {
                 } 
             }
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(500).json({ error: 1, message: error });
         }
     }
@@ -1048,193 +1074,6 @@ module.exports = {
         }
     },
 
-    paymentStart: async (req, res) => {
-        try{
-            axios({
-                method: 'post',
-                url: 'https://api.dapi.co/v1/auth/ExchangeToken',
-                data: {
-                    "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
-                    "accessCode": req.body.accessCode,
-                    "connectionID": req.body.connectionID
-                }
-              }).then(function (response) {
-                console.log(response.data);
-                let token = response.data.accessToken;
-                console.log(token);
-                
-                if(response.data.accessToken){
-
-                    axios({
-                        method: 'post',
-                        url: 'https://api.dapi.co/v1/data/accounts/get',
-                        headers: {'Authorization': 'Bearer ' + token},
-                        data: {
-                            "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
-                            "userSecret": req.body.userSecret,
-                            "sync": true,
-                        }
-                      }).then(function (response) {
-                        console.log(response.data);
-                        if(response.data.status){
-                            let senderId = response.data.accounts[0].id
-                            axios({
-                                method: 'post',
-                                url: 'https://api.dapi.co/v1/payment/transfer/create',
-                                headers: {'Authorization': 'Bearer ' + token},
-                                data: {
-                                    "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
-                                    "userSecret": req.body.userSecret,
-                                    "sync": true,
-                                     "amount": 1,
-                                     "senderID": senderId,
-                                    // "senderID":  process.env.SENDER_ID,
-                                    "receiverID": process.env.RECEIVER_ID,
-                                    "remark": "remarks for transaction"
-                                }
-                              }).then(function (response) {
-                                console.log(response.data);
-                                let finalResponse = {};
-                                finalResponse.data = response.data;
-                                finalResponse.token = token;
-                                finalResponse.userSecret = req.body.userSecret;
-                                res.json(finalResponse);
-                                // res.json({data: response.data, token: token, userSecret: req.body.userSecret});
-                              }).catch(function (error) {
-                                console.log(error);
-                                res.status(500).json({ error: 1, message: error });
-                              });
-                        }else{
-                            console.log(error);
-                            res.status(500).json({ error: 1, message: error });
-                        }
-                      }).catch(function (error) {
-                        console.log(error);
-                        res.status(500).json({ error: 1, message: error });
-                      });
-                    
-                    // axios({
-                    //     method: 'post',
-                    //     url: 'https://api.dapi.co/v1/payment/transfer/create',
-                    //     headers: {'Authorization': 'Bearer ' + token},
-                    //     data: {
-                    //         "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
-                    //         "userSecret": req.body.userSecret,
-                    //         "sync": true,
-                    //          "amount": 1,
-                    //         "senderID":  process.env.SENDER_ID,
-                    //         "receiverID": process.env.RECEIVER_ID,
-                    //         "remark": "remarks for transaction"
-                    //     }
-                    //   }).then(function (response) {
-                    //     console.log(response);
-                    //     res.json({data: response, token: token, userSecret: req.body.userSecret});
-                    //   }).catch(function (error) {
-                    //     console.log(error);
-                    //     res.status(500).json({ error: 1, message: error });
-                    //   });
-                }else{
-                    console.log(error);
-                    res.status(500).json({ error: 1, message: error });
-                }
-              })
-              .catch(function (error) {
-                console.log(error);
-                res.status(500).json({ error: 1, message: error });
-              });
-        }catch(error){
-            console.log(error);
-            res.status(500).json({ error: 1, message: error });
-        }
-    },
-
-    resumeJobs: async (req, res) => {
-        axios({
-            method: 'post',
-            url: 'https://api.dapi.co/v1/job/resume',
-            headers: {"Authorization": "Bearer " + req.body.token},
-            data: {
-                "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
-                "userSecret": req.body.userSecret,
-                "sync": true,
-                "jobID": req.body.jobID,
-                "userInputs": req.body.userInputs
-            }
-          }).then(function (response) {
-            console.log(response.data);
-            res.json(response.data);
-          }).catch(function (error) {
-              console.log("jjjjjjjjjjjjjjjj");
-            console.log(error);
-            res.status(500).json({ error: 1, message: error });
-          });
-    },
-
-    // paymentSender: async (req, res) => {
-    //     try{
-    //         axios({
-    //             method: 'post',
-    //             url: 'https://api.dapi.co/v1/auth/ExchangeToken',
-    //             data: {
-    //                 "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
-    //                 "accessCode": req.body.accessCode,
-    //                 "connectionID": req.body.connectionID
-    //             }
-    //           }).then(function (response) {
-    //             console.log(response.data);
-    //             let token = response.data.accessToken;
-    //             console.log(token);
-                
-    //             if(response.data.accessToken){
-
-    //                 axios({
-    //                     method: 'post',
-    //                     url: 'https://api.dapi.co/v1/data/accounts/get',
-    //                     headers: {'Authorization': 'Bearer ' + token},
-    //                     data: {
-    //                         "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
-    //                         "userSecret": req.body.userSecret,
-    //                         "sync": true,
-    //                     }
-    //                   }).then(function (response) {
-    //                     console.log(response.data);
-    //                   }).catch(function (error) {
-    //                     console.log(error);
-    //                     res.status(500).json({ error: 1, message: error });
-    //                   });
-
-    //                   axios({
-    //                     method: 'post',
-    //                     url: 'https://api.dapi.co/v1/payment/beneficiaries/get',
-    //                     headers: {'Authorization': 'Bearer ' + token},
-    //                     data: {
-    //                         "appSecret": "43836f1547d1c9c2123698e084420a72dccbad2a32fa8399e7b01057773c8c52a53acafe3e9560778074baa3887a614ccbefca2707a013186492a2c074ee3830e994ae75445e8df085c01d604e3ad52d0cf15a5c8650009c96d27a211c45fe568dc440bc13bbae1ef9aff33b17cd2d727712f983b41e6dd814fe4b83c0d5f01a",
-    //                         "userSecret": req.body.userSecret,
-    //                         "sync": true,
-    //                     }
-    //                   }).then(function (response) {
-    //                     console.log(response.data);
-    //                   }).catch(function (error) {
-    //                     console.log(error);
-    //                     res.status(500).json({ error: 1, message: error });
-    //                   });
-                    
-                    
-    //             }else{
-    //                 console.log(error);
-    //                 res.status(500).json({ error: 1, message: error });
-    //             }
-    //           })
-    //           .catch(function (error) {
-    //             console.log(error);
-    //             res.status(500).json({ error: 1, message: error });
-    //           });
-    //     }catch(error){
-    //         console.log(error);
-    //         res.status(500).json({ error: 1, message: error });
-    //     }
-    // }
-
     updatespice: async(req, res) => {
         try{
         const finalfood = await dishes.model.find({ spice_level: { $in: ['1','2','3']} }).populate("available_days").populate("availability");
@@ -1491,4 +1330,4 @@ async function getRandom(arr, n) {
         taken[x] = --len in taken ? taken[len] : len;
     }
     return result;
-}
+} 
