@@ -525,241 +525,358 @@ module.exports = {
             res.status(500).json({ error: 1, message: error });
         }
     },
-    //following api logic is on temp bases. will change it later
+
     listFood: async (req, res) => {
-        try {
-            let alltime = req.body.mealType;
-            let spicyDetail = [];
-            let spicyLevel = req.body.spicy;
-            let data = await spicelevels.model.findOne({spice_level:spicyLevel[0]})
-            spicyDetail.push(`${data._id}`);
-            let breakfast = [];
-            let lunch = [];
-            let dinner = [];
-            let completeDetail = {};
-            async function pushArray(foundItem, arrayName) {
-                await foundItem.map((item) => {
-                    arrayName.push(item.id);
-                })  
-            }
-            let allergyDetails = [];
-            let newAllergens = await allergens.model.find({ name: { $in: req.body.allergens } });
-            pushArray(newAllergens, allergyDetails);
-            let availableDetails = [];
-            let newAvailable = await availability.model.find({ name: { $in: req.body.mealType } });
-            pushArray(newAvailable, availableDetails);
-            let daysDetails = [];
-            let daysNames = [];
-            let newDays = await days.model.find({ name: { $in: req.body.day } });
-            pushArray(newDays, daysDetails);
-            newDays.map((i) => {
-                daysNames.push(i.name);
-            })
-            let dietaryRequirement = await dietary_requirement.model.find({name:{$in:req.body.foodType}})
-            let foodType = dietaryRequirement.map(val=>{
-                return `${val._id}`;
-            })
-            req.body.foodType = foodType;
-            let selectedday = req.body.day;
-            let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
-            let cusineData = await cuisine.model.find({name:{$in:cuisines}})
-            let cusineIds = cusineData.map(val=>{
-                return val._id;
-            })
-            cuisines = cusineIds;
-            let primary_ingredeints_data = []
+		try {
+			let alltime = req.body.mealType;
+			let spicyDetail = [];
+			let spicyLevel = req.body.spicy;
+			let data = await spicelevels.model.findOne({
+				spice_level: spicyLevel[0]
+			})
+			spicyDetail.push(`${data._id}`);
+			let breakfast = [];
+			let lunch = [];
+			let dinner = [];
+			let completeDetail = {};
+			async function pushArray(foundItem, arrayName) {
+				await foundItem.map((item) => {
+					arrayName.push(item.id);
+				})
+			}
+			let allergyDetails = [];
+			let newAllergens = await allergens.model.find({
+				name: {
+					$in: req.body.allergens
+				}
+			});
+			pushArray(newAllergens, allergyDetails);
+			let availableDetails = [];
+			let newAvailable = await availability.model.find({
+				name: {
+					$in: req.body.mealType
+				}
+			});
+			pushArray(newAvailable, availableDetails);
+			let daysDetails = [];
+			let daysNames = [];
+			let newDays = await days.model.find({
+				name: {
+					$in: req.body.day
+				}
+			});
+			pushArray(newDays, daysDetails);
+			newDays.map((i) => {
+				daysNames.push(i.name);
+			})
+			let dietaryRequirement = await dietary_requirement.model.find({
+				name: {
+					$in: req.body.foodType
+				}
+			})
+			let foodType = dietaryRequirement.map(val => {
+				return `${val._id}`;
+			})
+			req.body.foodType = foodType;
+			let selectedday = req.body.day;
+			let cuisines = [...req.body.primaryCuisine, ...req.body.secondaryCuisine];
+			let cusineData = await cuisine.model.find({
+				name: {
+					$in: cuisines
+				}
+			})
+			let cusineIds = cusineData.map(val => {
+				return val._id;
+			})
+			let cuisineNames = cuisines;
+			cuisines = cusineIds;
+			let primary_ingredeints_data = []
 
-            if(req.body.breakfast_primary_ingredient){
-                primary_ingredeints_data.push(req.body.breakfast_primary_ingredient)
-            }
-            if(req.body.lunch_primary_ingredient){
-                primary_ingredeints_data.push(req.body.lunch_primary_ingredient)
-            }
-            if(req.body.dinner_primary_ingredient){
-                primary_ingredeints_data.push(req.body.dinner_primary_ingredient)
-            }
-            primary_ingredeints_data = [...primary_ingredeints_data, ...req.body.primary_ingredeints]
-            console.log(primary_ingredeints_data,"aksalksalksalksaslalksaskl")
+			if (req.body.breakfast_primary_ingredient) {
+				primary_ingredeints_data.push(req.body.breakfast_primary_ingredient)
+			}
+			if (req.body.lunch_primary_ingredient) {
+				primary_ingredeints_data.push(req.body.lunch_primary_ingredient)
+			}
+			if (req.body.dinner_primary_ingredient) {
+				primary_ingredeints_data.push(req.body.dinner_primary_ingredient)
+			}
+			primary_ingredeints_data = [...primary_ingredeints_data, ...req.body.primary_ingredeints]
+			console.log(primary_ingredeints_data, "aksalksalksalksaslalksaskl")
 
-            // let lunchMatchingWithPrimaryIngredient = await dishes.model.find({ primary_ingredeints: {$in:primary_ingredeints_data}, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
-            let finalfood = await dishes.model.find({ primary_ingredeints: {$nin:primary_ingredeints_data}, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
-            console.log(finalfood.length,"--aa--aa--aa--aa--aa")
-            if(req.body.mealType.includes("Breakfast")){
-                let type_of_food_id = await typeOfFood.model.findOne({name:"Breakfast"});
-                type_of_food_id = [type_of_food_id._id];
-                const dishesWithOutcuisines = await dishes.model.find({ type_of_food:{$in:type_of_food_id},cuisine: { $nin: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails } }).populate("available_days").populate("availability").lean();
-                finalfood = [...finalfood, ...dishesWithOutcuisines]
-            }
-            console.log(availableDetails)
-            const preferredIngredientsDishesFinal = await dishes.model.find({ primary_ingredeints: { $in: primary_ingredeints_data }, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
-            console.log(preferredIngredientsDishesFinal.length,"------------")
-            for await (let elemoffinalfood of finalfood) {
-                elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
-                let timing = elemoffinalfood.availability;
-                for await (let elem of timing) {
-                    for await (let time of alltime ){
-                        if (elem.name == 'Breakfast' && time == 'Breakfast' ) {
-                            breakfast.push(elemoffinalfood )                            
-                        }
-                        else if (elem.name == 'Lunch' && time== 'Lunch' ) {
-                            lunch.push(elemoffinalfood);                            
-                        }
-                        else if (elem.name == 'Dinner' && time == 'Dinner') {
-                            dinner.push(elemoffinalfood);                            
-                        }
-                    }
-                }
-            }
-            for await (let itemofbreakfast of daysNames) {
-                completeDetail[`${itemofbreakfast}`] = { Breakfast: [], Lunch: [], Dinner: [] };
+			// let lunchMatchingWithPrimaryIngredient = await dishes.model.find({ primary_ingredeints: {$in:primary_ingredeints_data}, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
+			let finalfood = await dishes.model.find({
+				primary_ingredeints: {
+					$nin: primary_ingredeints_data
+				},
+				cuisine: {
+					$in: cuisines
+				},
+				diet: {
+					$in: req.body.foodType
+				},
+				spice_level: {
+					$in: spicyDetail
+				},
+				allergens: {
+					$nin: allergyDetails
+				},
+				available_days: {
+					$in: daysDetails
+				},
+				availability: {
+					$in: availableDetails
+				}
+			}).populate("available_days").populate("availability").lean();
+			console.log(finalfood.length, "--aa--aa--aa--aa--aa")
+			if (req.body.mealType.includes("Breakfast")) {
+				let type_of_food_id = await typeOfFood.model.findOne({
+					name: "Breakfast"
+				});
+				type_of_food_id = [type_of_food_id._id];
+				const dishesWithOutcuisines = await dishes.model.find({
+					type_of_food: {
+						$in: type_of_food_id
+					},
+					cuisine: {
+						$nin: cuisines
+					},
+					diet: {
+						$in: req.body.foodType
+					},
+					spice_level: {
+						$in: spicyDetail
+					},
+					allergens: {
+						$nin: allergyDetails
+					}
+				}).populate("available_days").populate("availability").lean();
+				finalfood = [...finalfood, ...dishesWithOutcuisines]
+				console.log(finalfood.length, "===============================11===========")
+				if (!cuisineNames.includes("Continental")) {
+					let continentalcuisineData = await cuisine.model.findOne({
+						name: "Continental"
+					}).lean()
+					const continentalDishes = await dishes.model.find({
+						cuisine: continentalcuisineData._id,
+						diet: {
+							$in: req.body.foodType
+						},
+						spice_level: {
+							$in: spicyDetail
+						},
+						allergens: {
+							$nin: allergyDetails
+						},
+						available_days: {
+							$in: daysDetails
+						},
+						availability: {
+							$in: availableDetails
+						}
+					}).populate("available_days").populate("availability").lean();
+					finalfood = [...finalfood, ...continentalDishes]
+				}
+				console.log(finalfood.length, "===============================11===========")
+			}
+			console.log(availableDetails)
+			const preferredIngredientsDishesFinal = await dishes.model.find({
+				primary_ingredeints: {
+					$in: primary_ingredeints_data
+				},
+				cuisine: {
+					$in: cuisines
+				},
+				diet: {
+					$in: req.body.foodType
+				},
+				spice_level: {
+					$in: spicyDetail
+				},
+				allergens: {
+					$nin: allergyDetails
+				},
+				available_days: {
+					$in: daysDetails
+				},
+				availability: {
+					$in: availableDetails
+				}
+			}).populate("available_days").populate("availability").lean();
+			console.log(preferredIngredientsDishesFinal.length, "------------")
+			for await (let elemoffinalfood of finalfood) {
+				elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
+				let timing = elemoffinalfood.availability;
+				for await (let elem of timing) {
+					for await (let time of alltime) {
+						if (elem.name == 'Breakfast' && time == 'Breakfast') {
+							breakfast.push(elemoffinalfood)
+						} else if (elem.name == 'Lunch' && time == 'Lunch') {
+							lunch.push(elemoffinalfood);
+						} else if (elem.name == 'Dinner' && time == 'Dinner') {
+							dinner.push(elemoffinalfood);
+						}
+					}
+				}
+			}
+			for await (let itemofbreakfast of daysNames) {
+				completeDetail[`${itemofbreakfast}`] = {
+					Breakfast: [],
+					Lunch: [],
+					Dinner: []
+				};
+			}
+
+			let meallength = req.body.mealType.length;
+			let newlength = meallength * 2;
+			let daylength = daysNames.length;
+			let percentage = parseInt((15 / 100) * (daylength * newlength));
+			if (percentage == 0) {
+				percentage = 1;
+			}
+			async function listfood(food, type, completeDetail, daysDetails) {
+				for await (let value of food) {
+					let count = 0;
+					let gotDays = value.available_days;
+					for await (let day of gotDays) {
+						let founddday = selectedday.find((elem) => elem == day.name);
+						if (founddday) {
+							value = JSON.parse(JSON.stringify(value));
+							delete value.allergens;
+							delete value.availability;
+							delete value.available_days;
+
+							if (type == 'breakfast') {
+								completeDetail[`${day.name}`].Breakfast.push(value);
+							} else if (type == 'lunch') {
+								completeDetail[`${day.name}`].Lunch.push(value);
+							} else if (type == 'dinner') {
+								completeDetail[`${day.name}`].Dinner.push(value);
+							}
+							completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
+							completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
+							completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);
+						}
+					}
+				}
+			}
+
+			await listfood(breakfast, 'breakfast', completeDetail, daysDetails);
+			console.log(lunch.length);
+			for (let day of selectedday) {
+				let numberOfItems = completeDetail[`${day}`].Breakfast.length;
+				completeDetail[`${day}`].Breakfast.splice(2, numberOfItems);
+				//   console.log(completeDetail[`${day}`].Breakfast.length);
+				// console.log(completeDetail[`${day}`].Breakfast.length);
+			}
+			for (let day of selectedday) {
+				// console.log(day);
+				for await (let eachitem of completeDetail[`${day}`].Breakfast) {
+					console.log(eachitem._id);
+					let found_item_in_lunch = lunch.find((element) => element._id == eachitem._id);
+					// console.log(found_item_in_lunch);
+					if (found_item_in_lunch) {
+						for (var i = 0; i < lunch.length; i++) {
+							if (lunch[i] === found_item_in_lunch) {
+								//  console.log("hchsjgchjsgcgj"); 
+								lunch.splice(i, 1);
+							}
+						}
+					}
+				}
+			}
+
+			await listfood(lunch, 'lunch', completeDetail, daysDetails);
+			for (let day of selectedday) {
+				let numberOfItems2 = completeDetail[`${day}`].Breakfast.length;
+				completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
+				let numberOfItems3 = completeDetail[`${day}`].Lunch.length;
+				completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
+			}
+			for (let day of selectedday) {
+				for await (let eachitem of completeDetail[`${day}`].Breakfast) {
+					let found_item_in_dinner = dinner.find((element) => element._id == eachitem._id);
+					// console.log(found_item_in_dinner);
+					if (found_item_in_dinner) {
+						for (var i = 0; i < dinner.length; i++) {
+							if (dinner[i] == found_item_in_dinner) {
+								//  console.log("iiiiiiiiiiiiiiiii");
+								dinner.splice(i, 1);
+							}
+						}
+					}
+				}
+				for await (let eachitem of completeDetail[`${day}`].Lunch) {
+					// let numberOfItems2 = completeDetail[`${day}`].Lunch.length;
+					//  completeDetail[`${day}`].Lunch.splice(2, numberOfItems2);
+					let founded_item_in_dinner = dinner.find((element) => element._id == eachitem._id);
+					// console.log(founded_item_in_dinner);
+					if (founded_item_in_dinner) {
+						for (var i = 0; i < dinner.length; i++) {
+							if (dinner[i] == founded_item_in_dinner) {
+								console.log("uuuuuuuuuuuuuuuuu");
+								dinner.splice(i, 1);
+							}
+						}
+					}
+				}
+			}
+			// dinner = dinner.sort(() => Math.random() - 0.5);
+			await listfood(dinner, 'dinner', completeDetail, daysDetails);
+			for (let day of selectedday) {
+				let numberOfItems3 = completeDetail[`${day}`].Dinner.length;
+				completeDetail[`${day}`].Dinner.splice(2, numberOfItems3);
+			}
+
+			for (let day of selectedday) {
+				console.log(day, "----------", req.body.mealType)
+				if (req.body.mealType.includes("Breakfast")) {
+					pushPreferredIngredientDish("Breakfast", completeDetail[`${day}`].Breakfast, preferredIngredientsDishesFinal)
+					console.log(preferredIngredientsDishesFinal.length)
+				}
+				if (req.body.mealType.includes("Lunch")) {
+					pushPreferredIngredientDish("Lunch", completeDetail[`${day}`].Lunch, preferredIngredientsDishesFinal)
+					console.log(preferredIngredientsDishesFinal.length)
+				}
+				if (req.body.mealType.includes("Dinner")) {
+					pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal)
+					console.log(preferredIngredientsDishesFinal.length)
+				}
+			}
+			res.json(completeDetail);
+
+			function pushPreferredIngredientDish(mealTime, data, preferredIngredientsDishesFinal) {
+				let foundIndex = preferredIngredientsDishesFinal.findIndex(value => {
+					return value.availability.find(item => {
+						return item.name == mealTime
+					})
+				})
+				if (foundIndex != -1) {
+					let dataToInsert = preferredIngredientsDishesFinal[foundIndex]
+					let findData = data.find(val => {
+						return val._id == dataToInsert._id
+					})
+					if (!findData) {
+						if (data.length >= 2) {
+							data.splice(0, 1)
+							data.push(dataToInsert)
+							preferredIngredientsDishesFinal.splice(foundIndex, 1)
+						} else {
+							data.push(dataToInsert)
+							preferredIngredientsDishesFinal.splice(foundIndex, 1)
+						}
+					}
+				}
             }
 
-            let meallength = req.body.mealType.length;
-            let newlength = meallength * 2;
-            let daylength = daysNames.length;
-            let percentage = parseInt((15/100)* (daylength*newlength));
-            if(percentage == 0){
-                percentage = 1;
-            }
-            async function listfood(food, type, completeDetail, daysDetails){
-                for await (let value of food) {
-                    let count = 0;
-                    let gotDays = value.available_days;
-                    for await (let day of gotDays) {
-                        let founddday = selectedday.find((elem)=> elem == day.name);
-                            if (founddday ) {
-                                value = JSON.parse(JSON.stringify(value));
-                                delete value.allergens;
-                                delete value.availability;
-                                delete value.available_days;
-
-                                if (type == 'breakfast') {
-                                    completeDetail[`${day.name}`].Breakfast.push(value);
-                                }
-                                else if (type == 'lunch') {
-                                    completeDetail[`${day.name}`].Lunch.push(value);
-                                }
-                                else if (type == 'dinner' ) {
-                                    completeDetail[`${day.name}`].Dinner.push(value);
-                                }
-                                completeDetail[`${day.name}`].Breakfast = completeDetail[`${day.name}`].Breakfast.sort(() => Math.random() - 0.5);
-                                completeDetail[`${day.name}`].Lunch = completeDetail[`${day.name}`].Lunch.sort(() => Math.random() - 0.5);
-                                completeDetail[`${day.name}`].Dinner = completeDetail[`${day.name}`].Dinner.sort(() => Math.random() - 0.5);
-                            }
-                    }
-                }
-            }
-
-            await listfood(breakfast,'breakfast', completeDetail, daysDetails);
-            console.log(lunch.length);
-            for(let day of selectedday){
-              let numberOfItems = completeDetail[`${day}`].Breakfast.length;
-              completeDetail[`${day}`].Breakfast.splice(2, numberOfItems);
-            //   console.log(completeDetail[`${day}`].Breakfast.length);
-            // console.log(completeDetail[`${day}`].Breakfast.length);
-            }
-            for(let day of selectedday){
-                // console.log(day);
-                for await (let eachitem of completeDetail[`${day}`].Breakfast){
-                    console.log(eachitem._id);
-                    let found_item_in_lunch = lunch.find((element)=> element._id == eachitem._id);
-                    // console.log(found_item_in_lunch);
-                    if(found_item_in_lunch){
-                        for( var i = 0; i < lunch.length; i++){
-                             if ( lunch[i] === found_item_in_lunch) {
-                                //  console.log("hchsjgchjsgcgj"); 
-                                lunch.splice(i, 1); 
-                            }}
-                    }
-                }
-            }
-            
-            await listfood(lunch,'lunch', completeDetail, daysDetails);
-            for(let day of selectedday){
-                let numberOfItems2 = completeDetail[`${day}`].Breakfast.length;
-                 completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
-                 let numberOfItems3 = completeDetail[`${day}`].Lunch.length;
-                 completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
-            }
-            for(let day of selectedday){
-            for await (let eachitem of completeDetail[`${day}`].Breakfast){
-                let found_item_in_dinner = dinner.find((element)=> element._id == eachitem._id);
-                // console.log(found_item_in_dinner);
-                if(found_item_in_dinner){
-                    for( var i = 0; i < dinner.length; i++){
-                         if ( dinner[i] == found_item_in_dinner) { 
-                            //  console.log("iiiiiiiiiiiiiiiii");
-                            dinner.splice(i, 1); 
-                        }}
-                }
-            }
-            for await (let eachitem of completeDetail[`${day}`].Lunch){
-                // let numberOfItems2 = completeDetail[`${day}`].Lunch.length;
-                //  completeDetail[`${day}`].Lunch.splice(2, numberOfItems2);
-                let founded_item_in_dinner = dinner.find((element)=> element._id == eachitem._id);
-                // console.log(founded_item_in_dinner);
-                if(founded_item_in_dinner){
-                    for( var i = 0; i < dinner.length; i++){
-                         if ( dinner[i] == founded_item_in_dinner) { 
-                             console.log("uuuuuuuuuuuuuuuuu");
-                            dinner.splice(i, 1); 
-                        }}
-                }
-            }
-        }
-        // dinner = dinner.sort(() => Math.random() - 0.5);
-            await listfood(dinner,'dinner', completeDetail, daysDetails);
-            for(let day of selectedday){
-                let numberOfItems3 = completeDetail[`${day}`].Dinner.length;
-                completeDetail[`${day}`].Dinner.splice(2, numberOfItems3);
-            }
-
-            for(let day of selectedday){
-                console.log(day,"----------",req.body.mealType)
-                if(req.body.mealType.includes("Breakfast")){
-                    pushPreferredIngredientDish("Breakfast",completeDetail[`${day}`].Breakfast,preferredIngredientsDishesFinal)
-                    console.log(preferredIngredientsDishesFinal.length)
-                }
-                if(req.body.mealType.includes("Lunch")){
-                    pushPreferredIngredientDish("Lunch",completeDetail[`${day}`].Lunch,preferredIngredientsDishesFinal)
-                    console.log(preferredIngredientsDishesFinal.length)
-                }
-                if(req.body.mealType.includes("Dinner")){
-                    pushPreferredIngredientDish("Dinner",completeDetail[`${day}`].Dinner,preferredIngredientsDishesFinal)
-                    console.log(preferredIngredientsDishesFinal.length)
-                }
-            }
-            res.json(completeDetail);
-
-            function pushPreferredIngredientDish(mealTime,data,preferredIngredientsDishesFinal){
-                let foundIndex = preferredIngredientsDishesFinal.findIndex(value=>{
-                    return value.availability.find(item=>{
-                        return item.name==mealTime
-                    })
-                })
-                if(foundIndex!= -1){
-                    let dataToInsert = preferredIngredientsDishesFinal[foundIndex]
-                    let findData = data.find(val=>{
-                        return val._id==dataToInsert._id
-                    })
-                    if(!findData){
-                        if(data.length>=2){
-                            data.splice(0,1)
-                            data.push(dataToInsert)
-                            preferredIngredientsDishesFinal.splice(foundIndex,1)
-                        }else{
-                            data.push(dataToInsert)
-                            preferredIngredientsDishesFinal.splice(foundIndex,1)
-                        }
-                    }
-                } 
-            }
-        } catch (error) {
-            // console.log(error);
-            res.status(500).json({ error: 1, message: error });
-        }
-    }
-,
+		} catch (error) {
+			// console.log(error);
+			res.status(500).json({
+				error: 1,
+				message: error
+			});
+		}
+	},
     dishDetails: async (req, res) => {
         try {
             let details = await carts.model.create({
