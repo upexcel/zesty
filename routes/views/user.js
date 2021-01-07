@@ -604,8 +604,10 @@ module.exports = {
 			primary_ingredeints_data = [...primary_ingredeints_data, ...req.body.primary_ingredeints]
 			console.log(primary_ingredeints_data, "aksalksalksalksaslalksaskl")
 
-			// let lunchMatchingWithPrimaryIngredient = await dishes.model.find({ primary_ingredeints: {$in:primary_ingredeints_data}, cuisine: { $in: cuisines }, diet: { $in: req.body.foodType }, spice_level: { $in: spicyDetail }, allergens: { $nin: allergyDetails }, available_days: { $in: daysDetails }, availability: { $in: availableDetails } }).populate("available_days").populate("availability").lean();
 			let finalfood = await dishes.model.find({
+				_id: {
+					$nin: req.body.dislikes
+				},
 				primary_ingredeints: {
 					$nin: primary_ingredeints_data
 				},
@@ -634,30 +636,37 @@ module.exports = {
 					name: "Breakfast"
 				});
 				type_of_food_id = [type_of_food_id._id];
-				const dishesWithOutcuisines = await dishes.model.find({
-					type_of_food: {
-						$in: type_of_food_id
-					},
-					cuisine: {
-						$nin: cuisines
-					},
-					diet: {
-						$in: req.body.foodType
-					},
-					spice_level: {
-						$in: spicyDetail
-					},
-					allergens: {
-						$nin: allergyDetails
-					}
-				}).populate("available_days").populate("availability").lean();
-				finalfood = [...finalfood, ...dishesWithOutcuisines]
-				console.log(finalfood.length, "===============================11===========")
+				// const dishesWithOutcuisines = await dishes.model.find({
+                //     _id: {
+                //         $nin: req.body.dislikes
+                //     },
+				// 	type_of_food: {
+				// 		$in: type_of_food_id
+				// 	},
+				// 	cuisine: {
+				// 		$nin: cuisines
+				// 	},
+				// 	diet: {
+				// 		$in: req.body.foodType
+				// 	},
+				// 	spice_level: {
+				// 		$in: spicyDetail
+				// 	},
+				// 	allergens: {
+				// 		$nin: allergyDetails
+				// 	}
+                // }).populate("available_days").populate("availability").lean();
+                // console.log(dishesWithOutcuisines.length,"kkkkkkkkkkkkkkkkkkkkkkkkk")
+				// finalfood = [...finalfood, ...dishesWithOutcuisines]
+				// console.log(finalfood.length, "===============================11===========")
 				if (!cuisineNames.includes("Continental")) {
 					let continentalcuisineData = await cuisine.model.findOne({
 						name: "Continental"
 					}).lean()
 					const continentalDishes = await dishes.model.find({
+                        _id: {
+                            $nin: req.body.dislikes
+                        },
 						cuisine: continentalcuisineData._id,
 						diet: {
 							$in: req.body.foodType
@@ -677,10 +686,12 @@ module.exports = {
 					}).populate("available_days").populate("availability").lean();
 					finalfood = [...finalfood, ...continentalDishes]
 				}
-				console.log(finalfood.length, "===============================11===========")
 			}
-			console.log(availableDetails)
-			const preferredIngredientsDishesFinal = await dishes.model.find({
+
+            const preferredIngredientsDishesFinal = await dishes.model.find({
+                _id: {
+					$nin: req.body.dislikes
+				},
 				primary_ingredeints: {
 					$in: primary_ingredeints_data
 				},
@@ -703,7 +714,6 @@ module.exports = {
 					$in: availableDetails
 				}
 			}).populate("available_days").populate("availability").lean();
-			console.log(preferredIngredientsDishesFinal.length, "------------")
 			for await (let elemoffinalfood of finalfood) {
 				elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
 				let timing = elemoffinalfood.availability;
@@ -718,15 +728,15 @@ module.exports = {
 						}
 					}
 				}
-			}
-			for await (let itemofbreakfast of daysNames) {
-				completeDetail[`${itemofbreakfast}`] = {
-					Breakfast: [],
-					Lunch: [],
-					Dinner: []
-				};
-			}
-
+            }
+            for await (let itemofbreakfast of daysNames) {
+                completeDetail[`${itemofbreakfast}`] = {
+                    Breakfast: [],
+                    Lunch: [],
+                    Dinner: []
+                };
+            }
+            
 			let meallength = req.body.mealType.length;
 			let newlength = meallength * 2;
 			let daylength = daysNames.length;
@@ -760,14 +770,11 @@ module.exports = {
 					}
 				}
 			}
+            await listfood(breakfast, 'breakfast', completeDetail, daysDetails);
 
-			await listfood(breakfast, 'breakfast', completeDetail, daysDetails);
-			console.log(lunch.length);
 			for (let day of selectedday) {
-				let numberOfItems = completeDetail[`${day}`].Breakfast.length;
+                let numberOfItems = completeDetail[`${day}`].Breakfast.length;
 				completeDetail[`${day}`].Breakfast.splice(2, numberOfItems);
-				//   console.log(completeDetail[`${day}`].Breakfast.length);
-				// console.log(completeDetail[`${day}`].Breakfast.length);
 			}
 			for (let day of selectedday) {
 				// console.log(day);
@@ -786,11 +793,13 @@ module.exports = {
 				}
 			}
 
-			await listfood(lunch, 'lunch', completeDetail, daysDetails);
+            await listfood(lunch, 'lunch', completeDetail, daysDetails);
 			for (let day of selectedday) {
-				let numberOfItems2 = completeDetail[`${day}`].Breakfast.length;
-				completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
-				let numberOfItems3 = completeDetail[`${day}`].Lunch.length;
+                let numberOfItems2 = completeDetail[`${day}`].Breakfast.length;
+                // console.log(numberOfItems2,"============111111111")
+                completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
+                
+                let numberOfItems3 = completeDetail[`${day}`].Lunch.length;
 				completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
 			}
 			for (let day of selectedday) {
@@ -807,8 +816,7 @@ module.exports = {
 					}
 				}
 				for await (let eachitem of completeDetail[`${day}`].Lunch) {
-					// let numberOfItems2 = completeDetail[`${day}`].Lunch.length;
-					//  completeDetail[`${day}`].Lunch.splice(2, numberOfItems2);
+                    
 					let founded_item_in_dinner = dinner.find((element) => element._id == eachitem._id);
 					// console.log(founded_item_in_dinner);
 					if (founded_item_in_dinner) {
@@ -842,8 +850,14 @@ module.exports = {
 					pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal)
 					console.log(preferredIngredientsDishesFinal.length)
 				}
-			}
-			res.json(completeDetail);
+            }
+            if(req.body.specificDay){
+                let specificData = {}
+                specificData[`${req.body.specificDay}`] = {[`${req.body.specificMealTime}`]:completeDetail[`${req.body.specificDay}`][`${req.body.specificMealTime}`]}
+                res.json(specificData)
+            }else{
+                res.json(completeDetail);
+            }
 
 			function pushPreferredIngredientDish(mealTime, data, preferredIngredientsDishesFinal) {
 				let foundIndex = preferredIngredientsDishesFinal.findIndex(value => {
@@ -867,16 +881,17 @@ module.exports = {
 						}
 					}
 				}
-            }
+			}
 
 		} catch (error) {
-			// console.log(error);
+			console.log(error);
 			res.status(500).json({
 				error: 1,
 				message: error
 			});
 		}
-	},
+    },
+    
     dishDetails: async (req, res) => {
         try {
             let details = await carts.model.create({
