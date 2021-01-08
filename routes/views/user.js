@@ -1357,7 +1357,15 @@ module.exports = {
                 return val._id;
             })
             cuisines = cusineIds;
-			console.log(availableDetails, "=======")
+            // console.log(cuisines.length)
+            if (!cuisines.includes("Continental") && req.body.mealType === "Breakfast") {
+                let continentalcuisineData = await cuisine.model.findOne({
+                    name: "Continental"
+                }).lean()
+                cuisines.push(continentalcuisineData._id)
+            }
+            // console.log(cuisines.length)
+			// console.log(availableDetails, "=======")
 			let otherDishesQuery = {
 				allergens: {
 					$nin: allergyDetails
@@ -1374,20 +1382,39 @@ module.exports = {
 				spice_level: {
 					$in: spicyDetail
 				}
-			}
+            }
 			if (cuisines.length < 4) {
-				console.log("---------------------------------------------")
+                console.log("---------------------------------------------")
 				otherDishesQuery.cuisine = {
 					$nin: cuisines
 				}
-			}
-			// if(req.body.foodType<3){
-			//     otherDishesQuery.diet= { $nin: req.body.foodType }
-            // }
-            // console.log(otherDishesQuery,"other dishes queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
+            }
 			let dishesOtherThenPrefrences = await dishes.model.find(otherDishesQuery).populate("availability").select('-available_days');
-			// console.log(dishesOtherThenPrefrences.length,"asldsaldadkakaaaaappppppppppppppppppppppppppppppppppppppppppppppppppppppp")
-			let query = {
+			let query = {   
+                primary_ingredeints: {
+					$nin: req.body.primary_ingredeints
+				},
+				cuisine: {
+					$in: cuisines
+				},
+				diet: {
+					$in: foodType
+				},
+				spice_level: {
+					$in: spicyDetail
+				},
+				allergens: {
+					$nin: allergyDetails
+				},
+				availability: {
+					$in: availableDetails
+				}
+            }
+            
+            let preferredIngredientsQuery ={
+				primary_ingredeints: {
+					$in: req.body.primary_ingredeints
+				},
 				cuisine: {
 					$in: cuisines
 				},
@@ -1404,9 +1431,11 @@ module.exports = {
 					$in: availableDetails
 				}
 			}
-			// console.log(query, "main food details")
-			const finalfood = await dishes.model.find(query).populate("availability").select('-available_days');
-            console.log( dishesOtherThenPrefrences.length,finalfood.length, "kkkkkkkkkkkkkkkkkkkkkkkkkkk")
+
+            let preferredIngredientsDishesFinal = await dishes.model.find(preferredIngredientsQuery).populate("available_days").populate("availability").lean();
+            preferredIngredientsDishesFinal=preferredIngredientsDishesFinal.sort(() => Math.random() - 0.5)
+            preferredIngredientsDishesFinal = preferredIngredientsDishesFinal.splice(0, 6);
+            let finalfood = await dishes.model.find(query).populate("availability").select('-available_days');
 
 			let extraDishesCount = dishesOtherThenPrefrences.length>=4?4:dishesOtherThenPrefrences.length;
 			if (finalfood.length < 12) {
@@ -1420,9 +1449,9 @@ module.exports = {
             // console.log(extraDishesCount,dishesToFetch,"aksaksas21212212121212")
             console.log(extraDishesCount, (finalfood.length >= dishesToFetch) ? dishesToFetch : finalfood.length,"jjjjjjjjjjjjjjjjj")
 			let resp = await getRandom(finalfood, (finalfood.length >= dishesToFetch) ? dishesToFetch : finalfood.length)
-			// console.log(resp.length, "-------")
-			let finalResponse = [...resp, ...extraDishes]
-			console.log(finalResponse.length, "============")
+            let dataOtherThenPrimaryIngredients = resp.splice(0,preferredIngredientsDishesFinal.length)
+            let finalResponse = [...resp, ...preferredIngredientsDishesFinal, ...extraDishes]
+
 			res.json({
 				[`${req.body.mealType}`]: finalResponse
 			})
