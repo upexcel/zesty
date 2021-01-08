@@ -688,7 +688,7 @@ module.exports = {
 				}
 			}
 
-            const preferredIngredientsDishesFinal = await dishes.model.find({
+            let preferredIngredientsDishesFinal = await dishes.model.find({
                 _id: {
 					$nin: req.body.dislikes
 				},
@@ -713,7 +713,10 @@ module.exports = {
 				availability: {
 					$in: availableDetails
 				}
-			}).populate("available_days").populate("availability").lean();
+            }).populate("available_days").populate("availability").lean();
+            preferredIngredientsDishesFinal = JSON.parse(JSON.stringify(preferredIngredientsDishesFinal))
+            preferredIngredientsDishesFinal=preferredIngredientsDishesFinal.sort(() => Math.random() - 0.5)
+            console.log(preferredIngredientsDishesFinal.length,"=================11111111111111222222222222222")
 			for await (let elemoffinalfood of finalfood) {
 				elemoffinalfood = JSON.parse(JSON.stringify(elemoffinalfood));
 				let timing = elemoffinalfood.availability;
@@ -835,19 +838,17 @@ module.exports = {
 				let numberOfItems3 = completeDetail[`${day}`].Dinner.length;
 				completeDetail[`${day}`].Dinner.splice(2, numberOfItems3);
 			}
-
 			for (let day of selectedday) {
-				console.log(day, "----------", req.body.mealType)
 				if (req.body.mealType.includes("Breakfast")) {
-					pushPreferredIngredientDish("Breakfast", completeDetail[`${day}`].Breakfast, preferredIngredientsDishesFinal)
+					pushPreferredIngredientDish("Breakfast", completeDetail[`${day}`].Breakfast, preferredIngredientsDishesFinal, req.body.breakfast_primary_ingredient)
 					console.log(preferredIngredientsDishesFinal.length)
 				}
 				if (req.body.mealType.includes("Lunch")) {
-					pushPreferredIngredientDish("Lunch", completeDetail[`${day}`].Lunch, preferredIngredientsDishesFinal)
+					pushPreferredIngredientDish("Lunch", completeDetail[`${day}`].Lunch, preferredIngredientsDishesFinal, req.body.lunch_primary_ingredient)
 					console.log(preferredIngredientsDishesFinal.length)
 				}
 				if (req.body.mealType.includes("Dinner")) {
-					pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal)
+					pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal, req.body.dinner_primary_ingredient)
 					console.log(preferredIngredientsDishesFinal.length)
 				}
             }
@@ -859,28 +860,35 @@ module.exports = {
                 res.json(completeDetail);
             }
 
-			function pushPreferredIngredientDish(mealTime, data, preferredIngredientsDishesFinal) {
-				let foundIndex = preferredIngredientsDishesFinal.findIndex(value => {
-					return value.availability.find(item => {
-						return item.name == mealTime
-					})
-				})
-				if (foundIndex != -1) {
-					let dataToInsert = preferredIngredientsDishesFinal[foundIndex]
-					let findData = data.find(val => {
-						return val._id == dataToInsert._id
-					})
-					if (!findData) {
-						if (data.length >= 2) {
-							data.splice(0, 1)
-							data.push(dataToInsert)
-							preferredIngredientsDishesFinal.splice(foundIndex, 1)
-						} else {
-							data.push(dataToInsert)
-							preferredIngredientsDishesFinal.splice(foundIndex, 1)
-						}
-					}
-				}
+			function pushPreferredIngredientDish(mealTime, data, preferredIngredientsDishesFinal, specificMealTimePrimaryData,lastDay) {
+                    let foundIndex = preferredIngredientsDishesFinal.findIndex(value => {
+                        return (value.availability.find(item => {
+                            return item.name == mealTime
+                        }) && value.primary_ingredeints.includes(specificMealTimePrimaryData))
+                    })
+                    if(foundIndex == -1){
+                        foundIndex = preferredIngredientsDishesFinal.findIndex(value => {
+                            return value.availability.find(item => {
+                                return item.name == mealTime
+                            })
+                        })
+                    }
+                    if (foundIndex != -1) {
+                        let dataToInsert = preferredIngredientsDishesFinal[foundIndex]
+                            let findData = data.find(val => {
+                                return val._id == dataToInsert._id
+                            })
+                            if (!findData) {
+                                if (data.length >= 2) {
+                                    data.splice(0, 1)
+                                    data.push(dataToInsert)
+                                    preferredIngredientsDishesFinal.splice(foundIndex, 1)
+                                } else {
+                                    data.push(dataToInsert)
+                                    preferredIngredientsDishesFinal.splice(foundIndex, 1)
+                                }
+                            }
+                    }
 			}
 
 		} catch (error) {
