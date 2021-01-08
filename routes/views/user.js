@@ -1383,6 +1383,7 @@ module.exports = {
 					$in: spicyDetail
 				}
             }
+            
 			if (cuisines.length < 4) {
                 console.log("---------------------------------------------")
 				otherDishesQuery.cuisine = {
@@ -1431,12 +1432,12 @@ module.exports = {
 					$in: availableDetails
 				}
 			}
-
+            console.log(preferredIngredientsQuery,"====1111222")
             let preferredIngredientsDishesFinal = await dishes.model.find(preferredIngredientsQuery).populate("available_days").populate("availability").lean();
             preferredIngredientsDishesFinal=preferredIngredientsDishesFinal.sort(() => Math.random() - 0.5)
             preferredIngredientsDishesFinal = preferredIngredientsDishesFinal.splice(0, 6);
             let finalfood = await dishes.model.find(query).populate("availability").select('-available_days');
-
+            console.log(preferredIngredientsDishesFinal.length,"pppppppp")
 			let extraDishesCount = dishesOtherThenPrefrences.length>=4?4:dishesOtherThenPrefrences.length;
 			if (finalfood.length < 12) {
 				extraDishesCount = 20 - finalfood.length;
@@ -1450,8 +1451,10 @@ module.exports = {
             console.log(extraDishesCount, (finalfood.length >= dishesToFetch) ? dishesToFetch : finalfood.length,"jjjjjjjjjjjjjjjjj")
 			let resp = await getRandom(finalfood, (finalfood.length >= dishesToFetch) ? dishesToFetch : finalfood.length)
             let dataOtherThenPrimaryIngredients = resp.splice(0,preferredIngredientsDishesFinal.length)
-            let finalResponse = [...resp, ...preferredIngredientsDishesFinal, ...extraDishes]
-
+            let finalResponse = [...resp, ...preferredIngredientsDishesFinal]
+            finalResponse = finalResponse.sort(() => Math.random() - 0.5)
+            finalResponse = [...finalResponse, ...extraDishes]
+            console.log(finalResponse.length)
 			res.json({
 				[`${req.body.mealType}`]: finalResponse
 			})
