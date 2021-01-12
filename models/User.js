@@ -15,7 +15,8 @@ User.add({
 	type: {type: String},
 	userId: { type: String},
 	password: { type: Types.Password, initial: true, required: true },
-	workprofile: {type: String}
+	workprofile: {type: String},
+	orderForThisWeek: { type: Types.Relationship, ref: 'Foodplan', index:true},
 }, 'Permissions', {
 	isAdmin: { type: Boolean, label: 'Can access Keystone', index: true },
 });
@@ -24,7 +25,6 @@ User.add({
 User.schema.virtual('canAccessKeystone').get(function () {
 	return this.isAdmin;
 });
-
 
 /**
  * Relationships
@@ -35,5 +35,5 @@ User.relationship({ ref: 'Post', path: 'posts', refPath: 'author' });
 /**
  * Registration
  */
-User.defaultColumns = 'name, email, isAdmin';
+User.defaultColumns = 'name, email, orderForThisWeek, isAdmin';
 User.register();

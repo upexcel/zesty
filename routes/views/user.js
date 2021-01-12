@@ -936,19 +936,22 @@ module.exports = {
 
             let startday;
             let endday;
-
-            for (const property in daysObj) {
-                let day = String(property);
-
+            let lastWeekStartDate;
+            let lastWeekEndDate;
+            // for (const property in daysObj) {
                 let today = new Date();
-                let daynumber = today.getDay();;
+                let daynumber = today.getDay();
                 let startdate = (7 - daynumber) + 1;
                 let enddate = (7 - daynumber) + 7;
-
+                // console.log(startdate,daynumber,"asdkasdkadksdakdakdsksdksdkjdskdjasdk")
                 startday = moment(today, "YYYY-MM-DD").add('days', startdate).set("hour", 0).set("minute", 0).set("seconds", 0);
                 endday = moment(today, "YYYY-MM-DD").add('days', enddate).set("hour", 0).set("minute", 0).set("seconds", 0);
+                lastWeekStartDate = new Date(new Date(Date.now() - (daynumber-1) * 24 * 60 * 60 * 1000).setUTCHours(0,0,0,0));
+                lastWeekEndDate = new Date(new Date(Date.now() + (startdate) * 24 * 60 * 60 * 1000).setUTCHours(0,0,0,0));
 
-            }
+                // console.log(new Date(new Date(Date.now() - (daynumber-1) * 24 * 60 * 60 * 1000).setUTCHours(0,0,0,0)),"========qqwwwqq")
+            // }
+            // console.log(startday,lastWeekStartDate,lastWeekEndDate,"=======")
             let foundplan = await foodplans.model.findOne({user: req.body.userId,startdate:{$gt:new Date()}});
             
             let foundPlanForReference = JSON.parse(JSON.stringify(foundplan))
@@ -994,11 +997,18 @@ module.exports = {
                 let otherChoices = await otherChoicesModel.model.create(req.body.other_dinner_choices_data);
                 dataToCreate.other_dinner_choices = otherChoices._id;
             }
-            console.log(dataToCreate,"----------------")
+            // console.log(dataToCreate,"----------------")
             let completeDataToCreate = Object.assign(dataToCreate,fieldsToUpdate)
             if (!foundplan) {
+                // console.log(lastWeekStartDate,lastWeekEndDate,"asdsakdaskasksdlkaddlkdlkladlkasskl",{user: req.body.userId,startdate:{$and:{$gte:lastWeekStartDate},startdate:{$lte:lastWeekEndDate}})
+                let lastWeekFoodPlan = await foodplans.model.findOne({$and: [{user: req.body.userId, }, { startdate: { $gte:lastWeekStartDate } }, { startdate: { $lte:lastWeekEndDate } } ] } );
+                console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
+                if(lastWeekFoodPlan){
+                    console.log("lastWeekFoodPlan","================")
+                    let updatedUser = await users.model.update({ _id: req.body.userId }, { orderForThisWeek: lastWeekFoodPlan._id })
+                }
                 let createdPlan = await foodplans.model.create(completeDataToCreate);
-                res.json({ error: 0, message: "Success" });
+                res.json({ error: 0, message: "Success" ,lastWeekFoodPlan});
             }
             else {
                 let removeOld = await foodplans.model.remove({ user: req.body.userId, startdate:{$gt:new Date()}})
@@ -1455,7 +1465,7 @@ module.exports = {
             let finalResponse = [...resp, ...preferredIngredientsDishesFinal]
             finalResponse = finalResponse.sort(() => Math.random() - 0.5)
             finalResponse = [...finalResponse, ...extraDishes]
-            console.log(finalResponse.length)
+            // console.log(finalResponse.length)
 			res.json({
 				[`${req.body.mealType}`]: finalResponse
 			})
