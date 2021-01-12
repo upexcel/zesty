@@ -999,14 +999,15 @@ module.exports = {
             }
             // console.log(dataToCreate,"----------------")
             let completeDataToCreate = Object.assign(dataToCreate,fieldsToUpdate)
+            let lastWeekFoodPlan = await foodplans.model.findOne({$and: [{user: req.body.userId, }, { startdate: { $gte:lastWeekStartDate } }, { startdate: { $lte:lastWeekEndDate } } ] } );
+                // console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
+            if(lastWeekFoodPlan){
+                console.log("lastWeekFoodPlan","================")
+                let updatedUser = await users.model.update({ _id: req.body.userId }, { orderForThisWeek: lastWeekFoodPlan._id })
+            }
             if (!foundplan) {
                 // console.log(lastWeekStartDate,lastWeekEndDate,"asdsakdaskasksdlkaddlkdlkladlkasskl",{user: req.body.userId,startdate:{$and:{$gte:lastWeekStartDate},startdate:{$lte:lastWeekEndDate}})
-                let lastWeekFoodPlan = await foodplans.model.findOne({$and: [{user: req.body.userId, }, { startdate: { $gte:lastWeekStartDate } }, { startdate: { $lte:lastWeekEndDate } } ] } );
-                console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
-                if(lastWeekFoodPlan){
-                    console.log("lastWeekFoodPlan","================")
-                    let updatedUser = await users.model.update({ _id: req.body.userId }, { orderForThisWeek: lastWeekFoodPlan._id })
-                }
+                
                 let createdPlan = await foodplans.model.create(completeDataToCreate);
                 res.json({ error: 0, message: "Success" ,lastWeekFoodPlan});
             }
