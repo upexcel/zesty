@@ -1179,7 +1179,7 @@ module.exports = {
                     foundDishObject.deliveryDetails = deliveryDetails;
 
 
-                    // res.json(foundDishObject);
+
                     finalData.push({startdate:foundDishObject.startdate,enddate:foundDishObject.enddate,data:foundDishObject})
                 }
                 res.json(finalData)
@@ -1359,10 +1359,9 @@ module.exports = {
 				return `${val._id}`;
 			})
 
-			console.log(foodType, "askaslasalsalslk")
 			let otherDiets = await dietary_requirement.model.find({
 				name: foodTypeQuery
-			})
+            })
 			let other_diets = otherDiets.map(val => {
 				return `${val._id}`;
 			})
@@ -1399,15 +1398,15 @@ module.exports = {
 					$in: spicyDetail
 				}
             }
-            
-			if (cuisines.length < 4) {
+            let dishesOtherThenPrefrences = [];
+			if (cuisines.length < 5) {
                 console.log("---------------------------------------------")
 				otherDishesQuery.cuisine = {
 					$nin: cuisines
-				}
+                }
+                dishesOtherThenPrefrences = await dishes.model.find(otherDishesQuery).populate("availability").select('-available_days');
             }
-			let dishesOtherThenPrefrences = await dishes.model.find(otherDishesQuery).populate("availability").select('-available_days');
-			let query = {   
+            let query = {   
                 primary_ingredeints: {
 					$nin: req.body.primary_ingredeints
 				},
@@ -1447,12 +1446,12 @@ module.exports = {
 				availability: {
 					$in: availableDetails
 				}
-			}
+            }
             let preferredIngredientsDishesFinal = await dishes.model.find(preferredIngredientsQuery).populate("available_days").populate("availability").lean();
             preferredIngredientsDishesFinal=preferredIngredientsDishesFinal.sort(() => Math.random() - 0.5)
             preferredIngredientsDishesFinal = preferredIngredientsDishesFinal.splice(0, 6);
             let finalfood = await dishes.model.find(query).populate("availability").select('-available_days');
-			let extraDishesCount = dishesOtherThenPrefrences.length>=4?4:dishesOtherThenPrefrences.length;
+            let extraDishesCount = dishesOtherThenPrefrences.length>=4?4:dishesOtherThenPrefrences.length;
 			if (finalfood.length < 12) {
 				extraDishesCount = 20 - finalfood.length;
 				if (dishesOtherThenPrefrences.length < extraDishesCount) {
