@@ -55,7 +55,7 @@ Foodplan.add({
     other_breakfast_choices: {type: Types.Relationship, ref: "otherChoices", index: true},
     other_lunch_choices: {type: Types.Relationship, ref: "otherChoices", index: true},
     other_dinner_choices: {type: Types.Relationship, ref: "otherChoices", index: true},
-
+    primary_ingredeints:{ type: Types.TextArray },
 });
 
 Foodplan.schema.add({

@@ -6,6 +6,7 @@ let Dishes = new keystone.List('Dishes');
 Dishes.add({
     images: { type: Types.CloudinaryImages },
     name: { type: String },
+    price: { type: Number },
     // name: { type: Types.Name, required: true, index: true },
     description: { type: String },
     // cuisine: { type: Types.Select, options: 'North Indian, South Indian, Chinese, Italian', index: true, many:true },
