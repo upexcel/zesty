@@ -924,20 +924,15 @@ module.exports = {
             let endday;
             let lastWeekStartDate;
             let lastWeekEndDate;
-            // for (const property in daysObj) {
-                let today = new Date();
-                let daynumber = today.getDay();
-                let startdate = (7 - daynumber) + 1;
-                let enddate = (7 - daynumber) + 7;
-                // console.log(startdate,daynumber,"asdkasdkadksdakdakdsksdksdkjdskdjasdk")
-                startday = moment(today, "YYYY-MM-DD").add('days', startdate).set("hour", 0).set("minute", 0).set("seconds", 0);
-                endday = moment(today, "YYYY-MM-DD").add('days', enddate).set("hour", 0).set("minute", 0).set("seconds", 0);
-                lastWeekStartDate = new Date(new Date(Date.now() - (daynumber-1) * 24 * 60 * 60 * 1000).setUTCHours(0,0,0,0));
-                lastWeekEndDate = new Date(new Date(Date.now() + (startdate) * 24 * 60 * 60 * 1000).setUTCHours(0,0,0,0));
-
-                // console.log(new Date(new Date(Date.now() - (daynumber-1) * 24 * 60 * 60 * 1000).setUTCHours(0,0,0,0)),"========qqwwwqq")
-            // }
-            // console.log(startday,lastWeekStartDate,lastWeekEndDate,"=======")
+            let today = new Date();
+            let daynumber = today.getDay();
+            let startdate = (7 - daynumber);
+            let enddate = (7 - daynumber) + 6;
+            startday = moment(today, "YYYY-MM-DD").add('days', startdate).set("hour", 0).set("minute", 0).set("seconds", 0);
+            endday = moment(today, "YYYY-MM-DD").add('days', enddate).set("hour", 0).set("minute", 0).set("seconds", 0);
+            lastWeekStartDate = new Date(new Date(Date.now() - (daynumber-1) * 24 * 60 * 60 * 1000).setUTCHours(0,0,0,0));
+            lastWeekEndDate = new Date(new Date(Date.now() + (startdate) * 24 * 60 * 60 * 1000).setUTCHours(0,0,0,0));
+            console.log(startdate,enddate,new Date(startday),(endday),lastWeekStartDate,lastWeekEndDate)
             let foundplan = await foodplans.model.findOne({user: req.body.userId,startdate:{$gt:new Date()}});
             
             let foundPlanForReference = JSON.parse(JSON.stringify(foundplan))
@@ -992,16 +987,19 @@ module.exports = {
                 console.log("lastWeekFoodPlan","================")
                 let updatedUser = await users.model.update({ _id: req.body.userId }, { orderForThisWeek: lastWeekFoodPlan._id })
             }
+            console.log(foundUser.orderForThisWeek,"asdaasdl")
             if (!foundplan) {
-                // console.log(lastWeekStartDate,lastWeekEndDate,"asdsakdaskasksdlkaddlkdlkladlkasskl",{user: req.body.userId,startdate:{$and:{$gte:lastWeekStartDate},startdate:{$lte:lastWeekEndDate}})
-                
+                let mailData = await sendMailToStaff(foundUser);            
                 let createdPlan = await foodplans.model.create(completeDataToCreate);
+                console.log(mailData,"askkasaksalksalksalksaksk")
                 res.json({ error: 0, message: "Success" ,lastWeekFoodPlan});
             }
             else {
                 let removeOld = await foodplans.model.remove({ user: req.body.userId, startdate:{$gt:new Date()}})
+                let mailData = await sendMailToStaff(foundUser);
                 let newRecord = await foodplans.model.create(completeDataToCreate)
-                res.json({ error: 0, message: "Success" });
+                console.log(mailData,"askkasaksalksalksalksakskkkkk")
+                res.json({ error: 0, message: "Success",foundUser });
             }
 
         } catch (error) {
@@ -1014,8 +1012,8 @@ module.exports = {
         try {
             let today = new Date();
             let daynumber = today.getDay();;
-            let startdate = (7 - daynumber) + 1;
-            let enddate = (7 - daynumber) + 7;
+            let startdate = (7 - daynumber);
+            let enddate = (7 - daynumber) + 6;
             let startday = moment(today, "YYYY-MM-DD").add('days', startdate).set("hour", 0).set("minute", 0).set("seconds", 0);
             let endday = moment(today, "YYYY-MM-DD").add('days', enddate).set("hour", 0).set("minute", 0).set("seconds", 0);
             let currentPlan = await foodplans.model.findOne({ _id:req.body.planId});
@@ -1493,4 +1491,17 @@ async function getRandom(arr, n) {
         taken[x] = --len in taken ? taken[len] : len;
     }
     return result;
-} 
+}
+
+async function sendMailToStaff(userData) {
+    let foodPlanOfUser=await foodplans.model.findOne({user:userData._id})
+    let userName = userData.name ? userData.name.first +" " + (userData.name.last? userData.name.last:""):"A user"
+    let email = JSON.parse(process.env.emailsForStaff);
+    let html = `Congrats, ${userName} created a foodplan.`
+    let subject = "Foodplan"
+    console.log(email,foodPlanOfUser,"emails emails")
+    if(!foodPlanOfUser) {
+        passverify.reminderservice(html, email, subject);
+    }
+    return "success mail"
+}
