@@ -784,7 +784,7 @@ module.exports = {
                 completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
                 
                 let numberOfItems3 = completeDetail[`${day}`].Lunch.length;
-				completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
+                completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
 			}
 			for (let day of selectedday) {
 				for await (let eachitem of completeDetail[`${day}`].Breakfast) {
@@ -812,7 +812,7 @@ module.exports = {
 						}
 					}
 				}
-			}
+            }
 			// dinner = dinner.sort(() => Math.random() - 0.5);
 			await listfood(dinner, 'dinner', completeDetail, daysDetails);
 			for (let day of selectedday) {
@@ -822,14 +822,23 @@ module.exports = {
 			for (let day of selectedday) {
 				if (req.body.mealType.includes("Breakfast")) {
 					pushPreferredIngredientDish("Breakfast", completeDetail[`${day}`].Breakfast, preferredIngredientsDishesFinal, req.body.breakfast_primary_ingredient)
-					console.log(preferredIngredientsDishesFinal.length)
+                    if(completeDetail[`${day}`].Breakfast.length!==2){
+                        pushPreferredIngredientDish("Breakfast", completeDetail[`${day}`].Breakfast, preferredIngredientsDishesFinal, req.body.breakfast_primary_ingredient)
+                    }
+                    console.log(preferredIngredientsDishesFinal.length)
 				}
 				if (req.body.mealType.includes("Lunch")) {
 					pushPreferredIngredientDish("Lunch", completeDetail[`${day}`].Lunch, preferredIngredientsDishesFinal, req.body.lunch_primary_ingredient)
-					console.log(preferredIngredientsDishesFinal.length)
+                    if(completeDetail[`${day}`].Lunch.length!==2){
+                        pushPreferredIngredientDish("Lunch", completeDetail[`${day}`].Lunch, preferredIngredientsDishesFinal, req.body.lunch_primary_ingredient)
+                    }
+                    console.log(preferredIngredientsDishesFinal.length)
 				}
 				if (req.body.mealType.includes("Dinner")) {
-					pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal, req.body.dinner_primary_ingredient)
+                    pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal, req.body.dinner_primary_ingredient)
+                    if(completeDetail[`${day}`].Dinner.length!==2){
+                        pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal, req.body.dinner_primary_ingredient)
+                    }
 					console.log(preferredIngredientsDishesFinal.length)
 				}
             }
