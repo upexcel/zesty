@@ -974,6 +974,7 @@ module.exports = {
                 Shipping_Address: deliveryDetails.shippingAddress,
                 Shipping_State: deliveryDetails.shippingState,
                 Shipping_Zipcode: deliveryDetails.shippingZipcode,
+                mobile: deliveryDetails.mobile,
                 primary_ingredeints: selections.primary_ingredeints,
             }
             if(req.body.other_breakfast_choices_data){
