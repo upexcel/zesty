@@ -1101,6 +1101,7 @@ module.exports = {
                 deliveryDetails.Shipping_Address = foundFood.Shipping_Address;
                 deliveryDetails.Shipping_State = foundFood.Shipping_State;
                 deliveryDetails.Shipping_Zipcode = foundFood.Shipping_Zipcode;
+                deliveryDetails.Shipping_Zipcode = foundFood.Shipping_Zipcode;
                 foundDishObject.choices = choices;
                 foundDishObject.deliveryDetails = deliveryDetails;
                 foundDishObject._id=foundFood._id
