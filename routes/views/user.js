@@ -1514,5 +1514,6 @@ async function sendMailToStaff(userData) {
     if(!foodPlanOfUser) {
         passverify.reminderservice(html, email, subject);
     }
+    
     return "success mail"
 }
