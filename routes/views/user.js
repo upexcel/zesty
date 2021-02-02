@@ -997,6 +997,7 @@ module.exports = {
                 console.log("lastWeekFoodPlan","================")
                 let updatedUser = await users.model.update({ _id: req.body.userId }, { orderForThisWeek: lastWeekFoodPlan._id })
             }
+            let updatedUserData = await users.model.update({ _id: req.body.userId }, { mobile: deliveryDetails.mobile })
             console.log(foundUser.orderForThisWeek,"asdaasdl")
             if (!foundplan) {
                 let mailData = await sendMailToStaff(foundUser);            
