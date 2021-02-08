@@ -54,21 +54,27 @@ async function updateFood(req) {
                 let founditem = await dishes.model.findOne({ _id: foodDayDetails[`${item}`].Breakfast[0] });
                     let daytextbreakfast = [`${item}`] + "_Breakfast- " + founditem.name;
                     itemToUpdate1 = [`${item}`] + "_Breakfast";
+                    let chefForBreakFast = [`${item}`] + "_Breakfast_Chef";
                     text = text + "\n" + daytextbreakfast;
-                    dataToReturn[`${itemToUpdate1}`]=foodDayDetails[`${item}`].Breakfast[0] 
+                    dataToReturn[`${itemToUpdate1}`]=foodDayDetails[`${item}`].Breakfast[0]
+                    dataToReturn[`${chefForBreakFast}`]=founditem.chef
                 }
                 if (foodDayDetails[`${item}`].Lunch.length) {
                     let founditem = await dishes.model.findOne({ _id: foodDayDetails[`${item}`].Lunch[0] });
                     let daytextlunch = [`${item}`] + "_Lunch- " + founditem.name;
                     itemToUpdate2 = [`${item}`] + "_Lunch";
+                    let chefForLunch = [`${item}`] + "_Lunch_Chef";
                     text = text + "\n" + daytextlunch;
+                    dataToReturn[`${chefForLunch}`]=founditem.chef
                     dataToReturn[`${itemToUpdate2}`]=foodDayDetails[`${item}`].Lunch[0] 
                 }
                 if (foodDayDetails[`${item}`].Dinner.length) {
                     let founditem = await dishes.model.findOne({ _id: foodDayDetails[`${item}`].Dinner[0] });
                     let daytextdinner = [`${item}`] + "_Dinner- " +founditem.name;
+                    let chefForDinner = [`${item}`] + "_Dinner_Chef";
                     itemToUpdate3 = [`${item}`] + "_Dinner";
                     text = text + "\n" + daytextdinner;
+                    dataToReturn[`${chefForDinner}`]=founditem.chef
                     dataToReturn[`${itemToUpdate3}`]=foodDayDetails[`${item}`].Dinner[0]
                 }
             }
@@ -989,23 +995,32 @@ module.exports = {
                 let otherChoices = await otherChoicesModel.model.create(req.body.other_dinner_choices_data);
                 dataToCreate.other_dinner_choices = otherChoices._id;
             }
+            console.log("========")
             // console.log(dataToCreate,"----------------")
             let completeDataToCreate = Object.assign(dataToCreate,fieldsToUpdate)
+            console.log("========")
             let lastWeekFoodPlan = await foodplans.model.findOne({$and: [{user: req.body.userId, }, { startdate: { $gte:lastWeekStartDate } }, { startdate: { $lte:lastWeekEndDate } } ] } );
                 // console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
+                console.log("========")
+
             if(lastWeekFoodPlan){
                 console.log("lastWeekFoodPlan","================")
                 let updatedUser = await users.model.update({ _id: req.body.userId }, { orderForThisWeek: lastWeekFoodPlan._id })
             }
+            console.log("========")
+
             let updatedUserData = await users.model.update({ _id: req.body.userId }, { mobile: deliveryDetails.mobile })
-            console.log(foundUser.orderForThisWeek,"asdaasdl")
+            console.log("========")
+
             if (!foundplan) {
+                console.log("1111")
                 let mailData = await sendMailToStaff(foundUser);            
                 let createdPlan = await foodplans.model.create(completeDataToCreate);
                 console.log(mailData,"askkasaksalksalksalksaksk")
                 res.json({ error: 0, message: "Success" ,lastWeekFoodPlan});
             }
             else {
+                console.log("2222")
                 let removeOld = await foodplans.model.remove({ user: req.body.userId, startdate:{$gt:new Date()}})
                 let mailData = await sendMailToStaff(foundUser);
                 let newRecord = await foodplans.model.create(completeDataToCreate)
@@ -1507,14 +1522,15 @@ async function getRandom(arr, n) {
 
 async function sendMailToStaff(userData) {
     let foodPlanOfUser=await foodplans.model.findOne({user:userData._id})
+    console.log("asdasdkskd")
     let userName = userData.name ? userData.name.first +" " + (userData.name.last? userData.name.last:""):"A user"
     let email = JSON.parse(process.env.emailsForStaff);
+    console.log("asdasdkskd")
     let html = `Congrats, ${userName} created a foodplan.`
     let subject = "Foodplan"
     console.log(email,foodPlanOfUser,"emails emails")
     if(!foodPlanOfUser) {
         passverify.reminderservice(html, email, subject);
     }
-    
     return "success mail"
 }
