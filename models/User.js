@@ -15,6 +15,7 @@ User.add({
 	type: {type: String},
 	userId: { type: String},
 	mobile: { type: String},
+	facebookId: { type: String},
 	password: { type: Types.Password, initial: true, required: true },
 	workprofile: {type: String},
 	orderForThisWeek: { type: Types.Relationship, ref: 'Foodplan', index:true},
@@ -36,5 +37,5 @@ User.relationship({ ref: 'Post', path: 'posts', refPath: 'author' });
 /**
  * Registration
  */
-User.defaultColumns = 'name, email, mobile, orderForThisWeek, isAdmin';
+User.defaultColumns = 'name, email, orderForThisWeek, isAdmin';
 User.register();

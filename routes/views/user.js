@@ -270,8 +270,19 @@ module.exports = {
 
     sociallogin: async (req, res) => {
         try{
-            newuser = await users.model.findOne({ email: req.body.email });
+            let newuser;
+            let query={}
+            if(req.body.email){
+                query.email=req.body.email
+            }
+            if(req.body.facebookId){
+                query.facebookId=req.body.facebookId
+            }
+            if(req.body.email || req.body.facebookId){
+                newuser = await users.model.findOne(query);
+            }
         if (!newuser) {
+            console.log("11o21212192")
             try {
                 let logintype = req.body.type;
                 let pass = process.env.PASSWORD;
@@ -282,6 +293,7 @@ module.exports = {
                     userId: req.body.userId,
                     password: pass,
                     isAdmin: req.body.isAdmin,
+                    facebookId: req.body.facebookId
                 });
                 if (logintype == 'facebook') {
                     let date = new Date().getTime();
@@ -305,7 +317,7 @@ module.exports = {
                 res.status(500).json({ error: 1, message: error });
             }
         } else {
-
+            console.log("=========1111111")
             let token = jwt.sign({ token: { name: newuser.name, id: newuser.id } }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
             return res.json({
                 error: 0,
@@ -365,6 +377,7 @@ module.exports = {
         }
         
     },
+
 
     verifyemail: async (req, res) => {
         try {
@@ -1494,6 +1507,16 @@ module.exports = {
     listPrimaryIngredeints: async (req, res) => {
         try{
             let data = await primary_ingredeints.model.find({appear_on_favourite:true});
+            res.json(data);
+        }catch(err){
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+
+    userData: async (req, res) => {
+        try{
+            let data = await users.model.findOne({facebookId:req.params.facebookId}).select('_id');
             res.json(data);
         }catch(err){
             console.log(err);

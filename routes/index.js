@@ -72,6 +72,7 @@ exports = module.exports = function (app) {
 	app.get('/api/getPreviousWeekData/:userId', routes.views.user.getPreviousWeekData);
 	app.post('/api/getDishesByMealTime', routes.views.user.getDishesByMealTime);
 	app.get('/api/listPrimaryIngredeints', routes.views.user.listPrimaryIngredeints);
+	app.get('/api/userData/:facebookId', routes.views.user.userData);
 	// app.post('/api/sendreminder', routes.views.user.sendreminder);
 
 
