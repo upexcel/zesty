@@ -37,5 +37,5 @@ User.relationship({ ref: 'Post', path: 'posts', refPath: 'author' });
 /**
  * Registration
  */
-User.defaultColumns = 'name, email, orderForThisWeek, isAdmin';
+User.defaultColumns = 'name, email, mobile, orderForThisWeek, isAdmin';
 User.register();
