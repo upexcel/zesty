@@ -22,7 +22,8 @@ Dishes.add({
     available_days: { type: Types.Relationship, ref: 'Days', many: true, index: true},
     chef: { type: Types.Relationship, ref: 'Chef', index:true},
     make_duplicate: { type: Types.Boolean },
-    deep_fried: {type: Types.Select, options: 'yes, no', index: true }
+    deep_fried: {type: Types.Select, options: 'yes, no', index: true },
+    side_dish: { type: Types.Relationship, ref: 'side_dish', many: true, index: true },
 });
 
 
