@@ -52,7 +52,7 @@ keystone.set('cors allow headers', true);
 
 var cronSend = require('./routes/views/user')
 var CronJob = require('cron').CronJob;
-var job = new CronJob('0 0 12 * * */5', function() {
+var job = new CronJob('30 13 * * 5', function() {
   console.log('You will see this message every second');
   cronSend.cronsender();
 }, null, true, 'Asia/Kolkata');
