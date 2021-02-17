@@ -3,10 +3,10 @@
 // require('dotenv').config();
 
 
-if (process.env.NODE_ENV !== 'production') { 
-	require('dotenv').config() 
+if (process.env.NODE_ENV !== 'production') {
+	require('dotenv').config()
 }
- 
+
 
 // Require keystone
 var keystone = require('keystone');
@@ -51,12 +51,21 @@ keystone.set('cors allow methods', true);
 keystone.set('cors allow headers', true);
 
 var cronSend = require('./routes/views/user')
+var service = require('./routes/views/service')
+
 var CronJob = require('cron').CronJob;
-var job = new CronJob('30 13 * * 5', function() {
-  console.log('You will see this message every second');
-  cronSend.cronsender();
+var job = new CronJob('30 13 * * 5', function () {
+	cronSend.cronsender();
 }, null, true, 'Asia/Kolkata');
 job.start();
+
+var chefMailForNextWeek = new CronJob('30 14 * * 5', function () {
+	service.chefMailForNextWeek().then((data) => {
+	}).catch(err => {
+		console.log(err)
+	});
+}, null, true, 'Asia/Kolkata');
+chefMailForNextWeek.start();
 
 // Configure the navigation bar in Keystone's Admin UI
 keystone.set('nav', {

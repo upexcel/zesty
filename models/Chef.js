@@ -4,7 +4,12 @@ let Types = keystone.Field.Types;
 let Chef = new keystone.List('Chef');
 
 Chef.add({
-name: { type: String }
+	name: {
+		type: String
+	},
+	email: {
+		type: String
+	}
 });
 
 Chef.register();

@@ -1013,8 +1013,8 @@ module.exports = {
             let completeDataToCreate = Object.assign(dataToCreate,fieldsToUpdate)
             console.log("========")
             let lastWeekFoodPlan = await foodplans.model.findOne({$and: [{user: req.body.userId, }, { startdate: { $gte:lastWeekStartDate } }, { startdate: { $lte:lastWeekEndDate } } ] } );
-                // console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
-                console.log("========")
+            // console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
+            console.log("========")
 
             if(lastWeekFoodPlan){
                 console.log("lastWeekFoodPlan","================")
