@@ -17,6 +17,8 @@ Foodplan.add({
     Meal_Timing: { type: Types.TextArray },
     Days: { type: Types.TextArray },
     Order_For: {type: String},
+    adult_count: {type: Number},
+    children_count: {type: Number},
     Other_Mentions: {type: String},
     Breakfast_Time_Interval: {type: String},
     Lunch_Time_Interval: {type: String},

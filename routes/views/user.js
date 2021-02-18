@@ -981,6 +981,8 @@ module.exports = {
                 Allergens: selections.allergens,
                 Meal_Timing: selections.mealType,
                 Order_For: selections.orderFor,
+                adult_count: req.body.adult_count,
+                children_count: req.body.children_count,
                 Other_Mentions: selections.extraMention,
                 Breakfast_Time_Interval: selections.Breakfast_Time_Interval,
                 Lunch_Time_Interval: selections.Lunch_Time_Interval,
@@ -1013,8 +1015,8 @@ module.exports = {
             let completeDataToCreate = Object.assign(dataToCreate,fieldsToUpdate)
             console.log("========")
             let lastWeekFoodPlan = await foodplans.model.findOne({$and: [{user: req.body.userId, }, { startdate: { $gte:lastWeekStartDate } }, { startdate: { $lte:lastWeekEndDate } } ] } );
-            // console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
-            console.log("========")
+                // console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
+                console.log("========")
 
             if(lastWeekFoodPlan){
                 console.log("lastWeekFoodPlan","================")
