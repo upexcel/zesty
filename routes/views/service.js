@@ -57,9 +57,7 @@ module.exports = {
 	chefMailForNextWeek: async () => {
 		try {
 			let allDishes = await dishes.model.find({}).populate("chef").populate("allergens").populate("Spicelevel").lean()
-			let chefs = await Chef.model.find({
-				name: "Madhavi"
-			})
+			let chefs = await Chef.model.find({})
 
 			allDishes = JSON.parse(JSON.stringify(allDishes))
 			// data = JSON.parse(JSON.stringify(data))
