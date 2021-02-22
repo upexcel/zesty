@@ -63,7 +63,7 @@ module.exports = {
 
 			allDishes = JSON.parse(JSON.stringify(allDishes))
 			// data = JSON.parse(JSON.stringify(data))
-			let daysMeal = ["Sunday_Breakfast", "Sunday_Lunch", "Sunday_dinner", "Monday_Breakfast", "Monday_Lunch", "Monday_Dinner", "Tuesday_Breakfast", "Tuesday_Lunch", "Tuesday_Dinner", "Wednesday_Breakfast", "Wednesday_Lunch", "Wednesday_Dinner", "Thursday_Breakfast", "Thursday_Lunch", "Thursday_Dinner", "Friday_Breakfast", "Friday_Lunch", "Friday_Dinner", "Saturday_Breakfast", "Saturday_Lunch", "Saturday_Dinner"]
+			let daysMeal = ["Sunday_Breakfast", "Sunday_Lunch", "Sunday_Dinner", "Monday_Breakfast", "Monday_Lunch", "Monday_Dinner", "Tuesday_Breakfast", "Tuesday_Lunch", "Tuesday_Dinner", "Wednesday_Breakfast", "Wednesday_Lunch", "Wednesday_Dinner", "Thursday_Breakfast", "Thursday_Lunch", "Thursday_Dinner", "Friday_Breakfast", "Friday_Lunch", "Friday_Dinner", "Saturday_Breakfast", "Saturday_Lunch", "Saturday_Dinner"]
 
 			for await (let item of chefs) {
 				if (item.email) {
@@ -87,7 +87,7 @@ Your menu for the week is:<br/>`
 								$in: dishIds
 							}
 						}, {
-							"Sunday_dinner": {
+							"Sunday_Dinner": {
 								$in: dishIds
 							}
 						}, {
@@ -172,7 +172,7 @@ Your menu for the week is:<br/>`
 					foodPlanDataByChef = JSON.parse(JSON.stringify(foodPlanDataByChef))
 					let Sunday_Breakfast = ``
 					let Sunday_Lunch = ``
-					let Sunday_dinner = ``
+					let Sunday_Dinner = ``
 					let Monday_Breakfast = ``
 					let Monday_Lunch = ``
 					let Monday_Dinner = ``
@@ -226,11 +226,11 @@ Your menu for the week is:<br/>`
 											}
 											Sunday_Lunch += mailMessageToAdd
 										}
-										if (val === "Sunday_dinner") {
-											if (!Sunday_dinner) {
-												Sunday_dinner = `${daytime[0]}: ${daytime[1]}- `
+										if (val === "Sunday_Dinner") {
+											if (!Sunday_Dinner) {
+												Sunday_Dinner = `${daytime[0]}: ${daytime[1]}- `
 											}
-											Sunday_dinner += mailMessageToAdd
+											Sunday_Dinner += mailMessageToAdd
 										}
 										if (val === "Monday_Breakfast") {
 											if (!Monday_Breakfast) {
@@ -348,7 +348,7 @@ Your menu for the week is:<br/>`
 						// if()
 						mailMessage += Sunday_Breakfast ? `${Sunday_Breakfast.replace("- , ","- ")}<br/>` : ''
 						mailMessage += Sunday_Lunch ? `${Sunday_Lunch.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Sunday_dinner ? `${Sunday_dinner.replace("- , ","- ")}<br/>` : ''
+						mailMessage += Sunday_Dinner ? `${Sunday_Dinner.replace("- , ","- ")}<br/>` : ''
 						mailMessage += Monday_Breakfast ? `${Monday_Breakfast.replace("- , ","- ")}<br/>` : ''
 						mailMessage += Monday_Lunch ? `${Monday_Lunch.replace("- , ","- ")}<br/>` : ''
 						mailMessage += Monday_Dinner ? `${Monday_Dinner.replace("- , ","- ")}<br/>` : ''

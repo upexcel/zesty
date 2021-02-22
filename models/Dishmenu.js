@@ -24,6 +24,7 @@ Dishes.add({
     make_duplicate: { type: Types.Boolean },
     deep_fried: {type: Types.Select, options: 'yes, no', index: true },
     side_dish: { type: Types.Relationship, ref: 'side_dish', many: true, index: true },
+    standard_meal: { type: Types.Relationship, ref: 'side_dish', many: true, index: true }
 });
 
 

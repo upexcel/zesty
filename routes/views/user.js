@@ -739,14 +739,7 @@ module.exports = {
                     Dinner: []
                 };
             }
-            
-			let meallength = req.body.mealType.length;
-			let newlength = meallength * 2;
-			let daylength = daysNames.length;
-			let percentage = parseInt((15 / 100) * (daylength * newlength));
-			if (percentage == 0) {
-				percentage = 1;
-			}
+
 			async function listfood(food, type, completeDetail, daysDetails) {
 				for await (let value of food) {
 					let count = 0;
@@ -777,7 +770,7 @@ module.exports = {
 
 			for (let day of selectedday) {
                 let numberOfItems = completeDetail[`${day}`].Breakfast.length;
-				completeDetail[`${day}`].Breakfast.splice(2, numberOfItems);
+				completeDetail[`${day}`].Breakfast.splice(1, numberOfItems);
 			}
 			for (let day of selectedday) {
 				// console.log(day);
@@ -800,10 +793,10 @@ module.exports = {
 			for (let day of selectedday) {
                 let numberOfItems2 = completeDetail[`${day}`].Breakfast.length;
                 // console.log(numberOfItems2,"============111111111")
-                completeDetail[`${day}`].Breakfast.splice(2, numberOfItems2);
+                completeDetail[`${day}`].Breakfast.splice(1, numberOfItems2);
                 
                 let numberOfItems3 = completeDetail[`${day}`].Lunch.length;
-                completeDetail[`${day}`].Lunch.splice(2, numberOfItems3);
+                completeDetail[`${day}`].Lunch.splice(1, numberOfItems3);
 			}
 			for (let day of selectedday) {
 				for await (let eachitem of completeDetail[`${day}`].Breakfast) {
@@ -836,26 +829,26 @@ module.exports = {
 			await listfood(dinner, 'dinner', completeDetail, daysDetails);
 			for (let day of selectedday) {
 				let numberOfItems3 = completeDetail[`${day}`].Dinner.length;
-				completeDetail[`${day}`].Dinner.splice(2, numberOfItems3);
+				completeDetail[`${day}`].Dinner.splice(1, numberOfItems3);
 			}
 			for (let day of selectedday) {
 				if (req.body.mealType.includes("Breakfast")) {
 					pushPreferredIngredientDish("Breakfast", completeDetail[`${day}`].Breakfast, preferredIngredientsDishesFinal, req.body.breakfast_primary_ingredient)
-                    if(completeDetail[`${day}`].Breakfast.length!==2){
+                    if(completeDetail[`${day}`].Breakfast.length!==1){
                         pushPreferredIngredientDish("Breakfast", completeDetail[`${day}`].Breakfast, preferredIngredientsDishesFinal, req.body.breakfast_primary_ingredient)
                     }
                     console.log(preferredIngredientsDishesFinal.length)
 				}
 				if (req.body.mealType.includes("Lunch")) {
 					pushPreferredIngredientDish("Lunch", completeDetail[`${day}`].Lunch, preferredIngredientsDishesFinal, req.body.lunch_primary_ingredient)
-                    if(completeDetail[`${day}`].Lunch.length!==2){
+                    if(completeDetail[`${day}`].Lunch.length!==1){
                         pushPreferredIngredientDish("Lunch", completeDetail[`${day}`].Lunch, preferredIngredientsDishesFinal, req.body.lunch_primary_ingredient)
                     }
                     console.log(preferredIngredientsDishesFinal.length)
 				}
 				if (req.body.mealType.includes("Dinner")) {
                     pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal, req.body.dinner_primary_ingredient)
-                    if(completeDetail[`${day}`].Dinner.length!==2){
+                    if(completeDetail[`${day}`].Dinner.length!==1){
                         pushPreferredIngredientDish("Dinner", completeDetail[`${day}`].Dinner, preferredIngredientsDishesFinal, req.body.dinner_primary_ingredient)
                     }
 					console.log(preferredIngredientsDishesFinal.length)
@@ -893,7 +886,7 @@ module.exports = {
                                 return val._id == dataToInsert._id
                             })
                             if (!findData) {
-                                if (data.length >= 2) {
+                                if (data.length >= 1) {
                                     data.splice(0, 1)
                                     data.push(dataToInsert)
                                     preferredIngredientsDishesFinal.splice(foundIndex, 1)

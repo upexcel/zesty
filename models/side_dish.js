@@ -6,6 +6,9 @@ let side_dish = new keystone.List('side_dish');
 side_dish.add({
 	name: {
 		type: String
+	},
+	default_count: {
+		type: Number
 	}
 });
 
