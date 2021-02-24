@@ -4,6 +4,7 @@ let keystone = require('keystone');
 let foodplans = keystone.list('Foodplan');
 let dishes = keystone.list('Dishes');
 let Chef = keystone.list('Chef');
+let users = keystone.list('User');
 
 module.exports = {
 	newemailservice: async (link, email, subject) => {
@@ -374,6 +375,90 @@ Your menu for the week is:<br/>`
 			return "data";
 		} catch (err) {
 			console.log(err)
+		}
+	},
+	previousFoodPlanUpdate: async () => {
+		let allUsers = await users.model.find({}).lean();
+		let upcomingSunday = new Date();
+		upcomingSunday = upcomingSunday.setDate(
+			upcomingSunday.getDate() + ((0 - 1 - upcomingSunday.getDay() + 7) % 7) + 1
+		);
+		upcomingSunday = new Date(upcomingSunday);
+		for (let userData of allUsers) {
+			let foodPlanDataExist = await foodplans.model
+				.findOne({
+					user: userData._id,
+					enddate: {
+						$gte: upcomingSunday,
+					},
+				})
+				.lean();
+			if (!foodPlanDataExist) {
+				let foodPlanDataByChef = await foodplans.model
+					.findOne({
+						user: userData._id,
+						enddate: {
+							$lt: upcomingSunday,
+						},
+					})
+					.lean();
+				if (foodPlanDataByChef) {
+					let nextMonday = new Date();
+					nextMonday = nextMonday.setDate(
+						nextMonday.getDate() + ((1 + 7 - nextMonday.getDay()) % 7)
+					);
+					nextMonday = new Date(nextMonday);
+					let UniqueMonday = new Date();
+					UniqueMonday = UniqueMonday.setDate(
+						UniqueMonday.getDate() + ((1 + 7 - UniqueMonday.getDay()) % 7)
+					);
+					let nextSaturday = new Date(UniqueMonday);
+					nextSaturday = nextSaturday.setDate(
+						nextSaturday.getDate() + ((6 + 7 - nextSaturday.getDay()) % 7)
+					);
+					nextSaturday = new Date(nextSaturday);
+					console.log(nextMonday);
+					console.log(nextSaturday);
+					let saveObject = {
+						user: foodPlanDataByChef.user,
+						foodDetails: foodPlanDataByChef.foodDetails,
+						Breakfast_Time_Interval: foodPlanDataByChef.Breakfast_Time_Interval,
+						Lunch_Time_Interval: foodPlanDataByChef.Lunch_Time_Interval,
+						Dinner_Time_Interval: foodPlanDataByChef.Dinner_Time_Interval,
+						startdate: nextMonday,
+						enddate: nextSaturday,
+						Receiver_Email: foodPlanDataByChef.Receiver_Email,
+						Shipping_Address: foodPlanDataByChef.Shipping_Address,
+						Shipping_State: foodPlanDataByChef.Shipping_State,
+						Monday_Breakfast: foodPlanDataByChef.Monday_Breakfast,
+						Monday_Lunch: foodPlanDataByChef.Monday_Lunch,
+						Monday_Dinner: foodPlanDataByChef.Monday_Dinner,
+						Tuesday_Breakfast: foodPlanDataByChef.Tuesday_Breakfast,
+						Tuesday_Lunch: foodPlanDataByChef.Tuesday_Lunch,
+						Tuesday_Dinner: foodPlanDataByChef.Tuesday_Dinner,
+						Wednesday_Breakfast: foodPlanDataByChef.Wednesday_Breakfast,
+						Wednesday_Lunch: foodPlanDataByChef.Wednesday_Lunch,
+						Wednesday_Dinner: foodPlanDataByChef.Wednesday_Dinner,
+						Thursday_Breakfast: foodPlanDataByChef.Thursday_Breakfast,
+						Thursday_Lunch: foodPlanDataByChef.Thursday_Lunch,
+						Thursday_Dinner: foodPlanDataByChef.Thursday_Dinner,
+						Friday_Breakfast: foodPlanDataByChef.Friday_Breakfast,
+						Friday_Lunch: foodPlanDataByChef.Friday_Lunch,
+						Friday_Dinner: foodPlanDataByChef.Friday_Lunch,
+						Receiver_Name: foodPlanDataByChef.Friday_Dinner,
+						Days: foodPlanDataByChef.Days,
+						Meal_Timing: foodPlanDataByChef.Meal_Timing,
+						Allergens: foodPlanDataByChef.Allergens,
+						Spice_Level: foodPlanDataByChef.Spice_Level,
+						Meal_Types: foodPlanDataByChef.Meal_Types,
+						Secondary_Cuisine: foodPlanDataByChef.Secondary_Cuisine,
+						Primary_Cuisine: foodPlanDataByChef.Primary_Cuisine,
+						name: foodPlanDataByChef.name,
+					};
+
+					let createNext = await foodplans.model.create(saveObject);
+				}
+			}
 		}
 	}
 }

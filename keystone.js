@@ -67,6 +67,14 @@ var chefMailForNextWeek = new CronJob('35 13 * * 6', function () {
 }, null, true, 'Asia/Kolkata');
 chefMailForNextWeek.start();
 
+var previousFoodPlanUpdate = new CronJob('25 13 * * 6', function () {
+	service.previousFoodPlanUpdate().then((data) => {
+	}).catch(err => {
+		console.log(err)
+	});
+}, null, true, 'Asia/Kolkata');
+previousFoodPlanUpdate.start();
+
 // Configure the navigation bar in Keystone's Admin UI
 keystone.set('nav', {
 	// posts: ['posts', 'post-categories'],
