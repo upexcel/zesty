@@ -5,6 +5,7 @@ let foodplans = keystone.list('Foodplan');
 let dishes = keystone.list('Dishes');
 let Chef = keystone.list('Chef');
 let users = keystone.list('User');
+let moment = require('moment');
 
 module.exports = {
 	newemailservice: async (link, email, subject) => {
@@ -403,30 +404,20 @@ Your menu for the week is:<br/>`
 					})
 					.lean();
 				if (foodPlanDataByChef) {
-					let nextMonday = new Date();
-					nextMonday = nextMonday.setDate(
-						nextMonday.getDate() + ((1 + 7 - nextMonday.getDay()) % 7)
-					);
-					nextMonday = new Date(nextMonday);
-					let UniqueMonday = new Date();
-					UniqueMonday = UniqueMonday.setDate(
-						UniqueMonday.getDate() + ((1 + 7 - UniqueMonday.getDay()) % 7)
-					);
-					let nextSaturday = new Date(UniqueMonday);
-					nextSaturday = nextSaturday.setDate(
-						nextSaturday.getDate() + ((6 + 7 - nextSaturday.getDay()) % 7)
-					);
-					nextSaturday = new Date(nextSaturday);
-					console.log(nextMonday);
-					console.log(nextSaturday);
+					let today = new Date();
+					let daynumber = today.getDay();
+					let startdate = (7 - daynumber);
+					let enddate = (7 - daynumber) + 6;
+					startday = moment(today, "YYYY-MM-DD").add('days', startdate).set("hour", 0).set("minute", 0).set("seconds", 0);
+					endday = moment(today, "YYYY-MM-DD").add('days', enddate).set("hour", 0).set("minute", 0).set("seconds", 0);
 					let saveObject = {
 						user: foodPlanDataByChef.user,
 						foodDetails: foodPlanDataByChef.foodDetails,
 						Breakfast_Time_Interval: foodPlanDataByChef.Breakfast_Time_Interval,
 						Lunch_Time_Interval: foodPlanDataByChef.Lunch_Time_Interval,
 						Dinner_Time_Interval: foodPlanDataByChef.Dinner_Time_Interval,
-						startdate: nextMonday,
-						enddate: nextSaturday,
+						startdate: startday,
+						enddate: endday,
 						Receiver_Email: foodPlanDataByChef.Receiver_Email,
 						Shipping_Address: foodPlanDataByChef.Shipping_Address,
 						Shipping_State: foodPlanDataByChef.Shipping_State,
