@@ -59,7 +59,7 @@ var job = new CronJob('30 13 * * 5', function () {
 }, null, true, 'Asia/Kolkata');
 job.start();
 
-var chefMailForNextWeek = new CronJob('0 12 * * 2', function () {
+var chefMailForNextWeek = new CronJob('30 13 * * 6', function () {
 	service.chefMailForNextWeek().then((data) => {
 	}).catch(err => {
 		console.log(err)
