@@ -22,6 +22,7 @@ const { indexOf } = require('lodash');
 const cloudinary = require('cloudinary').v2;
 var CronJob = require('cron').CronJob;
 const axios = require('axios');
+const Handlebars = require("handlebars");
 
 
 
@@ -1222,10 +1223,12 @@ module.exports = {
                 let email = element.email;
                 let html = `Hello, Select delicious food on Zesty to kill your hunger.
                 you can select your next week's menu from here -
-                ${process.env.webBaseUrl}/subscribe?_id=${element._id}`
+                <a href={{link}}> {{link}} </a>`
                 let subject = "Get Delocious Dishes."
                 console.log(`${process.env.webBaseUrl}/subscribe?_id=${element._id}`,"a-s-as-as-as-as-as-as-")
-                passverify.reminderservice(html, email, subject);
+                const template = Handlebars.compile(html);
+                let mailHtml = template({link: `${process.env.webBaseUrl}/subscribe?_id=${element._id}`})
+                passverify.reminderservice(mailHtml, email, subject);
             }
         } catch (error) {
             res.status(500).json({ error: 1, message: error });
