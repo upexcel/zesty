@@ -59,7 +59,7 @@ var job = new CronJob('30 13 * * 5', function () {
 }, null, true, 'Asia/Kolkata');
 job.start();
 
-var chefMailForNextWeek = new CronJob('35 13 * * 6', function () {
+var chefMailForNextWeek = new CronJob('35 1 * * 6', function () {
 	service.chefMailForNextWeek().then((data) => {
 	}).catch(err => {
 		console.log(err)
@@ -67,7 +67,7 @@ var chefMailForNextWeek = new CronJob('35 13 * * 6', function () {
 }, null, true, 'Asia/Kolkata');
 chefMailForNextWeek.start();
 
-var previousFoodPlanUpdate = new CronJob('25 13 * * 6', function () {
+var previousFoodPlanUpdate = new CronJob('20 1 * * 6', function () {
 	service.previousFoodPlanUpdate().then((data) => {
 	}).catch(err => {
 		console.log(err)
