@@ -170,35 +170,41 @@ Your menu for the week is:<br/>`
 						}
 					})
 					foodPlanDataByChef = JSON.parse(JSON.stringify(foodPlanDataByChef))
-					let Sunday_Breakfast = ``
-					let Sunday_Lunch = ``
-					let Sunday_Dinner = ``
-					let Monday_Breakfast = ``
-					let Monday_Lunch = ``
-					let Monday_Dinner = ``
-					let Tuesday_Breakfast = ``
-					let Tuesday_Lunch = ``
-					let Tuesday_Dinner = ``
-					let Wednesday_Breakfast = ``
-					let Wednesday_Lunch = ``
-					let Wednesday_Dinner = ``
-					let Thursday_Breakfast = ``
-					let Thursday_Lunch = ``
-					let Thursday_Dinner = ``
-					let Friday_Breakfast = ``
-					let Friday_Lunch = ``
-					let Friday_Dinner = ``
-					let Saturday_Breakfast = ``
-					let Saturday_Lunch = ``
-					let Saturday_Dinner = ``
-					if (Sunday_Breakfast) {
-						console.log("1212121212121212")
-					} else {
-						console.log("121211sas1212121212")
-					}
-					
+					let statement = '';
 					if (foodPlanDataByChef.length) {
 						for await (let foodPlan of foodPlanDataByChef) {
+							console.log(foodPlan._id,'_ID')
+							let Customer_Name = ''
+							let Sunday_Breakfast = ``
+							let Sunday_Lunch = ``
+							let Sunday_Dinner = ``
+							let Monday_Breakfast = ``
+							let Monday_Lunch = ``
+							let Monday_Dinner = ``
+							let Tuesday_Breakfast = ``
+							let Tuesday_Lunch = ``
+							let Tuesday_Dinner = ``
+							let Wednesday_Breakfast = ``
+							let Wednesday_Lunch = ``
+							let Wednesday_Dinner = ``
+							let Thursday_Breakfast = ``
+							let Thursday_Lunch = ``
+							let Thursday_Dinner = ``
+							let Friday_Breakfast = ``
+							let Friday_Lunch = ``
+							let Friday_Dinner = ``
+							let Saturday_Breakfast = ``
+							let Saturday_Lunch = ``
+							let Saturday_Dinner = ``
+							let foodPlanMessage = '';
+							if (Sunday_Breakfast) {
+								console.log("1212121212121212")
+							} else {
+								console.log("121211sas1212121212")
+							}
+							
+							console.log(foodPlan,'FOOD PLAN')
+							Customer_Name = `${foodPlan.name.first} ${foodPlan.name.last}`
 							for await (let val of daysMeal) {
 								if (foodPlan[val]) {
 									console.log(allDishes.length, foodPlan[val], "009900899")
@@ -210,7 +216,7 @@ Your menu for the week is:<br/>`
 										console.log(dish.chef.name, item.name, "jjjjjjjjjjjjjjjjjjj")
 										let daytime = val.split('_')
 										// if
-										let mailMessageToAdd = `, ${dish.name}=> ${foodPlan.Spice_Level[0]} spicy`
+										let mailMessageToAdd = `${dish.name}=> ${foodPlan.Spice_Level[0]} spicy`
 										if (foodPlan.Allergens.length && foodPlan.Allergens[0] != "Nothing") {
 											mailMessageToAdd += ` and ${foodPlan.Allergens.toString()} allergy`
 										}
@@ -344,33 +350,34 @@ Your menu for the week is:<br/>`
 									}
 								}
 							}
+							foodPlanMessage += Customer_Name ? `Customer Name: <b>${Customer_Name}</b><br/><br/>` : ''
+							foodPlanMessage += Sunday_Breakfast ? `${Sunday_Breakfast}<br/>` : ''
+							foodPlanMessage += Sunday_Lunch ? `${Sunday_Lunch}<br/>` : ''
+							foodPlanMessage += Monday_Lunch ? `${Monday_Lunch}<br/>` : ''
+							foodPlanMessage += Monday_Dinner ? `${Monday_Dinner}<br/>` : ''
+							foodPlanMessage += Tuesday_Breakfast ? `${Tuesday_Breakfast}<br/>` : ''
+							foodPlanMessage += Monday_Breakfast ? `${Monday_Breakfast}<br/>` : ''
+							foodPlanMessage += Tuesday_Lunch ? `${Tuesday_Lunch}<br/>` : ''
+							foodPlanMessage += Sunday_Dinner ? `${Sunday_Dinner}<br/>` : ''
+							foodPlanMessage += Tuesday_Dinner ? `${Tuesday_Dinner}<br/>` : ''
+							foodPlanMessage += Wednesday_Breakfast ? `${Wednesday_Breakfast}<br/>` : ''
+							foodPlanMessage += Wednesday_Lunch ? `${Wednesday_Lunch}<br/>` : ''
+							foodPlanMessage += Wednesday_Dinner ? `${Wednesday_Dinner}<br/>` : ''
+							foodPlanMessage += Thursday_Breakfast ? `${Thursday_Breakfast}<br/>` : ''
+							foodPlanMessage += Thursday_Lunch ? `${Thursday_Lunch}<br/>` : ''
+							foodPlanMessage += Thursday_Dinner ? `${Thursday_Dinner}<br/>` : ''
+							foodPlanMessage += Friday_Breakfast ? `${Friday_Breakfast}<br/>` : ''
+							foodPlanMessage += Friday_Lunch ? `${Friday_Lunch}<br/>` : ''
+							foodPlanMessage += Friday_Dinner ? `${Friday_Dinner}<br/>` : ''
+							foodPlanMessage += Saturday_Breakfast ? `${Saturday_Breakfast}<br/>` : ''
+							foodPlanMessage += Saturday_Lunch ? `${Saturday_Lunch}<br/>` : ''
+							foodPlanMessage += Saturday_Dinner ? `${Saturday_Dinner}` : ''
+							statement = statement + foodPlanMessage
 						}
-						// if()
-						mailMessage += Sunday_Breakfast ? `${Sunday_Breakfast.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Sunday_Lunch ? `${Sunday_Lunch.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Sunday_Dinner ? `${Sunday_Dinner.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Monday_Breakfast ? `${Monday_Breakfast.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Monday_Lunch ? `${Monday_Lunch.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Monday_Dinner ? `${Monday_Dinner.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Tuesday_Breakfast ? `${Tuesday_Breakfast.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Tuesday_Lunch ? `${Tuesday_Lunch.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Tuesday_Dinner ? `${Tuesday_Dinner.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Wednesday_Breakfast ? `${Wednesday_Breakfast.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Wednesday_Lunch ? `${Wednesday_Lunch.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Wednesday_Dinner ? `${Wednesday_Dinner.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Thursday_Breakfast ? `${Thursday_Breakfast.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Thursday_Lunch ? `${Thursday_Lunch.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Thursday_Dinner ? `${Thursday_Dinner.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Friday_Breakfast ? `${Friday_Breakfast.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Friday_Lunch ? `${Friday_Lunch.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Friday_Dinner ? `${Friday_Dinner.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Saturday_Breakfast ? `${Saturday_Breakfast.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Saturday_Lunch ? `${Saturday_Lunch.replace("- , ","- ")}<br/>` : ''
-						mailMessage += Saturday_Dinner ? `${Saturday_Dinner.replace("- , ","- ")}` : ''
-						console.log(Saturday_Dinner, "asjalsaklsalksjalskj")
-						let mailSendData = await module.exports.reminderservice(mailMessage, item.email, "Dishes for the next week");
 					}
-					console.log(mailMessage, "asasaasasasasas")
+					let finalMessage = `${mailMessage}<br/>${statement}`
+					console.log(finalMessage,'FINAL MESSAGE')
+					let mailSendData = await module.exports.reminderservice(finalMessage, item.email, "Dishes for the next week");
 				}
 			}
 			return "data";
@@ -385,6 +392,9 @@ Your menu for the week is:<br/>`
 			upcomingSunday.getDate() + ((0 - 1 - upcomingSunday.getDay() + 7) % 7) + 1
 		);
 		upcomingSunday = new Date(upcomingSunday);
+		console.log(upcomingSunday,'UPCOMING SUNDAY')
+		let lastTolastweekSaturday = moment().date(-8).format()
+		console.log(new Date(lastTolastweekSaturday),'LAST TO LAST WEEK SATURDAY')
 		for (let userData of allUsers) {
 			let foodPlanDataExist = await foodplans.model
 				.findOne({
@@ -392,18 +402,20 @@ Your menu for the week is:<br/>`
 					enddate: {
 						$gte: upcomingSunday,
 					},
-				})
-				.lean();
-			if (!foodPlanDataExist) {
+				}).lean();
+				if (!foodPlanDataExist) {
+				console.log('QQQQQQQQQQQQQQQQQ<')
 				let foodPlanDataByChef = await foodplans.model
 					.findOne({
 						user: userData._id,
 						enddate: {
-							$lt: upcomingSunday,
+							$lt: upcomingSunday,	
+							$gt: new Date (lastTolastweekSaturday)			 
 						},
 					})
 					.lean();
 				if (foodPlanDataByChef) {
+					console.log(',,,,,,,,,,,,,,,,,,,,,,')
 					let today = new Date();
 					let daynumber = today.getDay();
 					let startdate = (7 - daynumber);
@@ -413,6 +425,8 @@ Your menu for the week is:<br/>`
 					let saveObject = {
 						user: foodPlanDataByChef.user,
 						foodDetails: foodPlanDataByChef.foodDetails,
+						adult_count: foodPlanDataByChef.adult_count,
+						children_count : foodPlanDataByChef.children_count,
 						Breakfast_Time_Interval: foodPlanDataByChef.Breakfast_Time_Interval,
 						Lunch_Time_Interval: foodPlanDataByChef.Lunch_Time_Interval,
 						Dinner_Time_Interval: foodPlanDataByChef.Dinner_Time_Interval,
@@ -421,22 +435,55 @@ Your menu for the week is:<br/>`
 						Receiver_Email: foodPlanDataByChef.Receiver_Email,
 						Shipping_Address: foodPlanDataByChef.Shipping_Address,
 						Shipping_State: foodPlanDataByChef.Shipping_State,
+						mobile : foodPlanDataByChef.mobile,
+						other_breakfast_choices: foodPlanDataByChef.other_breakfast_choices,
+						other_lunch_choices: foodPlanDataByChef.other_lunch_choices,
+						other_dinner_choices: foodPlanDataByChef.other_dinner_choices,
+						Sunday_Breakfast: foodPlanDataByChef.Sunday_Breakfast,
+						Sunday_Breakfast_Chef: foodPlanDataByChef.Sunday_Breakfast_Chef,
+						Sunday_Lunch: foodPlanDataByChef.Sunday_Lunch,
+						Sunday_Lunch_Chef: foodPlanDataByChef.Sunday_Lunch_Chef,
+						Sunday_Dinner: foodPlanDataByChef.Sunday_Dinner,
+						Sunday_dinner_Chef: foodPlanDataByChef.Sunday_dinner_Chef,
 						Monday_Breakfast: foodPlanDataByChef.Monday_Breakfast,
+						Monday_Breakfast_Chef: foodPlanDataByChef.Monday_Breakfast_Chef,
 						Monday_Lunch: foodPlanDataByChef.Monday_Lunch,
+						Monday_Lunch_Chef: foodPlanDataByChef.Monday_Lunch_Chef,
 						Monday_Dinner: foodPlanDataByChef.Monday_Dinner,
+						Monday_Dinner_Chef: foodPlanDataByChef.Monday_Dinner_Chef,
 						Tuesday_Breakfast: foodPlanDataByChef.Tuesday_Breakfast,
+						Tuesday_Breakfast_Chef: foodPlanDataByChef.Tuesday_Breakfast_Chef,
 						Tuesday_Lunch: foodPlanDataByChef.Tuesday_Lunch,
+						Tuesday_Lunch_Chef: foodPlanDataByChef.Tuesday_Lunch_Chef,
 						Tuesday_Dinner: foodPlanDataByChef.Tuesday_Dinner,
+						Tuesday_Dinner_Chef: foodPlanDataByChef.Tuesday_Dinner_Chef,
 						Wednesday_Breakfast: foodPlanDataByChef.Wednesday_Breakfast,
+						Wednesday_Breakfast_Chef: foodPlanDataByChef.Wednesday_Breakfast_Chef,
 						Wednesday_Lunch: foodPlanDataByChef.Wednesday_Lunch,
+						Wednesday_Lunch_Chef: foodPlanDataByChef.Wednesday_Lunch_Chef,
 						Wednesday_Dinner: foodPlanDataByChef.Wednesday_Dinner,
+						Wednesday_Dinner_Chef: foodPlanDataByChef.Wednesday_Dinner_Chef,
 						Thursday_Breakfast: foodPlanDataByChef.Thursday_Breakfast,
+						Thursday_Breakfast_Chef: foodPlanDataByChef.Thursday_Breakfast_Chef,
 						Thursday_Lunch: foodPlanDataByChef.Thursday_Lunch,
+						Thursday_Lunch_Chef: foodPlanDataByChef.Thursday_Lunch_Chef,
 						Thursday_Dinner: foodPlanDataByChef.Thursday_Dinner,
+						Thursday_Dinner_Chef: foodPlanDataByChef.Thursday_Dinner_Chef,
 						Friday_Breakfast: foodPlanDataByChef.Friday_Breakfast,
+						Friday_Breakfast_Chef: foodPlanDataByChef.Friday_Breakfast_Chef,
 						Friday_Lunch: foodPlanDataByChef.Friday_Lunch,
+						Friday_Lunch_Chef: foodPlanDataByChef.Friday_Lunch_Chef,
 						Friday_Dinner: foodPlanDataByChef.Friday_Lunch,
+						Friday_Dinner_Chef: foodPlanDataByChef.Friday_Dinner_Chef,
+						Saturday_Breakfast: foodPlanDataByChef.Saturday_Breakfast,
+						Saturday_Breakfast_Chef: foodPlanDataByChef.Saturday_Breakfast_Chef,
+						Saturday_Lunch: foodPlanDataByChef.Saturday_Breakfast,
+						Saturday_Lunch_Chef: foodPlanDataByChef.Saturday_Lunch_Chef,
+						Saturday_Dinner: foodPlanDataByChef.Saturday_Breakfast,
+						Saturday_Dinner_Chef: foodPlanDataByChef.Saturday_Dinner_Chef,
 						Receiver_Name: foodPlanDataByChef.Friday_Dinner,
+						Order_For: foodPlanDataByChef.Order_For,
+						Other_Mentions: foodPlanDataByChef.Other_Mentions,
 						Days: foodPlanDataByChef.Days,
 						Meal_Timing: foodPlanDataByChef.Meal_Timing,
 						Allergens: foodPlanDataByChef.Allergens,
