@@ -30,7 +30,7 @@ Foodplan.add({
     Sunday_Lunch: { type:Types.Relationship, ref: 'Dishes'},
     Sunday_Lunch_Chef: { type:Types.Relationship, ref: 'Chef'},
     Sunday_Dinner: { type:Types.Relationship, ref: 'Dishes'},
-    Sunday_dinner_Chef: { type:Types.Relationship, ref: 'Chef'},
+    Sunday_Dinner_Chef: { type:Types.Relationship, ref: 'Chef'},
     Monday_Breakfast: { type:Types.Relationship, ref: 'Dishes'},
     Monday_Breakfast_Chef: { type:Types.Relationship, ref: 'Chef'},
     Monday_Lunch: { type:Types.Relationship, ref: 'Dishes'},

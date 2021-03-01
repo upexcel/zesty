@@ -444,7 +444,7 @@ Your menu for the week is:<br/>`
 						Sunday_Lunch: foodPlanDataByChef.Sunday_Lunch,
 						Sunday_Lunch_Chef: foodPlanDataByChef.Sunday_Lunch_Chef,
 						Sunday_Dinner: foodPlanDataByChef.Sunday_Dinner,
-						Sunday_dinner_Chef: foodPlanDataByChef.Sunday_dinner_Chef,
+						Sunday_Dinner_Chef: foodPlanDataByChef.Sunday_Dinner_Chef,
 						Monday_Breakfast: foodPlanDataByChef.Monday_Breakfast,
 						Monday_Breakfast_Chef: foodPlanDataByChef.Monday_Breakfast_Chef,
 						Monday_Lunch: foodPlanDataByChef.Monday_Lunch,
