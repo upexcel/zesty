@@ -371,7 +371,7 @@ Your menu for the week is:<br/>`
 							foodPlanMessage += Friday_Dinner ? `${Friday_Dinner}<br/>` : ''
 							foodPlanMessage += Saturday_Breakfast ? `${Saturday_Breakfast}<br/>` : ''
 							foodPlanMessage += Saturday_Lunch ? `${Saturday_Lunch}<br/>` : ''
-							foodPlanMessage += Saturday_Dinner ? `${Saturday_Dinner}` : ''
+							foodPlanMessage += Saturday_Dinner ? `${Saturday_Dinner}<br/>` : ''
 							statement = statement + foodPlanMessage
 						}
 					}
