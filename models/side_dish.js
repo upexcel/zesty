@@ -7,6 +7,9 @@ side_dish.add({
 	name: {
 		type: String
 	},
+	price: {
+		type: Number
+	},
 	default_count: {
 		type: Number
 	}

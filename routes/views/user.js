@@ -6,6 +6,7 @@ let users = keystone.list('User');
 // let subscriptions = keystone.list('Subscription');
 // let carts = keystone.list('Cart');
 let dishes = keystone.list('Dishes');
+let side_dish = keystone.list('side_dish')
 let allergens = keystone.list('Allergens');
 let primary_ingredeints = keystone.list('primary_ingredeints');
 let availability = keystone.list('Availability');
@@ -49,6 +50,7 @@ async function updateFood(req) {
         let dataToReturn = {}
         let text = '';
         let foodDayDetails = req.body.foodDetails;
+        let extraDetails = req.body.ExtrafoodDayDetails;
         for(let item in foodDayDetails){
             if(foodDayDetails[`${item}`]){
                 if (foodDayDetails[`${item}`].Breakfast.length) {
@@ -56,7 +58,31 @@ async function updateFood(req) {
                     let daytextbreakfast = [`${item}`] + "_Breakfast- " + founditem.name;
                     itemToUpdate1 = [`${item}`] + "_Breakfast";
                     let chefForBreakFast = [`${item}`] + "_Breakfast_Chef";
-                    text = text + "\n" + daytextbreakfast;
+                    if (text != '') {
+                        text += "<br/>"
+                    }
+                    text = text + "</br>" + daytextbreakfast;
+                    
+                    let sideDishText = []
+                    let sideDishId = []
+                    if (extraDetails[item] && extraDetails[item].Breakfast && extraDetails[item].Breakfast.length){
+                        let details = await side_dish.model.find({_id : {$in : extraDetails[item].Breakfast }})
+                        for (let data of details) {
+                            if (data) {
+                                sideDishId.push(data._id)
+                                sideDishText.push(data.name)
+                            }
+                        }    
+                    }
+                    
+                    if (sideDishText.length) {
+                        
+                        text = text + "<br/>" + `${item}_BreakFast_Extra_Dish-${sideDishText.join()}`
+                    } 
+                    if (sideDishId.length) {
+                        dataToReturn[`${itemToUpdate1}_Extra`] = sideDishId
+                    }
+
                     dataToReturn[`${itemToUpdate1}`]=foodDayDetails[`${item}`].Breakfast[0]
                     dataToReturn[`${chefForBreakFast}`]=founditem.chef
                 }
@@ -65,7 +91,27 @@ async function updateFood(req) {
                     let daytextlunch = [`${item}`] + "_Lunch- " + founditem.name;
                     itemToUpdate2 = [`${item}`] + "_Lunch";
                     let chefForLunch = [`${item}`] + "_Lunch_Chef";
-                    text = text + "\n" + daytextlunch;
+                    text = text + "<br/>" + daytextlunch;
+
+                    let sideDishText = []
+                    let sideDishId = []
+                    if (extraDetails[item] && extraDetails[item].Lunch && extraDetails[item].Lunch.length){
+                        let details = await side_dish.model.find({_id : {$in : extraDetails[item].Lunch }})
+                        for (let data of details) {
+                            if (data) {
+                                sideDishId.push(data._id)
+                                sideDishText.push(data.name)
+                            }
+                        }    
+                    }
+                    
+                    if (sideDishText.length) {
+                        text = text + "<br/>" + `${item}_Lunch_Extra_Dish-${sideDishText.join()}`
+                    } 
+                    if (sideDishId.length) {
+                        dataToReturn[`${itemToUpdate2}_Extra`] = sideDishId
+                    }
+
                     dataToReturn[`${chefForLunch}`]=founditem.chef
                     dataToReturn[`${itemToUpdate2}`]=foodDayDetails[`${item}`].Lunch[0] 
                 }
@@ -74,7 +120,27 @@ async function updateFood(req) {
                     let daytextdinner = [`${item}`] + "_Dinner- " +founditem.name;
                     let chefForDinner = [`${item}`] + "_Dinner_Chef";
                     itemToUpdate3 = [`${item}`] + "_Dinner";
-                    text = text + "\n" + daytextdinner;
+                    text = text + "<br/>" + daytextdinner;
+
+                    let sideDishText = []
+                    let sideDishId = []
+                    if (extraDetails[item] && extraDetails[item].Dinner && extraDetails[item].Dinner.length){
+                        let details = await side_dish.model.find({_id : {$in : extraDetails[item].Dinner }})
+                        for (let data of details) {
+                            if (data) {
+                                sideDishId.push(data._id)
+                                sideDishText.push(data.name)
+                            }
+                        }    
+                    }
+                    
+                    if (sideDishText.length) {
+                        text = text + "<br/>" + `${item}_Dinner_Extra_Dish-${sideDishText.join()}`
+                    } 
+                    if (sideDishId.length) {
+                        dataToReturn[`${itemToUpdate3}_Extra`] = sideDishId
+                    }
+
                     dataToReturn[`${chefForDinner}`]=founditem.chef
                     dataToReturn[`${itemToUpdate3}`]=foodDayDetails[`${item}`].Dinner[0]
                 }
@@ -649,7 +715,7 @@ module.exports = {
 				availability: {
 					$in: availableDetails
 				}
-			}).populate("available_days").populate("availability").lean();
+			}).populate("available_days").populate("availability").populate("side_dish").lean();
 			console.log(finalfood.length, "--aa--aa--aa--aa--aa")
 			if (req.body.mealType.includes("Breakfast")) {
 				let type_of_food_id = await typeOfFood.model.findOne({
@@ -680,7 +746,7 @@ module.exports = {
 						availability: {
 							$in: availableDetails
 						}
-					}).populate("available_days").populate("availability").lean();
+					}).populate("available_days").populate("availability").populate("side_dish").lean();
 					finalfood = [...finalfood, ...continentalDishes]
 				}
 			}
@@ -710,7 +776,7 @@ module.exports = {
 				availability: {
 					$in: availableDetails
 				}
-            }).populate("available_days").populate("availability").lean();
+            }).populate("available_days").populate("availability").populate("side_dish").lean();
             preferredIngredientsDishesFinal = JSON.parse(JSON.stringify(preferredIngredientsDishesFinal))
             preferredIngredientsDishesFinal=preferredIngredientsDishesFinal.sort(() => Math.random() - 0.5)
             console.log(preferredIngredientsDishesFinal.length,"=================11111111111111222222222222222")
@@ -1218,7 +1284,7 @@ module.exports = {
 
     cronsender: async () => {
         try {
-            let data = await users.model.find({});
+            let data = await users.model.find();
             for await (let element of data) {
                 let email = element.email;
                 let html = `Hello, Select delicious food on Zesty to kill your hunger.
