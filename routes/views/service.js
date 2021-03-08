@@ -492,6 +492,27 @@ Your menu for the week is:<br/>`
 						Secondary_Cuisine: foodPlanDataByChef.Secondary_Cuisine,
 						Primary_Cuisine: foodPlanDataByChef.Primary_Cuisine,
 						name: foodPlanDataByChef.name,
+						Sunday_Breakfast_Extra:  foodPlanDataByChef.Sunday_Breakfast_Extra,
+						Sunday_Lunch_Extra: foodPlanDataByChef.Sunday_Lunch_Extra,
+						Sunday_Dinner_Extra: foodPlanDataByChef.Sunday_Dinner_Extra,
+						Monday_Breakfast_Extra:foodPlanDataByChef.Monday_Breakfast_Extra,
+						Monday_Lunch_Extra: foodPlanDataByChef.Monday_Lunch_Extra,
+						Monday_Dinner_Extra: foodPlanDataByChef.Monday_Dinner_Extra,
+						Tuesday_Breakfast_Extra: foodPlanDataByChef.Tuesday_Breakfast_Extra,
+						Tuesday_Lunch_Extra: foodPlanDataByChef.Tuesday_Lunch_Extra,
+						Tuesday_Dinner_Extra:  foodPlanDataByChef.Tuesday_Dinner_Extra,
+						Wednesday_Breakfast_Extra:  foodPlanDataByChef.Wednesday_Breakfast_Extra,
+						Wednesday_Lunch_Extra: foodPlanDataByChef.Wednesday_Lunch_Extra,
+						Wednesday_Dinner_Extra: foodPlanDataByChef.Wednesday_Dinner_Extra,
+						Thursday_Breakfast_Extra:foodPlanDataByChef.Thursday_Breakfast_Extra ,
+						Thursday_Lunch_Extra:  foodPlanDataByChef.Thursday_Lunch_Extra,
+						Thursday_Dinner_Extra:  foodPlanDataByChef.Thursday_Dinner_Extra,
+						Friday_Breakfast_Extra: foodPlanDataByChef.Friday_Breakfast_Extra,
+						Friday_Lunch_Extra: foodPlanDataByChef.Friday_Lunch_Extra,
+						Friday_Dinner_Extra: foodPlanDataByChef.Friday_Dinner_Extra,
+						Saturday_Breakfast_Extra: foodPlanDataByChef.Saturday_Breakfast_Extra,
+						Saturday_Lunch_Extra: foodPlanDataByChef.Saturday_Lunch_Extra,
+						Saturday_Dinner_Extra: foodPlanDataByChef.Saturday_Dinner_Extra
 					};
 
 					let createNext = await foodplans.model.create(saveObject);
