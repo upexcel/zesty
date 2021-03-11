@@ -50,6 +50,7 @@ async function updateFood(req) {
         let dataToReturn = {}
         let text = '';
         let foodDayDetails = req.body.foodDetails;
+        let standardMealDetails = req.body.StandardMealList;
         let extraDetails = req.body.ExtrafoodDayDetails;
         for(let item in foodDayDetails){
             if(foodDayDetails[`${item}`]){
@@ -83,6 +84,26 @@ async function updateFood(req) {
                         dataToReturn[`${itemToUpdate1}_Extra`] = sideDishId
                     }
 
+                    let standardDishText = []
+                    let standardDishId = []
+                    if (standardMealDetails[item] && standardMealDetails[item].Breakfast && standardMealDetails[item].Breakfast.length){
+                        let details = await side_dish.model.find({_id : {$in : standardMealDetails[item].Breakfast }})
+                        for (let data of details) {
+                            if (data) {
+                                standardDishId.push(data._id)
+                                standardDishText.push(data.name)
+                            }
+                        }    
+                    }
+                    
+                    if (standardDishText.length) {
+                        
+                        text = text + "<br/>" + `${item}_BreakFast_Standard_Dish-${standardDishText.join()}`
+                    } 
+                    if (standardDishId.length) {
+                        dataToReturn[`${itemToUpdate1}_Standard`] = standardDishId
+                    }
+
                     dataToReturn[`${itemToUpdate1}`]=foodDayDetails[`${item}`].Breakfast[0]
                     dataToReturn[`${chefForBreakFast}`]=founditem.chef
                 }
@@ -110,6 +131,27 @@ async function updateFood(req) {
                     } 
                     if (sideDishId.length) {
                         dataToReturn[`${itemToUpdate2}_Extra`] = sideDishId
+                    }
+
+
+                    let standardDishText = []
+                    let standardDishId = []
+                    if (standardMealDetails[item] && standardMealDetails[item].Lunch && standardMealDetails[item].Lunch.length){
+                        let details = await side_dish.model.find({_id : {$in : standardMealDetails[item].Lunch }})
+                        for (let data of details) {
+                            if (data) {
+                                standardDishId.push(data._id)
+                                standardDishText.push(data.name)
+                            }
+                        }    
+                    }
+                    
+                    if (standardDishText.length) {
+                        
+                        text = text + "<br/>" + `${item}_Lunch_Standard_Dish-${standardDishText.join()}`
+                    } 
+                    if (standardDishId.length) {
+                        dataToReturn[`${itemToUpdate2}_Standard`] = standardDishId
                     }
 
                     dataToReturn[`${chefForLunch}`]=founditem.chef
@@ -140,6 +182,27 @@ async function updateFood(req) {
                     if (sideDishId.length) {
                         dataToReturn[`${itemToUpdate3}_Extra`] = sideDishId
                     }
+
+                    let standardDishText = []
+                    let standardDishId = []
+                    if (standardMealDetails[item] && standardMealDetails[item].Dinner && standardMealDetails[item].Dinner.length){
+                        let details = await side_dish.model.find({_id : {$in : standardMealDetails[item].Dinner }})
+                        for (let data of details) {
+                            if (data) {
+                                standardDishId.push(data._id)
+                                standardDishText.push(data.name)
+                            }
+                        }    
+                    }
+                    
+                    if (standardDishText.length) {
+                        
+                        text = text + "<br/>" + `${item}_Dinner_Standard_Dish-${standardDishText.join()}`
+                    } 
+                    if (standardDishId.length) {
+                        dataToReturn[`${itemToUpdate3}_Standard`] = standardDishId
+                    }
+                    
 
                     dataToReturn[`${chefForDinner}`]=founditem.chef
                     dataToReturn[`${itemToUpdate3}`]=foodDayDetails[`${item}`].Dinner[0]
@@ -715,7 +778,7 @@ module.exports = {
 				availability: {
 					$in: availableDetails
 				}
-			}).populate("available_days").populate("availability").populate("side_dish").lean();
+			}).populate("available_days").populate("availability").populate('standard_meal').populate("side_dish").lean();
 			console.log(finalfood.length, "--aa--aa--aa--aa--aa")
 			if (req.body.mealType.includes("Breakfast")) {
 				let type_of_food_id = await typeOfFood.model.findOne({
@@ -746,7 +809,7 @@ module.exports = {
 						availability: {
 							$in: availableDetails
 						}
-					}).populate("available_days").populate("availability").populate("side_dish").lean();
+					}).populate("available_days").populate("availability").populate('standard_meal').populate("side_dish").lean();
 					finalfood = [...finalfood, ...continentalDishes]
 				}
 			}
@@ -776,7 +839,7 @@ module.exports = {
 				availability: {
 					$in: availableDetails
 				}
-            }).populate("available_days").populate("availability").populate("side_dish").lean();
+            }).populate("available_days").populate("availability").populate('standard_meal').populate("side_dish").lean();
             preferredIngredientsDishesFinal = JSON.parse(JSON.stringify(preferredIngredientsDishesFinal))
             preferredIngredientsDishesFinal=preferredIngredientsDishesFinal.sort(() => Math.random() - 0.5)
             console.log(preferredIngredientsDishesFinal.length,"=================11111111111111222222222222222")

@@ -512,7 +512,28 @@ Your menu for the week is:<br/>`
 						Friday_Dinner_Extra: foodPlanDataByChef.Friday_Dinner_Extra,
 						Saturday_Breakfast_Extra: foodPlanDataByChef.Saturday_Breakfast_Extra,
 						Saturday_Lunch_Extra: foodPlanDataByChef.Saturday_Lunch_Extra,
-						Saturday_Dinner_Extra: foodPlanDataByChef.Saturday_Dinner_Extra
+						Saturday_Dinner_Extra: foodPlanDataByChef.Saturday_Dinner_Extra,
+						Sunday_Breakfast_Standard:  foodPlanDataByChef.Sunday_Breakfast_Standard,
+						Sunday_Lunch_Standard: foodPlanDataByChef.Sunday_Lunch_Standard,
+						Sunday_Dinner_Standard: foodPlanDataByChef.Sunday_Dinner_Standard,
+						Monday_Breakfast_Standard:foodPlanDataByChef.Monday_Breakfast_Standard,
+						Monday_Lunch_Standard: foodPlanDataByChef.Monday_Lunch_Standard,
+						Monday_Dinner_Standard: foodPlanDataByChef.Monday_Dinner_Standard,
+						Tuesday_Breakfast_Standard: foodPlanDataByChef.Tuesday_Breakfast_Standard,
+						Tuesday_Lunch_Standard: foodPlanDataByChef.Tuesday_Lunch_Standard,
+						Tuesday_Dinner_Standard:  foodPlanDataByChef.Tuesday_Dinner_Standard,
+						Wednesday_Breakfast_Standard:  foodPlanDataByChef.Wednesday_Breakfast_Standard,
+						Wednesday_Lunch_Standard: foodPlanDataByChef.Wednesday_Lunch_Standard,
+						Wednesday_Dinner_Standard: foodPlanDataByChef.Wednesday_Dinner_Standard,
+						Thursday_Breakfast_Standard:foodPlanDataByChef.Thursday_Breakfast_Standard ,
+						Thursday_Lunch_Standard:  foodPlanDataByChef.Thursday_Lunch_Standard,
+						Thursday_Dinner_Standard:  foodPlanDataByChef.Thursday_Dinner_Standard,
+						Friday_Breakfast_Standard: foodPlanDataByChef.Friday_Breakfast_Standard,
+						Friday_Lunch_Standard: foodPlanDataByChef.Friday_Lunch_Standard,
+						Friday_Dinner_Standard: foodPlanDataByChef.Friday_Dinner_Standard,
+						Saturday_Breakfast_Standard: foodPlanDataByChef.Saturday_Breakfast_Standard,
+						Saturday_Lunch_Standard: foodPlanDataByChef.Saturday_Lunch_Standard,
+						Saturday_Dinner_Standard: foodPlanDataByChef.Saturday_Dinner_Standard
 					};
 
 					let createNext = await foodplans.model.create(saveObject);
