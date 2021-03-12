@@ -1417,9 +1417,6 @@ module.exports = {
 				user: req.params.userId,
 				startdate: {
 					$lt: dateToFind
-				},
-				enddate: {
-					$gt: dateToFind
 				}
             });
             if(foundFood){
