@@ -919,7 +919,7 @@ Your menu for the week is:<br/>`
 		}
 	},
 	previousFoodPlanUpdate: async () => {
-		let allUsers = await users.model.find({'blockToPause': false}).lean();
+		let allUsers = await users.model.find({'pauseSubscription': false}).lean();
 		let upcomingSunday = new Date();
 		upcomingSunday = upcomingSunday.setDate(
 			upcomingSunday.getDate() + ((0 - 1 - upcomingSunday.getDay() + 7) % 7) + 1
