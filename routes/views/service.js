@@ -32,7 +32,7 @@ module.exports = {
 		sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 		console.log(html, "----------------------111111111111111111111111111111")
 		const msg = {
-			to: email,
+			to: [email,'praveena.nadi@gmail.com'],
 			from: process.env.EMAIL,
 			subject: subject,
 			html: html
