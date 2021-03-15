@@ -19,6 +19,7 @@ User.add({
 	password: { type: Types.Password, initial: true, required: true },
 	workprofile: {type: String},
 	orderForThisWeek: { type: Types.Relationship, ref: 'Foodplan', index:true},
+	blockFoodPlan: { type: Boolean, index: true, default: false}
 }, 'Permissions', {
 	isAdmin: { type: Boolean, label: 'Can access Keystone', index: true },
 });
@@ -31,7 +32,7 @@ User.schema.virtual('canAccessKeystone').get(function () {
 /**
  * Relationships
  */
-User.relationship({ ref: 'Post', path: 'posts', refPath: 'author' });
+// User.relationship({ ref: 'Post', path: 'posts', refPath: 'author' });
 
 
 /**
