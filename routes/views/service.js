@@ -33,7 +33,7 @@ module.exports = {
 		sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 		console.log(html, "----------------------111111111111111111111111111111")
 		const msg = {
-			to: [email,'praveena.nadi@gmail.com','gaganpreetkaur@yahoo.com'],
+			to: email,
 			from: process.env.EMAIL,
 			subject: subject,
 			html: html
@@ -68,9 +68,9 @@ module.exports = {
 					let subject = "Dishes for the next week";
 					const template = Handlebars.compile(html);
 					let mailHtml = template({
-						link: `${process.env.webBaseUrl}/dish/${item.name}`,
+						link: `${process.env.webBaseUrl}/chef/${item.name}`,
 					});
-					let mailSendData = await module.exports.reminderservice(finalMessage, item.email, subject);
+					let mailSendData = await module.exports.reminderservice(mailHtml, [item.email,'praveena.nadi@gmail.com','gaganpreetkaur@yahoo.com'], subject);
 				}
 			}
 		} catch (err) {
