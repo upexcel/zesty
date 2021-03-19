@@ -1840,7 +1840,7 @@ module.exports = {
                             },
                         ],
                         startdate: {
-                            $gt: systemDetails.chefstartdate,
+                            $gte: systemDetails.chefstartdate,
                         }, enddate : {
                             $lt : systemDetails.chefenddate
                         }
