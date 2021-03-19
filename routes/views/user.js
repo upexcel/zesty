@@ -1937,7 +1937,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -1978,7 +1978,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2019,7 +2019,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2060,7 +2060,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2101,7 +2101,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2142,7 +2142,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2184,7 +2184,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2225,7 +2225,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2266,7 +2266,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2307,7 +2307,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2350,7 +2350,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2391,7 +2391,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2432,7 +2432,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2473,7 +2473,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2514,7 +2514,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2555,7 +2555,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2596,7 +2596,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2637,7 +2637,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2678,7 +2678,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2721,7 +2721,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
@@ -2762,7 +2762,7 @@ module.exports = {
                                                     });
                                                     for (let detail of sideStandard) {
                                                         if (detail) {
-                                                            standardText.push(detail.name);
+                                                            standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : ''} ${detail.name}`);
                                                         }
                                                     }
                                                 }
