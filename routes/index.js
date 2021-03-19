@@ -73,6 +73,7 @@ exports = module.exports = function (app) {
 	app.post('/api/getDishesByMealTime', routes.views.user.getDishesByMealTime);
 	app.get('/api/listPrimaryIngredeints', routes.views.user.listPrimaryIngredeints);
 	app.get('/api/userData/:facebookId', routes.views.user.userData);
+	app.get('/api/getChefFoodPlan/:chefName', routes.views.user.chefMailForNextWeek);
 	// app.post('/api/sendreminder', routes.views.user.sendreminder);
 
 
