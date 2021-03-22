@@ -1896,15 +1896,15 @@ module.exports = {
                                         }
 
                                         if (foodPlan.Breakfast_Time_Interval) {
-                                            Breakfast_Time_Interval = foodPlan.Breakfast_Time_Interval
+                                            Breakfast_Time_Interval = foodPlan.Breakfast_Time_Interval ? foodPlan.Breakfast_Time_Interval : "07:00 AM"
                                         }
 
                                         if (foodPlan.Lunch_Time_Interval) {
-                                            Lunch_Time_Interval = foodPlan.Lunch_Time_Interval
+                                            Lunch_Time_Interval = foodPlan.Lunch_Time_Interval ? foodPlan.Lunch_Time_Interval : "02:00 PM"
                                         }
 
                                         if (foodPlan.Dinner_Time_Interval) {
-                                            Dinner_Time_Interval = foodPlan.Dinner_Time_Interval
+                                            Dinner_Time_Interval = foodPlan.Dinner_Time_Interval ? foodPlan.Dinner_Time_Interval: "07:00 PM"
                                         }
 
                                         adult_count = foodPlan.adult_count ? foodPlan.adult_count : 0
