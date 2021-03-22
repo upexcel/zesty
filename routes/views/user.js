@@ -1309,14 +1309,34 @@ module.exports = {
 				user: req.body.userId,
 				startdate: { $gt: new Date() },
 			});
-
+			let lastWeekFoodPlan = await foodplans.model.findOne({
+				$and: [
+					{ user: req.body.userId },
+					{ startdate: { $gte: lastWeekStartDate } },
+					{ startdate: { $lte: lastWeekEndDate } },
+				],
+			});
 			let foundPlanForReference = JSON.parse(JSON.stringify(foundplan));
 			// let selections = req.body.choices;
 			let fieldsToUpdate = await updateFood(req);
 			let selections = req.body.choices;
 			let deliveryDetails = req.body.deliveryInfo;
 			let foundUser = await users.model.findOne({ _id: req.body.userId });
-
+			if (!selections.adult_count){
+				selections.adult_count = 0
+			}
+			if(!selections.children_count){
+				selections.children_count = 0
+			}
+			if (selections.adult_count == 0 && selections.children_count == 0){
+				if(lastWeekFoodPlan){
+					selections.adult_count = lastWeekFoodPlan.adult_count,
+					selections.children_count = lastWeekFoodPlan.children_count
+				}else{
+					selections.adult_count = 1,
+					selections.children_count = 0
+				}
+			}
 			let dataToCreate = {
 				name: foundUser.name,
 				user: req.body.userId,
