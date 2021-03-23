@@ -2,7 +2,7 @@ let keystone = require('keystone');
 let Types = keystone.Field.Types;
 
 
-let systemDates = new keystone.List('SystemDates');
+let systemDates = new keystone.List('SystemDates', { hidden: true });
 
 systemDates.add({
     chefstartdate: { type: Types.Datetime, required: true, initial: true },
