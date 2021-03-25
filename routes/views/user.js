@@ -1630,7 +1630,7 @@ module.exports = {
 				let html = `Hello, Select delicious food on Zesty to kill your hunger.
                 you can select your next week's menu from here -
                 <a href={{link}}> {{link}} </a>`;
-				let subject = "Get Delocious Dishes.";
+				let subject = "Your menu for next week.";
 				console.log(
 					`${process.env.webBaseUrl}/subscribe?_id=${element._id}`,
 					"a-s-as-as-as-as-as-as-"
