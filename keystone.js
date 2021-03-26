@@ -91,10 +91,9 @@ const setSystemDates = new CronJob('40 1 * * */6', async () => {
 		{weekenddate : newWeekEndDate,
 		weekstartdate : newWeekStartDate,
 		chefenddate : newChefEndDate,
-		chefstartdate : newChefStartDate})
-​
-	console.log(updated,"update query results for system dates")
-})
+		chefstartdate : newChefStartDate
+	})
+}, null, true, 'Asia/Kolkata')
 setSystemDates.start();
 
 // Configure the navigation bar in Keystone's Admin UI
