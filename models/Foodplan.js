@@ -118,6 +118,27 @@ Foodplan.add({
     other_lunch_choices: {type: Types.Relationship, ref: "otherChoices", index: true},
     other_dinner_choices: {type: Types.Relationship, ref: "otherChoices", index: true},
     primary_ingredeints: { type: Types.Relationship, ref: 'primary_ingredeints', many: true, index: true },
+    Sunday_Breakfast_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Sunday_Lunch_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Sunday_Dinner_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Monday_Breakfast_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Monday_Lunch_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Monday_Dinner_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Tuesday_Breakfast_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Tuesday_Lunch_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Tuesday_Dinner_Standard_dish:{ type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Wednesday_Breakfast_Standard_dish:{ type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Wednesday_Lunch_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Wednesday_Dinner_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Thursday_Breakfast_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Thursday_Lunch_Standard_dish:{ type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Thursday_Dinner_Standard_dish:{ type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Friday_Breakfast_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Friday_Lunch_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Friday_Dinner_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Saturday_Breakfast_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Saturday_Lunch_Standard_dish: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    Saturday_Dinner_Standard_dish:{ type: Types.Relationship, ref: 'UserDish', many: true, index: true }
 });
 Foodplan.schema.add({
     foodDetails: {
