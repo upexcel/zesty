@@ -105,10 +105,10 @@ async function updateFood(req) {
 						text =
 							text +
 							"<br/>" +
-							`${item}_BreakFast_Standard_Dish-${standardDishText.join()}`;
+							`${item}_Breakfast_Meal-${standardDishText.join()}`;
 					}
 					if (standardDishId.length) {
-						dataToReturn[`${itemToUpdate1}_Standard_dish`] = standardDishId;
+						dataToReturn[`${itemToUpdate1}_Meal`] = standardDishId;
 					}
 
 					dataToReturn[`${itemToUpdate1}`] = foodDayDetails[`${item}`].Breakfast[0];
@@ -141,10 +141,10 @@ async function updateFood(req) {
 						text =
 							text +
 							"<br/>" +
-							`${item}_Lunch_Standard_Dish-${standardDishText.join()}`;
+							`${item}_Lunch_Meal-${standardDishText.join()}`;
 					}
 					if (standardDishId.length) {
-						dataToReturn[`${itemToUpdate2}_Standard_dish`] = standardDishId;
+						dataToReturn[`${itemToUpdate2}_Meal`] = standardDishId;
 					}
 
 					dataToReturn[`${chefForLunch}`] = founditem.chef;
@@ -177,10 +177,10 @@ async function updateFood(req) {
 						text =
 							text +
 							"<br/>" +
-							`${item}_Dinner_Standard_Dish-${standardDishText.join()}`;
+							`${item}_Dinner_Meal-${standardDishText.join()}`;
 					}
 					if (standardDishId.length) {
-						dataToReturn[`${itemToUpdate3}_Standard_dish`] = standardDishId;
+						dataToReturn[`${itemToUpdate3}_Meal`] = standardDishId;
 					}
 
 					dataToReturn[`${chefForDinner}`] = founditem.chef;

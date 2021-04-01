@@ -6,8 +6,26 @@ let dishes = keystone.list('Dishes');
 let Chef = keystone.list('Chef');
 const Handlebars = require("handlebars");
 let users = keystone.list('User');
+let userDish = keystone.list("UserDish");
 let side_dish = keystone.list('side_dish');
 let moment = require('moment');
+
+
+async function updateMealPrevious (extra_details , standard_details){
+	let common_dish = extra_details.concat(standard_details)
+	let resp = []
+	for (let val of common_dish) {
+		let findsideDish = await side_dish.model.findOne({_id : val})
+		const newUserDish = await userDish.model.create({
+			name : findsideDish.name,
+			count : findsideDish.default_count,
+			dish : findsideDish._id
+		})
+		resp.push(newUserDish._id)
+	}
+	return resp
+}
+
 
 module.exports = {
 	newemailservice: async (link, email, subject) => {
@@ -343,6 +361,7 @@ module.exports = {
 		  
 		return response
 	},
+
 	previousFoodPlanUpdate: async () => {
 		let allUsers = await users.model.find({'pauseSubscription': false}).lean();
 		let upcomingSunday = new Date();
@@ -453,48 +472,35 @@ module.exports = {
 						Secondary_Cuisine: foodPlanDataByChef.Secondary_Cuisine,
 						Primary_Cuisine: foodPlanDataByChef.Primary_Cuisine,
 						name: foodPlanDataByChef.name,
-						Sunday_Breakfast_Extra:  foodPlanDataByChef.Sunday_Breakfast_Extra,
-						Sunday_Lunch_Extra: foodPlanDataByChef.Sunday_Lunch_Extra,
-						Sunday_Dinner_Extra: foodPlanDataByChef.Sunday_Dinner_Extra,
-						Monday_Breakfast_Extra:foodPlanDataByChef.Monday_Breakfast_Extra,
-						Monday_Lunch_Extra: foodPlanDataByChef.Monday_Lunch_Extra,
-						Monday_Dinner_Extra: foodPlanDataByChef.Monday_Dinner_Extra,
-						Tuesday_Breakfast_Extra: foodPlanDataByChef.Tuesday_Breakfast_Extra,
-						Tuesday_Lunch_Extra: foodPlanDataByChef.Tuesday_Lunch_Extra,
-						Tuesday_Dinner_Extra:  foodPlanDataByChef.Tuesday_Dinner_Extra,
-						Wednesday_Breakfast_Extra:  foodPlanDataByChef.Wednesday_Breakfast_Extra,
-						Wednesday_Lunch_Extra: foodPlanDataByChef.Wednesday_Lunch_Extra,
-						Wednesday_Dinner_Extra: foodPlanDataByChef.Wednesday_Dinner_Extra,
-						Thursday_Breakfast_Extra:foodPlanDataByChef.Thursday_Breakfast_Extra ,
-						Thursday_Lunch_Extra:  foodPlanDataByChef.Thursday_Lunch_Extra,
-						Thursday_Dinner_Extra:  foodPlanDataByChef.Thursday_Dinner_Extra,
-						Friday_Breakfast_Extra: foodPlanDataByChef.Friday_Breakfast_Extra,
-						Friday_Lunch_Extra: foodPlanDataByChef.Friday_Lunch_Extra,
-						Friday_Dinner_Extra: foodPlanDataByChef.Friday_Dinner_Extra,
-						Saturday_Breakfast_Extra: foodPlanDataByChef.Saturday_Breakfast_Extra,
-						Saturday_Lunch_Extra: foodPlanDataByChef.Saturday_Lunch_Extra,
-						Saturday_Dinner_Extra: foodPlanDataByChef.Saturday_Dinner_Extra,
-						Sunday_Breakfast_Standard:  foodPlanDataByChef.Sunday_Breakfast_Standard,
-						Sunday_Lunch_Standard: foodPlanDataByChef.Sunday_Lunch_Standard,
-						Sunday_Dinner_Standard: foodPlanDataByChef.Sunday_Dinner_Standard,
-						Monday_Breakfast_Standard:foodPlanDataByChef.Monday_Breakfast_Standard,
-						Monday_Lunch_Standard: foodPlanDataByChef.Monday_Lunch_Standard,
-						Monday_Dinner_Standard: foodPlanDataByChef.Monday_Dinner_Standard,
-						Tuesday_Breakfast_Standard: foodPlanDataByChef.Tuesday_Breakfast_Standard,
-						Tuesday_Lunch_Standard: foodPlanDataByChef.Tuesday_Lunch_Standard,
-						Tuesday_Dinner_Standard:  foodPlanDataByChef.Tuesday_Dinner_Standard,
-						Wednesday_Breakfast_Standard:  foodPlanDataByChef.Wednesday_Breakfast_Standard,
-						Wednesday_Lunch_Standard: foodPlanDataByChef.Wednesday_Lunch_Standard,
-						Wednesday_Dinner_Standard: foodPlanDataByChef.Wednesday_Dinner_Standard,
-						Thursday_Breakfast_Standard:foodPlanDataByChef.Thursday_Breakfast_Standard ,
-						Thursday_Lunch_Standard:  foodPlanDataByChef.Thursday_Lunch_Standard,
-						Thursday_Dinner_Standard:  foodPlanDataByChef.Thursday_Dinner_Standard,
-						Friday_Breakfast_Standard: foodPlanDataByChef.Friday_Breakfast_Standard,
-						Friday_Lunch_Standard: foodPlanDataByChef.Friday_Lunch_Standard,
-						Friday_Dinner_Standard: foodPlanDataByChef.Friday_Dinner_Standard,
-						Saturday_Breakfast_Standard: foodPlanDataByChef.Saturday_Breakfast_Standard,
-						Saturday_Lunch_Standard: foodPlanDataByChef.Saturday_Lunch_Standard,
-						Saturday_Dinner_Standard: foodPlanDataByChef.Saturday_Dinner_Standard
+
+						Sunday_Breakfast_Meal: await updateMealPrevious (foodPlanDataByChef.Sunday_Breakfast_Extra,foodPlanDataByChef.Sunday_Breakfast_Standard  ) ,
+						Sunday_Lunch_Meal: await updateMealPrevious (foodPlanDataByChef.Sunday_Lunch_Extra,foodPlanDataByChef.Sunday_Lunch_Standard  ),
+						Sunday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Sunday_Dinner_Extra,foodPlanDataByChef.Sunday_Dinner_Standard  ),
+						
+						Monday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Monday_Breakfast_Extra,foodPlanDataByChef.Monday_Breakfast_Standard  ) ,
+						Monday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Monday_Lunch_Extra,foodPlanDataByChef.Monday_Lunch_Standard  ) ,
+						Monday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Monday_Dinner_Extra,foodPlanDataByChef.Monday_Dinner_Standard  ) ,
+						
+						Tuesday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Tuesday_Breakfast_Extra,foodPlanDataByChef.Tuesday_Breakfast_Standard  ) ,
+						Tuesday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Tuesday_Lunch_Extra,foodPlanDataByChef.Tuesday_Lunch_Standard  ) ,
+						Tuesday_Dinner_Meal:  await updateMealPrevious(foodPlanDataByChef.Tuesday_Dinner_Extra,foodPlanDataByChef.Tuesday_Dinner_Standard  ) ,
+						
+						Wednesday_Breakfast_Meal:  await updateMealPrevious(foodPlanDataByChef.Wednesday_Breakfast_Extra,foodPlanDataByChef.Wednesday_Breakfast_Standard  ) ,
+						Wednesday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Wednesday_Lunch_Extra,foodPlanDataByChef.Wednesday_Lunch_Standard  ) ,
+						Wednesday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Wednesday_Dinner_Extra,foodPlanDataByChef.Wednesday_Dinner_Standard  ) ,
+						
+						Thursday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Thursday_Breakfast_Extra,foodPlanDataByChef.Thursday_Breakfast_Standard  ) ,
+						Thursday_Lunch_Meal:  await updateMealPrevious(foodPlanDataByChef.Thursday_Lunch_Extra,foodPlanDataByChef.Thursday_Lunch_Standard  ) ,
+						Thursday_Dinner_Meal:  await updateMealPrevious(foodPlanDataByChef.Thursday_Dinner_Extra,foodPlanDataByChef.Thursday_Dinner_Standard  ) ,
+						
+						Friday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Friday_Breakfast_Extra,foodPlanDataByChef.Friday_Breakfast_Standard  ) ,
+						Friday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Friday_Lunch_Extra,foodPlanDataByChef.Friday_Lunch_Standard  ) ,
+						Friday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Friday_Dinner_Extra,foodPlanDataByChef.Friday_Dinner_Standard  ) ,
+						
+						Saturday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Saturday_Breakfast_Extra,foodPlanDataByChef.Saturday_Breakfast_Standard  ) ,
+						Saturday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Saturday_Lunch_Extra,foodPlanDataByChef.Saturday_Lunch_Standard  ) ,
+						Saturday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Saturday_Dinner_Extra,foodPlanDataByChef.Saturday_Dinner_Standard  ) ,
+
 					};
 
 					let createNext = await foodplans.model.create(saveObject);
