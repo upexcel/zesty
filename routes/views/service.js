@@ -26,6 +26,14 @@ async function updateMealPrevious (extra_details , standard_details){
 	return resp
 }
 
+async function fetchChef (dishId) {
+	if (dishId) {
+		const dishDetail = await dishes.model.findOne({_id : dishId}).populate('chef')
+		console.log(dishDetail,'DISH DETAIl')
+		console.log(dishDetail.chef._id,'CHEF ID')
+		return dishDetail.chef._id
+	}
+}
 
 module.exports = {
 	newemailservice: async (link, email, subject) => {
@@ -420,47 +428,47 @@ module.exports = {
 						other_lunch_choices: foodPlanDataByChef.other_lunch_choices,
 						other_dinner_choices: foodPlanDataByChef.other_dinner_choices,
 						Sunday_Breakfast: foodPlanDataByChef.Sunday_Breakfast,
-						Sunday_Breakfast_Chef: foodPlanDataByChef.Sunday_Breakfast_Chef,
+						Sunday_Breakfast_Chef: await fetchChef(foodPlanDataByChef.Sunday_Breakfast),
 						Sunday_Lunch: foodPlanDataByChef.Sunday_Lunch,
-						Sunday_Lunch_Chef: foodPlanDataByChef.Sunday_Lunch_Chef,
+						Sunday_Lunch_Chef: await fetchChef (foodPlanDataByChef.Sunday_Lunch),
 						Sunday_Dinner: foodPlanDataByChef.Sunday_Dinner,
-						Sunday_Dinner_Chef: foodPlanDataByChef.Sunday_Dinner_Chef,
+						Sunday_Dinner_Chef: await fetchChef (foodPlanDataByChef.Sunday_Dinner),
 						Monday_Breakfast: foodPlanDataByChef.Monday_Breakfast,
-						Monday_Breakfast_Chef: foodPlanDataByChef.Monday_Breakfast_Chef,
+						Monday_Breakfast_Chef: await fetchChef (foodPlanDataByChef.Monday_Breakfast),
 						Monday_Lunch: foodPlanDataByChef.Monday_Lunch,
-						Monday_Lunch_Chef: foodPlanDataByChef.Monday_Lunch_Chef,
+						Monday_Lunch_Chef: await fetchChef (foodPlanDataByChef.Monday_Lunch),
 						Monday_Dinner: foodPlanDataByChef.Monday_Dinner,
-						Monday_Dinner_Chef: foodPlanDataByChef.Monday_Dinner_Chef,
+						Monday_Dinner_Chef: await fetchChef (foodPlanDataByChef.Monday_Dinner),
 						Tuesday_Breakfast: foodPlanDataByChef.Tuesday_Breakfast,
-						Tuesday_Breakfast_Chef: foodPlanDataByChef.Tuesday_Breakfast_Chef,
+						Tuesday_Breakfast_Chef: await fetchChef (foodPlanDataByChef.Tuesday_Breakfast),
 						Tuesday_Lunch: foodPlanDataByChef.Tuesday_Lunch,
-						Tuesday_Lunch_Chef: foodPlanDataByChef.Tuesday_Lunch_Chef,
+						Tuesday_Lunch_Chef: await fetchChef (foodPlanDataByChef.Tuesday_Lunch),
 						Tuesday_Dinner: foodPlanDataByChef.Tuesday_Dinner,
-						Tuesday_Dinner_Chef: foodPlanDataByChef.Tuesday_Dinner_Chef,
+						Tuesday_Dinner_Chef: await fetchChef (foodPlanDataByChef.Tuesday_Dinner),
 						Wednesday_Breakfast: foodPlanDataByChef.Wednesday_Breakfast,
-						Wednesday_Breakfast_Chef: foodPlanDataByChef.Wednesday_Breakfast_Chef,
+						Wednesday_Breakfast_Chef: await fetchChef (foodPlanDataByChef.Wednesday_Breakfast),
 						Wednesday_Lunch: foodPlanDataByChef.Wednesday_Lunch,
-						Wednesday_Lunch_Chef: foodPlanDataByChef.Wednesday_Lunch_Chef,
+						Wednesday_Lunch_Chef: await fetchChef (foodPlanDataByChef.Wednesday_Lunch),
 						Wednesday_Dinner: foodPlanDataByChef.Wednesday_Dinner,
-						Wednesday_Dinner_Chef: foodPlanDataByChef.Wednesday_Dinner_Chef,
+						Wednesday_Dinner_Chef: await fetchChef (foodPlanDataByChef.Wednesday_Dinner),
 						Thursday_Breakfast: foodPlanDataByChef.Thursday_Breakfast,
-						Thursday_Breakfast_Chef: foodPlanDataByChef.Thursday_Breakfast_Chef,
+						Thursday_Breakfast_Chef: await fetchChef (foodPlanDataByChef.Thursday_Breakfast),
 						Thursday_Lunch: foodPlanDataByChef.Thursday_Lunch,
-						Thursday_Lunch_Chef: foodPlanDataByChef.Thursday_Lunch_Chef,
+						Thursday_Lunch_Chef: await fetchChef (foodPlanDataByChef.Thursday_Lunch),
 						Thursday_Dinner: foodPlanDataByChef.Thursday_Dinner,
-						Thursday_Dinner_Chef: foodPlanDataByChef.Thursday_Dinner_Chef,
+						Thursday_Dinner_Chef: await fetchChef (foodPlanDataByChef.Thursday_Dinner),
 						Friday_Breakfast: foodPlanDataByChef.Friday_Breakfast,
-						Friday_Breakfast_Chef: foodPlanDataByChef.Friday_Breakfast_Chef,
+						Friday_Breakfast_Chef: await fetchChef (foodPlanDataByChef.Friday_Breakfast),
 						Friday_Lunch: foodPlanDataByChef.Friday_Lunch,
-						Friday_Lunch_Chef: foodPlanDataByChef.Friday_Lunch_Chef,
+						Friday_Lunch_Chef: await fetchChef (foodPlanDataByChef.Friday_Lunch),
 						Friday_Dinner: foodPlanDataByChef.Friday_Dinner,
-						Friday_Dinner_Chef: foodPlanDataByChef.Friday_Dinner_Chef,
+						Friday_Dinner_Chef: await fetchChef (foodPlanDataByChef.Friday_Dinner),
 						Saturday_Breakfast: foodPlanDataByChef.Saturday_Breakfast,
-						Saturday_Breakfast_Chef: foodPlanDataByChef.Saturday_Breakfast_Chef,
+						Saturday_Breakfast_Chef: await fetchChef (foodPlanDataByChef.Saturday_Breakfast),
 						Saturday_Lunch: foodPlanDataByChef.Saturday_Lunch,
-						Saturday_Lunch_Chef: foodPlanDataByChef.Saturday_Lunch_Chef,
+						Saturday_Lunch_Chef: await fetchChef (foodPlanDataByChef.Saturday_Lunch),
 						Saturday_Dinner: foodPlanDataByChef.Saturday_Dinner,
-						Saturday_Dinner_Chef: foodPlanDataByChef.Saturday_Dinner_Chef,
+						Saturday_Dinner_Chef: await fetchChef (foodPlanDataByChef.Saturday_Dinner),
 						Receiver_Name: foodPlanDataByChef.Receiver_Name,
 						Order_For: foodPlanDataByChef.Order_For,
 						Other_Mentions: foodPlanDataByChef.Other_Mentions,

@@ -1844,1242 +1844,381 @@ module.exports = {
                                         adult_count = foodPlan.adult_count ? foodPlan.adult_count : 0
                                         children_count = foodPlan.children_count ? foodPlan.children_count: 0 
                                         if (val === "Sunday_Breakfast") {
-                                            let extraText = [];
 											let standardText = [];
-											let extraStatment = ``
                                             if (!Sunday_Breakfast) {
 												Sunday_Breakfast = ``;
-                                                if (
-                                                    foodPlan.Sunday_Breakfast_Extra &&
-                                                    foodPlan.Sunday_Breakfast_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Sunday_Breakfast_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Sunday_Breakfast_Standard &&
-                                                    foodPlan.Sunday_Breakfast_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Sunday_Breakfast_Standard },
+												if (foodPlan.Sunday_Breakfast_Meal && foodPlan.Sunday_Breakfast_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Sunday_Breakfast_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Sunday_Breakfast += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Sunday_Breakfast += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Sunday_Breakfast += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Sunday_Lunch") {
-											let extraText = [];
 											let standardText = [];
-											let extraStatment = ``
                                             if (!Sunday_Lunch) {
 												Sunday_Lunch = ``;
-                                                if (
-                                                    foodPlan.Sunday_Lunch_Extra &&
-                                                    foodPlan.Sunday_Lunch_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Sunday_Lunch_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Sunday_Lunch_Standard &&
-                                                    foodPlan.Sunday_Lunch_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Sunday_Lunch_Standard },
+												if (foodPlan.Sunday_Lunch_Meal && foodPlan.Sunday_Lunch_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Sunday_Lunch_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Sunday_Lunch += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Sunday_Lunch += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Sunday_Lunch += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Sunday_Dinner") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Sunday_Dinner) {
 												Sunday_Dinner = ``;
-                                                if (
-                                                    foodPlan.Sunday_Dinner_Extra &&
-                                                    foodPlan.Sunday_Dinner_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Sunday_Dinner_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Sunday_Dinner_Standard &&
-                                                    foodPlan.Sunday_Dinner_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Sunday_Dinner_Standard },
+												if (foodPlan.Sunday_Dinner_Meal && foodPlan.Sunday_Dinner_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Sunday_Dinner_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Sunday_Dinner += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Sunday_Dinner += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Sunday_Dinner += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Monday_Breakfast") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Monday_Breakfast) {
 												Monday_Breakfast = ``;
-                                                if (
-                                                    foodPlan.Monday_Breakfast_Extra &&
-                                                    foodPlan.Monday_Breakfast_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Monday_Breakfast_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Monday_Breakfast_Standard &&
-                                                    foodPlan.Monday_Breakfast_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Monday_Breakfast_Standard },
+												if (foodPlan.Monday_Breakfast_Meal && foodPlan.Monday_Breakfast_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Monday_Breakfast_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Monday_Breakfast += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Monday_Breakfast += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Monday_Breakfast += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Monday_Lunch") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Monday_Lunch) {
 												Monday_Lunch = ``;
-                                                if (
-                                                    foodPlan.Monday_Lunch_Extra &&
-                                                    foodPlan.Monday_Lunch_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Monday_Lunch_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Monday_Lunch_Standard &&
-                                                    foodPlan.Monday_Lunch_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Monday_Lunch_Standard },
+												if (foodPlan.Monday_Lunch_Meal && foodPlan.Monday_Lunch_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Monday_Lunch_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Monday_Lunch += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Monday_Lunch += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Monday_Lunch += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Monday_Dinner") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Monday_Dinner) {
 												Monday_Dinner = ``;
-                                                if (
-                                                    foodPlan.Monday_Dinner_Extra &&
-                                                    foodPlan.Monday_Dinner_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Monday_Dinner_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Monday_Dinner_Standard &&
-                                                    foodPlan.Monday_Dinner_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Monday_Dinner_Standard },
+												if (foodPlan.Monday_Dinner_Meal && foodPlan.Monday_Dinner_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Monday_Dinner_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Monday_Dinner += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Monday_Dinner += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Monday_Dinner += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Tuesday_Breakfast") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Tuesday_Breakfast) {
 												Tuesday_Breakfast = ``;
-                                                if (
-                                                    foodPlan.Tuesday_Breakfast_Extra &&
-                                                    foodPlan.Tuesday_Breakfast_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Tuesday_Breakfast_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Tuesday_Breakfast_Standard &&
-                                                    foodPlan.Tuesday_Breakfast_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Tuesday_Breakfast_Standard },
+												if (foodPlan.Tuesday_Breakfast_Meal && foodPlan.Tuesday_Breakfast_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Tuesday_Breakfast_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Tuesday_Breakfast += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Tuesday_Breakfast += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Tuesday_Breakfast += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Tuesday_Lunch") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Tuesday_Lunch) {
 												Tuesday_Lunch = ``;
-                                                if (
-                                                    foodPlan.Tuesday_Lunch_Extra &&
-                                                    foodPlan.Tuesday_Lunch_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Tuesday_Lunch_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Tuesday_Lunch_Standard &&
-                                                    foodPlan.Tuesday_Lunch_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Tuesday_Lunch_Standard },
+												if (foodPlan.Tuesday_Lunch_Meal && foodPlan.Tuesday_Lunch_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Tuesday_Lunch_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Tuesday_Lunch += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Tuesday_Lunch += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Tuesday_Lunch += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Tuesday_Dinner") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Tuesday_Dinner) {
 												Tuesday_Dinner = ``;
-                                                if (
-                                                    foodPlan.Tuesday_Dinner_Extra &&
-                                                    foodPlan.Tuesday_Dinner_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Tuesday_Dinner_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Tuesday_Dinner_Standard &&
-                                                    foodPlan.Tuesday_Dinner_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Tuesday_Dinner_Standard },
+												if (foodPlan.Tuesday_Dinner_Meal && foodPlan.Tuesday_Dinner_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Tuesday_Dinner_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Tuesday_Dinner += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Tuesday_Dinner += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Tuesday_Dinner += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Wednesday_Breakfast") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Wednesday_Breakfast) {
 												Wednesday_Breakfast = ``;
-                                                if (
-                                                    foodPlan.Wednesday_Breakfast_Extra &&
-                                                    foodPlan.Wednesday_Breakfast_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Wednesday_Breakfast_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Wednesday_Breakfast_Standard &&
-                                                    foodPlan.Wednesday_Breakfast_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Wednesday_Breakfast_Standard },
+												if (foodPlan.Wednesday_Breakfast_Meal && foodPlan.Wednesday_Breakfast_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Wednesday_Breakfast_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Wednesday_Breakfast += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Wednesday_Breakfast += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Wednesday_Breakfast += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Wednesday_Lunch") {
-                                            let extraText = [];
 											let standardText = [];
-											let extraStatment = ``
                                             if (!Wednesday_Lunch) {
 												Wednesday_Lunch = ``;
-                                                if (
-                                                    foodPlan.Wednesday_Lunch_Extra &&
-                                                    foodPlan.Wednesday_Lunch_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Wednesday_Lunch_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Wednesday_Lunch_Standard &&
-                                                    foodPlan.Wednesday_Lunch_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Wednesday_Lunch_Standard },
+												if (foodPlan.Wednesday_Lunch_Meal && foodPlan.Wednesday_Lunch_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Wednesday_Lunch_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Wednesday_Lunch += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Wednesday_Lunch += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Wednesday_Lunch += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Wednesday_Dinner") {
-                                            let extraText = [];
 											let standardText = [];
-											let extraStatment = ``
                                             if (!Wednesday_Dinner) {
 												Wednesday_Dinner = ``;
-                                                if (
-                                                    foodPlan.Wednesday_Dinner_Extra &&
-                                                    foodPlan.Wednesday_Dinner_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Wednesday_Dinner_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Wednesday_Dinner_Standard &&
-                                                    foodPlan.Wednesday_Dinner_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Wednesday_Dinner_Standard },
+												if (foodPlan.Wednesday_Dinner_Meal && foodPlan.Wednesday_Dinner_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Wednesday_Dinner_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Wednesday_Dinner += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Wednesday_Dinner += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Wednesday_Dinner += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Thursday_Breakfast") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Thursday_Breakfast) {
 												Thursday_Breakfast = ``;
-                                                if (
-                                                    foodPlan.Thursday_Breakfast_Extra &&
-                                                    foodPlan.Thursday_Breakfast_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Thursday_Breakfast_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Thursday_Breakfast_Standard &&
-                                                    foodPlan.Thursday_Breakfast_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Thursday_Breakfast_Standard },
+												if (foodPlan.Thursday_Breakfast_Meal && foodPlan.Thursday_Breakfast_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Thursday_Breakfast_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Thursday_Breakfast += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Thursday_Breakfast += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Thursday_Breakfast += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Thursday_Lunch") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Thursday_Lunch) {
 												Thursday_Lunch = ``;
-                                                if (
-                                                    foodPlan.Thursday_Lunch_Extra &&
-                                                    foodPlan.Thursday_Lunch_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Thursday_Lunch_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Thursday_Lunch_Standard &&
-                                                    foodPlan.Thursday_Lunch_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Thursday_Lunch_Standard },
+												if (foodPlan.Thursday_Lunch_Meal && foodPlan.Thursday_Lunch_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Thursday_Lunch_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Thursday_Lunch += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Thursday_Lunch += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Thursday_Lunch += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Thursday_Dinner") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Thursday_Dinner) {
 												Thursday_Dinner = ``;
-                                                if (
-                                                    foodPlan.Thursday_Dinner_Extra &&
-                                                    foodPlan.Thursday_Dinner_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Thursday_Dinner_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Thursday_Dinner_Standard &&
-                                                    foodPlan.Thursday_Dinner_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Thursday_Dinner_Standard },
+												if (foodPlan.Thursday_Dinner_Meal && foodPlan.Thursday_Dinner_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Thursday_Dinner_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Thursday_Dinner += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Thursday_Dinner += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Thursday_Dinner += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Friday_Breakfast") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Friday_Breakfast) {
 												Friday_Breakfast = ``;
-                                                if (
-                                                    foodPlan.Friday_Breakfast_Extra &&
-                                                    foodPlan.Friday_Breakfast_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Friday_Breakfast_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Friday_Breakfast_Standard &&
-                                                    foodPlan.Friday_Breakfast_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Friday_Breakfast_Standard },
+												if (foodPlan.Friday_Breakfast_Meal && foodPlan.Friday_Breakfast_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Friday_Breakfast_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Friday_Breakfast += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Friday_Breakfast += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Friday_Breakfast += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Friday_Lunch") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Friday_Lunch) {
 												Friday_Lunch = ``;
-                                                if (
-                                                    foodPlan.Friday_Lunch_Extra &&
-                                                    foodPlan.Friday_Lunch_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Friday_Lunch_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Friday_Lunch_Standard &&
-                                                    foodPlan.Friday_Lunch_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Friday_Lunch_Standard },
+												if (foodPlan.Friday_Lunch_Meal && foodPlan.Friday_Lunch_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Friday_Lunch_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Friday_Lunch += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Friday_Lunch += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Friday_Lunch += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Friday_Dinner") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Friday_Dinner) {
 												Friday_Dinner = ``;
-                                                if (
-                                                    foodPlan.Friday_Dinner_Extra &&
-                                                    foodPlan.Friday_Dinner_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Friday_Dinner_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Friday_Dinner_Standard &&
-                                                    foodPlan.Friday_Dinner_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Friday_Dinner_Standard },
+												if (foodPlan.Friday_Dinner_Meal && foodPlan.Friday_Dinner_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Friday_Dinner_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Friday_Dinner += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Friday_Dinner += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Friday_Dinner += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Saturday_Breakfast") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Saturday_Breakfast) {
 												Saturday_Breakfast = ``;
-                                                if (
-                                                    foodPlan.Saturday_Breakfast_Extra &&
-                                                    foodPlan.Saturday_Breakfast_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Saturday_Breakfast_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Saturday_Breakfast_Standard &&
-                                                    foodPlan.Saturday_Breakfast_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Saturday_Breakfast_Standard },
+												if (foodPlan.Saturday_Breakfast_Meal && foodPlan.Saturday_Breakfast_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Saturday_Breakfast_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Saturday_Breakfast += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Saturday_Breakfast += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Saturday_Breakfast += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Saturday_Lunch") {
-                                            let extraText = [];
-											let standardText = [];
-											let extraStatment = ``
+                                            let standardText = [];
                                             if (!Saturday_Lunch) {
 												Saturday_Lunch = ``;
-                                                if (
-                                                    foodPlan.Saturday_Lunch_Extra &&
-                                                    foodPlan.Saturday_Lunch_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Saturday_Lunch_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Saturday_Lunch_Standard &&
-                                                    foodPlan.Saturday_Lunch_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Saturday_Lunch_Standard },
+												if (foodPlan.Saturday_Lunch_Meal && foodPlan.Saturday_Lunch_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Saturday_Lunch_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Saturday_Lunch += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Saturday_Lunch += ` with ${standardText.join(",")}`;
                                             }
-
-											if (extraText.length) {
-                                                Saturday_Lunch += `,${extraText.join(",")}`;
-                                            }
                                         }
                                         if (val === "Saturday_Dinner") {
-                                            let extraText = [];
 											let standardText = [];
-											let extraStatment = ``
                                             if (!Saturday_Dinner) {
 												Saturday_Dinner = ``;
-                                                if (
-                                                    foodPlan.Saturday_Dinner_Extra &&
-                                                    foodPlan.Saturday_Dinner_Extra.length
-                                                ) {
-                                                    let sideExtra = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Saturday_Dinner_Extra },
-                                                    });
-                                                    for (let detail of sideExtra) {
-                                                        if (detail) {
-                                                            extraText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-                                                        }
-                                                    }
-												}
-
-												extraStatment = extraText.join()
-
-                                                if (
-                                                    foodPlan.Saturday_Dinner_Standard &&
-                                                    foodPlan.Saturday_Dinner_Standard.length
-                                                ) {
-                                                    let sideStandard = await side_dish.model.find({
-                                                        _id: { $in: foodPlan.Saturday_Dinner_Standard },
+												if (foodPlan.Saturday_Dinner_Meal && foodPlan.Saturday_Dinner_Meal.length ) {
+													let sideStandard = await userDish.model.find({
+														_id: { $in: foodPlan.Saturday_Dinner_Meal },
 													});
-													
-                                                    for (let detail of sideStandard) {
-                                                        if (detail) { 
-															if (extraText.length) {
-																let extraCount = extraStatment.match(new RegExp(detail.name, "g")) 
-																if (extraCount) {
-																	const index = extraText.indexOf(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);(detail.name);
-																	if (index > -1) {
-																		extraText.splice(index, 1);
-																	}
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count + extraCount.length : '1'} ${detail.name}`);
-																} else {
-																	standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);	
-																}
-															} else {
-																standardText.push(`${detail.default_count && detail.default_count != 0 ? detail.default_count : '1'} ${detail.name}`);
-															}
-                                                        }
-                                                    }
-                                                }
+													for (let val of sideStandard) {
+														standardText.push(`${val.count} ${val.name}`)
+													}
+												}	
 											}
                                             Saturday_Dinner += mailMessageToAdd;
                                             if (standardText.length) {
                                                 Saturday_Dinner += ` with ${standardText.join(",")}`;
-                                            }
-
-											if (extraText.length) {
-                                                Saturday_Dinner += `,${extraText.join(",")}`;
                                             }
                                         }
                                     }
