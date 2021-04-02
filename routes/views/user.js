@@ -815,7 +815,7 @@ module.exports = {
 				.populate("availability")
 				.populate("standard_meal")
 				.populate("side_dish")
-				.populate('Chef')
+				.populate('chef')
 				.lean();
 			console.log(finalfood.length, "--aa--aa--aa--aa--aa");
 			if (req.body.mealType.includes("Breakfast")) {
@@ -855,7 +855,7 @@ module.exports = {
 						.populate("availability")
 						.populate("standard_meal")
 						.populate("side_dish")
-						.populate('Chef')
+						.populate('chef')
 						.lean();
 					finalfood = [...finalfood, ...continentalDishes];
 				}
@@ -892,7 +892,7 @@ module.exports = {
 				.populate("availability")
 				.populate("standard_meal")
 				.populate("side_dish")
-				.populate('Chef')
+				.populate('chef')
 				.lean();
 			preferredIngredientsDishesFinal = JSON.parse(
 				JSON.stringify(preferredIngredientsDishesFinal)
