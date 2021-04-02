@@ -9,7 +9,8 @@ Chef.add({
 	},
 	email: {
 		type: String
-	}
+	},
+	profileImage: { type: Types.CloudinaryImage }
 });
 
 Chef.register();
