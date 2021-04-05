@@ -35,6 +35,25 @@ async function fetchChef (dishId) {
 	}
 }
 
+const foodEntry = (val,foodTime) => {
+	if(val[foodTime] != ""){
+		let data =  {
+			'Customer_Name': val.Customer_Name,
+			'dish': val[`${foodTime}`],
+			'allergy': val.allergy,
+			'adult_count': val.adult_count,
+			'children_count': val.children_count,
+		}
+		foodTime = foodTime.split("_")
+		if(foodTime[1]=="Breakfast") data['Timing'] = val.Breakfast_Time_Interval
+		if(foodTime[1]=="Lunch") data['Timing'] = val.Lunch_Time_Interval
+		if(foodTime[1]=="Dinner") data['Timing'] = val.Dinner_Time_Interval
+		return data
+	}else{
+		return ""
+	}
+}
+
 module.exports = {
 	newemailservice: async (link, email, subject) => {
 		sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -102,7 +121,8 @@ module.exports = {
 		} catch (err) {
 			console.log(err)
 		}
-	}, 
+	},
+	
 	createChefMail : ( details ) => {
 		let response = {
 			'Sunday' : {
@@ -138,232 +158,38 @@ module.exports = {
 		  
 		  
 		  for (let val of details) {
-			if (val['Sunday_Breakfast'] != '' ) {
-			  response['Sunday']['Breakfast'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Sunday_Breakfast'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Breakfast_Time_Interval
-			  })
-		  
-			}
-			if (val['Sunday_Lunch'] != '') {
-			  response['Sunday']['Lunch'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Sunday_Lunch'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Lunch_Time_Interval
-			  })
-		  
-			}
-			if (val['Sunday_Dinner'] != '') {
-			  response['Sunday']['Dinner'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Sunday_Dinner'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Dinner_Time_Interval
-			  })
-		  
-			}
-			if (val['Monday_Breakfast'] != '') {
-			  response['Monday']['Breakfast'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Monday_Breakfast'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Breakfast_Time_Interval
-			  })
-		  
-			}
-			if (val['Monday_Lunch'] != '') {
-			 response['Monday']['Lunch'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Monday_Lunch'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Lunch_Time_Interval
-			  })
-		  
-			}
-			if (val['Monday_Dinner'] != '') {
-			  response['Monday']['Dinner'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Monday_Dinner'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Dinner_Time_Interval
-			  })
-		  
-			}
-			if (val['Tuesday_Breakfast'] != '') {
-			  response['Tuesday']['Breakfast'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Tuesday_Breakfast'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Breakfast_Time_Interval
-			  })
-		  
-			}
-			if (val['Tuesday_Lunch'] != '') {
-			 response['Tuesday']['Lunch'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Tuesday_Lunch'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Lunch_Time_Interval
-			  })
-		  
-			}
-			if (val['Tuesday_Dinner'] != '') {
-			  response['Tuesday']['Dinner'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Tuesday_Dinner'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Dinner_Time_Interval
-			  })
-		  
-			}if (val['Wednesday_Breakfast'] != '') {
-			  response['Wednesday']['Breakfast'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Wednesday_Breakfast'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Breakfast_Time_Interval
-			  })
-		  
-			}
-			if (val['Wednesday_Lunch'] != '') {
-			 response['Wednesday']['Lunch'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Wednesday_Lunch'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Lunch_Time_Interval
-			  })
-		  
-			}
-			if (val['Wednesday_Dinner'] != '') {
-			  response['Wednesday']['Dinner'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Wednesday_Dinner'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Dinner_Time_Interval
-			  })
-		  
-			} if (val['Thursday_Breakfast'] != '') {
-			  response['Thursday']['Breakfast'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Thursday_Breakfast'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Breakfast_Time_Interval
-			  })
-		  
-			}
-			if (val['Thursday_Lunch'] != '') {
-			 response['Thursday']['Lunch'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Thursday_Lunch'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Lunch_Time_Interval
-			  })
-		  
-			}
-			if (val['Thursday_Dinner'] != '') {
-			  response['Thursday']['Dinner'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Thursday_Dinner'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Dinner_Time_Interval
-			  })
-		  
-			}if (val['Friday_Breakfast'] != '') {
-			  response['Friday']['Breakfast'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Friday_Breakfast'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Breakfast_Time_Interval
-			  })
-		  
-			}
-			if (val['Friday_Lunch'] != '') {
-			 response['Friday']['Lunch'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Friday_Lunch'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Lunch_Time_Interval
-			  })
-		  
-			}
-			if (val['Friday_Dinner'] != '') {
-			  response['Friday']['Dinner'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Friday_Dinner'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Dinner_Time_Interval
-			  })
-		  
-			}if (val['Saturday_Breakfast'] != '') {
-			  response['Saturday']['Breakfast'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Saturday_Breakfast'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Breakfast_Time_Interval
-			  })
-		  
-			}
-			if (val['Saturday_Lunch'] != '') {
-			 response['Saturday']['Lunch'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Saturday_Lunch'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Lunch_Time_Interval
-			  })
-		  
-			}
-			if (val['Saturday_Dinner'] != '') {
-			  response['Saturday']['Dinner'].push({
-				'Customer_Name': val.Customer_Name,
-				'dish': val['Saturday_Dinner'],
-				'allergy': val.allergy,
-				'adult_count': val.adult_count,
-				'children_count': val.children_count,
-				'Timing': val.Dinner_Time_Interval
-			  })
-		  
+
+			let meals = [
+				'Sunday_Breakfast',
+				'Sunday_Lunch',
+				'Sunday_Dinner',
+				'Monday_Breakfast',
+				'Monday_Lunch',
+				'Monday_Dinner',
+				'Tuesday_Breakfast',
+				'Tuesday_Lunch',
+				'Tuesday_Dinner',
+				'Wednesday_Breakfast',
+				'Wednesday_Lunch',
+				'Wednesday_Dinner',
+				'Thursday_Breakfast',
+				'Thursday_Lunch',
+				'Thursday_Dinner',
+				'Friday_Breakfast',
+				'Friday_Lunch',
+				'Friday_Dinner',
+				'Saturday_Breakfast',
+				'Saturday_Lunch',
+				'Saturday_Dinner'
+			  ]
+
+			for (let meal of meals){
+				if(foodEntry(val,meal)==""){
+
+				}else{
+					let dayandtime = meal.split("_")
+					response[`${dayandtime[0]}`][`${dayandtime[1]}`].push(foodEntry(val,meal))
+				}
 			}
 		}
 		  
