@@ -29,8 +29,6 @@ async function updateMealPrevious (extra_details , standard_details){
 async function fetchChef (dishId) {
 	if (dishId) {
 		const dishDetail = await dishes.model.findOne({_id : dishId}).populate('chef')
-		console.log(dishDetail,'DISH DETAIl')
-		console.log(dishDetail.chef._id,'CHEF ID')
 		return dishDetail.chef._id
 	}
 }
@@ -49,7 +47,7 @@ const foodEntry = (val,foodTime) => {
 		if(foodTime[1]=="Lunch") data['Timing'] = val.Lunch_Time_Interval
 		if(foodTime[1]=="Dinner") data['Timing'] = val.Dinner_Time_Interval
 		return data
-	}else{
+	} else {
 		return ""
 	}
 }
@@ -61,8 +59,7 @@ module.exports = {
 			to: email,
 			from: process.env.EMAIL,
 			subject: subject,
-			text: "click here to verify- " + link,
-			// html: '<strong>${link}</strong>',
+			text: "click here to verify- " + link
 		}
 		sgMail
 			.send(msg)
@@ -76,7 +73,7 @@ module.exports = {
 
 	reminderservice: async (html, email, subject) => {
 		sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-		console.log(html, "----------------------111111111111111111111111111111")
+		console.log(html, "HTML SENDING MAIL")
 		const msg = {
 			to: email,
 			from: process.env.EMAIL,
@@ -185,8 +182,7 @@ module.exports = {
 
 			for (let meal of meals){
 				if(foodEntry(val,meal)==""){
-
-				}else{
+				} else {
 					let dayandtime = meal.split("_")
 					response[`${dayandtime[0]}`][`${dayandtime[1]}`].push(foodEntry(val,meal))
 				}
@@ -203,9 +199,7 @@ module.exports = {
 			upcomingSunday.getDate() + ((0 - 1 - upcomingSunday.getDay() + 7) % 7) + 1
 		);
 		upcomingSunday = new Date(upcomingSunday);
-		console.log(upcomingSunday,'UPCOMING SUNDAY')
 		let lastTolastweekSaturday = new Date(Date.now() - 12096e5)
-		console.log(new Date(lastTolastweekSaturday),'LAST TO LAST WEEK SATURDAY')
 		for (let userData of allUsers) {
 			let foodPlanDataExist = await foodplans.model
 				.findOne({
@@ -215,7 +209,6 @@ module.exports = {
 					},
 				}).lean();
 				if (!foodPlanDataExist) {
-				console.log(lastTolastweekSaturday,'<<<<<<<<<<<<<<<<<<<<<<')
 				let foodPlanData = await foodplans.model
 					.find({
 						user: userData._id,
@@ -227,15 +220,14 @@ module.exports = {
 					.lean();
 				if (foodPlanData.length) {
 					let foodPlanDataByChef = foodPlanData[0]
-
-					console.log(',,,,,,,,,,,,,,,,,,,,,,')
 					let today = new Date();
 					let daynumber = today.getDay();
 					let startdate = (7 - daynumber);
 					let enddate = (7 - daynumber) + 6;
 					let startday = moment(today, "YYYY-MM-DD").add(startdate, 'days').set("hour", 0).set("minute", 0).set("seconds", 0)
 					let endday = moment(today, "YYYY-MM-DD").add(enddate,'days' ).set("hour", 0).set("minute", 0).set("seconds", 0)
-					console.log(startday,endday,'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+					console.log(startday,endday,'Start AND END DATE')
+					
 					let saveObject = {
 						user: foodPlanDataByChef.user,
 						foodDetails: foodPlanDataByChef.foodDetails,
@@ -307,34 +299,27 @@ module.exports = {
 						Primary_Cuisine: foodPlanDataByChef.Primary_Cuisine,
 						name: foodPlanDataByChef.name,
 
-						Sunday_Breakfast_Meal: await updateMealPrevious (foodPlanDataByChef.Sunday_Breakfast_Extra,foodPlanDataByChef.Sunday_Breakfast_Standard  ) ,
-						Sunday_Lunch_Meal: await updateMealPrevious (foodPlanDataByChef.Sunday_Lunch_Extra,foodPlanDataByChef.Sunday_Lunch_Standard  ),
-						Sunday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Sunday_Dinner_Extra,foodPlanDataByChef.Sunday_Dinner_Standard  ),
-						
-						Monday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Monday_Breakfast_Extra,foodPlanDataByChef.Monday_Breakfast_Standard  ) ,
-						Monday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Monday_Lunch_Extra,foodPlanDataByChef.Monday_Lunch_Standard  ) ,
-						Monday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Monday_Dinner_Extra,foodPlanDataByChef.Monday_Dinner_Standard  ) ,
-						
-						Tuesday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Tuesday_Breakfast_Extra,foodPlanDataByChef.Tuesday_Breakfast_Standard  ) ,
-						Tuesday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Tuesday_Lunch_Extra,foodPlanDataByChef.Tuesday_Lunch_Standard  ) ,
-						Tuesday_Dinner_Meal:  await updateMealPrevious(foodPlanDataByChef.Tuesday_Dinner_Extra,foodPlanDataByChef.Tuesday_Dinner_Standard  ) ,
-						
-						Wednesday_Breakfast_Meal:  await updateMealPrevious(foodPlanDataByChef.Wednesday_Breakfast_Extra,foodPlanDataByChef.Wednesday_Breakfast_Standard  ) ,
-						Wednesday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Wednesday_Lunch_Extra,foodPlanDataByChef.Wednesday_Lunch_Standard  ) ,
-						Wednesday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Wednesday_Dinner_Extra,foodPlanDataByChef.Wednesday_Dinner_Standard  ) ,
-						
-						Thursday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Thursday_Breakfast_Extra,foodPlanDataByChef.Thursday_Breakfast_Standard  ) ,
-						Thursday_Lunch_Meal:  await updateMealPrevious(foodPlanDataByChef.Thursday_Lunch_Extra,foodPlanDataByChef.Thursday_Lunch_Standard  ) ,
-						Thursday_Dinner_Meal:  await updateMealPrevious(foodPlanDataByChef.Thursday_Dinner_Extra,foodPlanDataByChef.Thursday_Dinner_Standard  ) ,
-						
-						Friday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Friday_Breakfast_Extra,foodPlanDataByChef.Friday_Breakfast_Standard  ) ,
-						Friday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Friday_Lunch_Extra,foodPlanDataByChef.Friday_Lunch_Standard  ) ,
-						Friday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Friday_Dinner_Extra,foodPlanDataByChef.Friday_Dinner_Standard  ) ,
-						
-						Saturday_Breakfast_Meal: await updateMealPrevious(foodPlanDataByChef.Saturday_Breakfast_Extra,foodPlanDataByChef.Saturday_Breakfast_Standard  ) ,
-						Saturday_Lunch_Meal: await updateMealPrevious(foodPlanDataByChef.Saturday_Lunch_Extra,foodPlanDataByChef.Saturday_Lunch_Standard  ) ,
-						Saturday_Dinner_Meal: await updateMealPrevious(foodPlanDataByChef.Saturday_Dinner_Extra,foodPlanDataByChef.Saturday_Dinner_Standard  ) ,
-
+						Sunday_Breakfast_Meal: foodPlanDataByChef.Sunday_Breakfast_Meal,
+						Sunday_Lunch_Meal: foodPlanDataByChef.Sunday_Lunch_Meal,
+						Sunday_Dinner_Meal: foodPlanDataByChef.Sunday_Dinner_Meal,	
+						Monday_Breakfast_Meal: foodPlanDataByChef.Monday_Breakfast_Meal,
+						Monday_Lunch_Meal: foodPlanDataByChef.Monday_Lunch_Meal,
+						Monday_Dinner_Meal: foodPlanDataByChef.Monday_Dinner_Meal,		
+						Tuesday_Breakfast_Meal: foodPlanDataByChef.Tuesday_Breakfast_Meal,
+						Tuesday_Lunch_Meal: foodPlanDataByChef.Tuesday_Lunch_Meal,		
+						Tuesday_Dinner_Meal:  foodPlanDataByChef.Tuesday_Dinner_Meal,				
+						Wednesday_Breakfast_Meal: foodPlanDataByChef.Wednesday_Breakfast_Meal,
+						Wednesday_Lunch_Meal: foodPlanDataByChef.Wednesday_Lunch_Meal,						
+						Wednesday_Dinner_Meal: foodPlanDataByChef.Wednesday_Dinner_Meal,
+						Thursday_Breakfast_Meal:  foodPlanDataByChef.Thursday_Breakfast_Meal,
+						Thursday_Lunch_Meal:  foodPlanDataByChef.Thursday_Lunch_Meal,		
+						Thursday_Dinner_Meal:  foodPlanDataByChef.Thursday_Dinner_Meal,						
+						Friday_Breakfast_Meal: foodPlanDataByChef.Friday_Breakfast_Meal,
+						Friday_Lunch_Meal: foodPlanDataByChef.Friday_Lunch_Meal,
+						Friday_Dinner_Meal: foodPlanDataByChef.Friday_Dinner_Meal,	
+						Saturday_Breakfast_Meal: foodPlanDataByChef.Saturday_Breakfast_Meal,
+						Saturday_Lunch_Meal: foodPlanDataByChef.Saturday_Lunch_Meal,		
+						Saturday_Dinner_Meal: foodPlanDataByChef.Saturday_Dinner_Meal
 					};
 
 					let createNext = await foodplans.model.create(saveObject);

@@ -67,7 +67,6 @@ async function createUserSide (details) {
 } 
 
 async function updateFood(req) {
-	console.log("entttttttttttttttttt");
 	try {
 		let dataToReturn = {};
 		let text = "";
@@ -1195,6 +1194,7 @@ module.exports = {
 			let daynumber = today.getDay();
 			let startdate = 7 - daynumber;
 			let enddate = 7 - daynumber + 6;
+			let systemDetails = await systemDates.model.findOne({})
 			startday = moment(today, "YYYY-MM-DD")
 				.add("days", startdate)
 				.set("hour", 0)
@@ -1276,8 +1276,8 @@ module.exports = {
 				Lunch_Time_Interval: selections.Lunch_Time_Interval,
 				Dinner_Time_Interval: selections.Dinner_Time_Interval,
 				Days: selections.day,
-				startdate: startday,
-				enddate: endday,
+				startdate: systemDetails.weekstartdate,
+				enddate: systemDetails.weekenddate,
 				Receiver_Name: deliveryDetails.receiverName,
 				Receiver_Email: deliveryDetails.receiverEmail,
 				Shipping_Address: deliveryDetails.shippingAddress,
