@@ -10,7 +10,11 @@ Chef.add({
 	email: {
 		type: String
 	},
-	profileImage: { type: Types.CloudinaryImage }
+	profileImage: { type: Types.CloudinaryImage },
+	status : {
+		type : Boolean,
+		default : true
+	}
 });
 
 Chef.register();
