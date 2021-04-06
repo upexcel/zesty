@@ -11,10 +11,10 @@ Chef.add({
 		type: String
 	},
 	profileImage: { type: Types.CloudinaryImage },
-	status : {
-		type : Boolean,
-		default : true
-	}
+	// status : {
+	// 	type : Boolean,
+	// 	default : true
+	// }
 });
 
 Chef.register();
