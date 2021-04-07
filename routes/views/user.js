@@ -70,7 +70,7 @@ async function updateFood(req) {
 	try {
 		let dataToReturn = {};
 		let text = "";
-		let price = req.body.price
+		let price = req.body.totalbill
 		let foodDayDetails = req.body.foodDetails;
 		let standardMealDetails = req.body.updatedMealData;
 		for (let item in foodDayDetails) {
