@@ -96,7 +96,8 @@ Foodplan.add({
     Friday_Dinner_Meal: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
     Saturday_Breakfast_Meal: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
     Saturday_Lunch_Meal: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
-    Saturday_Dinner_Meal:{ type: Types.Relationship, ref: 'UserDish', many: true, index: true }
+    Saturday_Dinner_Meal:{ type: Types.Relationship, ref: 'UserDish', many: true, index: true },
+    TotalBill:{type : Number}
 });
 Foodplan.schema.add({
     foodDetails: {
