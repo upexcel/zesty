@@ -70,6 +70,7 @@ async function updateFood(req) {
 	try {
 		let dataToReturn = {};
 		let text = "";
+		let price = req.body.price
 		let foodDayDetails = req.body.foodDetails;
 		let standardMealDetails = req.body.updatedMealData;
 		for (let item in foodDayDetails) {
@@ -190,6 +191,8 @@ async function updateFood(req) {
 		let foundUser = await users.model.findOne({ _id: req.body.userId });
 		let email = foundUser.email;
 		let subject = "Your Order Details.";
+		text +=  '<br>' +
+				`<p>your order price is ${price}</p>`
 		await passverify.reminderservice(text, email, subject, null);
 		return dataToReturn;
 	} catch (error) {
