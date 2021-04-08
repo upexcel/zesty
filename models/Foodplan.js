@@ -104,5 +104,5 @@ Foodplan.schema.add({
         type: Schema.Types.Mixed
     }
 });
-Foodplan.defaultColumns = "name, startdate, enddate"
+Foodplan.defaultColumns = "name, startdate, enddate, totalbill"
 Foodplan.register();
