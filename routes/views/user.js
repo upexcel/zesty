@@ -17,6 +17,7 @@ let cuisine = keystone.list("cuisine");
 let dietary_requirement = keystone.list("dietary_requirement");
 let foodplans = keystone.list("Foodplan");
 let typeOfFood = keystone.list("type_of_food");
+let revenue = keystone.list("Revenue")
 let otherChoicesModel = keystone.list("otherChoices");
 let passverify = require("./service");
 const { select } = require("async");
@@ -1261,6 +1262,9 @@ module.exports = {
 			// 		selections.children_count = 0
 			// 	}
 			// }
+			console.log(req.body.totalbill,"4444444444444444")
+			let price = req.body.totalbill.split(" ")[1]
+			console.log(price,"gggggggggggggggggggggg")
 			let dataToCreate = {
 				name: foundUser.name,
 				user: req.body.userId,
@@ -1288,6 +1292,7 @@ module.exports = {
 				Shipping_Zipcode: deliveryDetails.shippingZipcode,
 				mobile: deliveryDetails.mobile,
 				primary_ingredeints: selections.primary_ingredeints,
+				totalbill: price
 			};
 			if (req.body.other_breakfast_choices_data) {
 				let otherChoices = await otherChoicesModel.model.create(
@@ -1328,15 +1333,34 @@ module.exports = {
 				{ mobile: deliveryDetails.mobile }
 			);
 			console.log("========");
-
+			let pastrevenue = await revenue.model.findOne({user : req.body.userId})
+			console.log(pastrevenue,"pastrevenue")
 			if (!foundplan) {
 				console.log("1111");
 				let mailData = await sendMailToStaff(foundUser);
+				if(pastrevenue&&pastrevenue.bill){
+					await revenue.model.update({user:req.body.userId},{bill:price+pastrevenue.bill})
+				}else{
+					await revenue.model.create({
+						user : req.body.userId,
+						name: foundUser.name,
+						bill : price
+					})
+				}
 				let createdPlan = await foodplans.model.create(completeDataToCreate);
 				console.log(mailData, "askkasaksalksalksalksaksk");
 				res.json({ error: 0, message: "Success", lastWeekFoodPlan });
 			} else {
 				console.log("2222");
+				if(pastrevenue&&pastrevenue.bill){
+					await revenue.model.update({user:req.body.userId},{bill:price+pastrevenue.bill-foundplan.totalbill})
+				}else{
+					await revenue.model.create({
+						user : req.body.userId,
+						name: foundUser.name,
+						bill : price
+					})
+				}
 				let removeOld = await foodplans.model.remove({
 					user: req.body.userId,
 					startdate: { $gt: new Date() },
