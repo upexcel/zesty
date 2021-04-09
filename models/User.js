@@ -19,7 +19,8 @@ User.add({
 	password: { type: Types.Password, initial: true, required: true },
 	workprofile: {type: String},
 	orderForThisWeek: { type: Types.Relationship, ref: 'Foodplan', index:true},
-	pauseSubscription: { type: Boolean, index: true, default: false}
+	pauseSubscription: { type: Boolean, index: true, default: false},
+	membership: {type : String, default: 'weekly'},
 }, 'Permissions', {
 	isAdmin: { type: Boolean, label: 'Can access Keystone', index: true },
 });
