@@ -1263,7 +1263,7 @@ module.exports = {
 			// 	}
 			// }
 			console.log(req.body.totalbill,"4444444444444444")
-			let price = req.body.totalbill.split(" ")[1]
+			let price = parseInt(req.body.totalbill.split(" ")[1])
 			console.log(price,"gggggggggggggggggggggg")
 			let dataToCreate = {
 				name: foundUser.name,
@@ -1292,7 +1292,7 @@ module.exports = {
 				Shipping_Zipcode: deliveryDetails.shippingZipcode,
 				mobile: deliveryDetails.mobile,
 				primary_ingredeints: selections.primary_ingredeints,
-				totalbill: price
+				totalBill: price
 			};
 			if (req.body.other_breakfast_choices_data) {
 				let otherChoices = await otherChoicesModel.model.create(
