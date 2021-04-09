@@ -1242,29 +1242,14 @@ module.exports = {
 				],
 			});
 			let foundPlanForReference = JSON.parse(JSON.stringify(foundplan));
-			// let selections = req.body.choices;
 			let fieldsToUpdate = await updateFood(req);
 			let selections = req.body.choices;
 			let deliveryDetails = req.body.deliveryInfo;
 			let foundUser = await users.model.findOne({ _id: req.body.userId });
-			// if (!selections.adult_count){
-			// 	selections.adult_count = 0
-			// }
-			// if(!selections.children_count){
-			// 	selections.children_count = 0
-			// }
-			// if (selections.adult_count == 0 && selections.children_count == 0){
-			// 	if(lastWeekFoodPlan){
-			// 		selections.adult_count = lastWeekFoodPlan.adult_count,
-			// 		selections.children_count = lastWeekFoodPlan.children_count
-			// 	}else{
-			// 		selections.adult_count = 1,
-			// 		selections.children_count = 0
-			// 	}
-			// }
-			console.log(req.body.totalbill,"4444444444444444")
+
+			console.log(req.body.totalbill,"TOTAL BILL")
 			let price = parseInt(req.body.totalbill.split(" ")[1])
-			console.log(price,"gggggggggggggggggggggg")
+			console.log(price,"PRICE")
 			let dataToCreate = {
 				name: foundUser.name,
 				user: req.body.userId,
@@ -1294,6 +1279,7 @@ module.exports = {
 				primary_ingredeints: selections.primary_ingredeints,
 				totalBill: price
 			};
+
 			if (req.body.other_breakfast_choices_data) {
 				let otherChoices = await otherChoicesModel.model.create(
 					req.body.other_breakfast_choices_data
@@ -1312,13 +1298,8 @@ module.exports = {
 				);
 				dataToCreate.other_dinner_choices = otherChoices._id;
 			}
-			console.log("========");
-			// console.log(dataToCreate,"----------------")
 			let completeDataToCreate = Object.assign(dataToCreate, fieldsToUpdate);
-			console.log("========");
-			// console.log(lastWeekFoodPlan._id,lastWeekFoodPlan.startdate,lastWeekFoodPlan.enddate,"===========111222333")
-			console.log("========");
-
+			
 			if (lastWeekFoodPlan) {
 				console.log("lastWeekFoodPlan", "================");
 				let updatedUser = await users.model.update(
@@ -1326,48 +1307,21 @@ module.exports = {
 					{ orderForThisWeek: lastWeekFoodPlan._id }
 				);
 			}
-			console.log("========");
 
+			completeDataToCreate.Allergens = req.body.allergens && req.body.allergens.length ? req.body.allergens : lastWeekFoodPlan && lastWeekFoodPlan.allergens ? lastWeekFoodPlan.allergens : ['Nothing'] 
+			completeDataToCreate.adult_count = req.body.adult_count ? req.body.adult_count : lastWeekFoodPlan && lastWeekFoodPlan.adult_count ? lastWeekFoodPlan.adult_count : 1
+			completeDataToCreate.children_count = req.body.children_count ? req.body.children_count : lastWeekFoodPlan && lastWeekFoodPlan.children_count ? lastWeekFoodPlan.children_count : 0
 			let updatedUserData = await users.model.update(
 				{ _id: req.body.userId },
 				{ mobile: deliveryDetails.mobile }
 			);
-			console.log("========");
-			let pastrevenue = await revenue.model.findOne({user : req.body.userId})
-			console.log(pastrevenue,"pastrevenue")
 			if (!foundplan) {
-				console.log("1111");
 				let mailData = await sendMailToStaff(foundUser);
-				if(pastrevenue&&pastrevenue.bill){
-					await revenue.model.update({user:req.body.userId},{bill:price+pastrevenue.bill})
-				}else{
-					await revenue.model.create({
-						user : req.body.userId,
-						name: foundUser.name,
-						bill : price
-					})
-				}
 				let createdPlan = await foodplans.model.create(completeDataToCreate);
-				console.log(mailData, "askkasaksalksalksalksaksk");
 				res.json({ error: 0, message: "Success", lastWeekFoodPlan });
 			} else {
-				console.log("2222");
-				if(pastrevenue&&pastrevenue.bill){
-					await revenue.model.update({user:req.body.userId},{bill:price+pastrevenue.bill-foundplan.totalbill})
-				}else{
-					await revenue.model.create({
-						user : req.body.userId,
-						name: foundUser.name,
-						bill : price
-					})
-				}
-				let removeOld = await foodplans.model.remove({
-					user: req.body.userId,
-					startdate: { $gt: new Date() },
-				});
 				let mailData = await sendMailToStaff(foundUser);
 				let newRecord = await foodplans.model.create(completeDataToCreate);
-				console.log(mailData, "askkasaksalksalksalksakskkkkk");
 				res.json({ error: 0, message: "Success", foundUser });
 			}
 		} catch (error) {
@@ -1664,6 +1618,7 @@ module.exports = {
         try {
             let textResponse = []
             let systemDetails = await systemDates.model.findOne({})
+			console.log(systemDetails,'SYS')
 
             let allDishes = await dishes.model
                 .find()
