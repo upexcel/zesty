@@ -298,7 +298,7 @@ module.exports = {
 						Secondary_Cuisine: foodPlanDataByChef.Secondary_Cuisine,
 						Primary_Cuisine: foodPlanDataByChef.Primary_Cuisine,
 						name: foodPlanDataByChef.name,
-
+						totalBill : foodPlanDataByChef.totalBill,
 						Sunday_Breakfast_Meal: foodPlanDataByChef.Sunday_Breakfast_Meal,
 						Sunday_Lunch_Meal: foodPlanDataByChef.Sunday_Lunch_Meal,
 						Sunday_Dinner_Meal: foodPlanDataByChef.Sunday_Dinner_Meal,	

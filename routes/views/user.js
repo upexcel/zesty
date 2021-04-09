@@ -17,7 +17,7 @@ let cuisine = keystone.list("cuisine");
 let dietary_requirement = keystone.list("dietary_requirement");
 let foodplans = keystone.list("Foodplan");
 let typeOfFood = keystone.list("type_of_food");
-let revenue = keystone.list("Revenue")
+let revenue = keystone.list("ZestyRevenue")
 let otherChoicesModel = keystone.list("otherChoices");
 let passverify = require("./service");
 const { select } = require("async");
@@ -1188,8 +1188,6 @@ module.exports = {
 
 	savefoodplan: async (req, res) => {
 		try {
-			let daysObj = req.body.foodDetails;
-
 			let startday;
 			let endday;
 			let lastWeekStartDate;
@@ -1221,14 +1219,6 @@ module.exports = {
 					0,
 					0
 				)
-			);
-			console.log(
-				startdate,
-				enddate,
-				new Date(startday),
-				endday,
-				lastWeekStartDate,
-				lastWeekEndDate
 			);
 			let foundplan = await foodplans.model.findOne({
 				user: req.body.userId,
@@ -1277,6 +1267,7 @@ module.exports = {
 				Shipping_Zipcode: deliveryDetails.shippingZipcode,
 				mobile: deliveryDetails.mobile,
 				primary_ingredeints: selections.primary_ingredeints,
+				membership: req.body.membership ? req.body.membership : 'weekly',
 				totalBill: price
 			};
 
@@ -2514,7 +2505,6 @@ module.exports = {
 			let finalResponse = [...resp, ...preferredIngredientsDishesFinal];
 			finalResponse = finalResponse.sort(() => Math.random() - 0.5);
 			finalResponse = [...finalResponse, ...extraDishes];
-			// console.log(finalResponse.length)
 			res.json({
 				[`${req.body.mealType}`]: finalResponse,
 			});
@@ -2534,7 +2524,6 @@ module.exports = {
 			});
 			res.json(data);
 		} catch (err) {
-			console.log(err);
 			res.status(500).json(err);
 		}
 	},
@@ -2546,7 +2535,6 @@ module.exports = {
 				.select("_id");
 			res.json(data);
 		} catch (err) {
-			console.log(err);
 			res.status(500).json(err);
 		}
 	},
@@ -2556,7 +2544,6 @@ async function getRandom(arr, n) {
 	var result = new Array(n),
 		len = arr.length,
 		taken = new Array(len);
-	console.log(n, len, "=-=---=");
 	if (n > len)
 		// n=len;
 		throw new RangeError("getRandom: more elements taken than available");
@@ -2571,19 +2558,32 @@ async function getRandom(arr, n) {
 
 async function sendMailToStaff(userData) {
 	let foodPlanOfUser = await foodplans.model.findOne({ user: userData._id });
-	console.log("asdasdkskd");
 	let userName = userData.name
 		? userData.name.first + " " + (userData.name.last ? userData.name.last : "")
 		: "A user";
 	let email = JSON.parse(process.env.emailsForStaff);
-	console.log("asdasdkskd");
 	let html = `Congrats, ${userName} created a foodplan.`;
 	let subject = "Foodplan";
-	console.log(email, foodPlanOfUser, "emails emails");
 	if (!foodPlanOfUser) {
 		passverify.reminderservice(html, email, subject);
 	}
 	return "success mail";
 }
 
+async function incrementWeekRevenue(startdate,enddate,amounts) {
+	return "weekly Incremented";
+}
 
+async function decrementWeekRevenue(startdate,enddate,amounts) {
+	
+	return "weekly Decremented";
+}
+
+
+async function incrementZestyRevenue(startdate,enddate,amounts) {
+	return "Overall Incremented";
+}
+
+async function decrementZestyRevenue(startdate,enddate,amounts) {
+	return "Overall Decremented";
+}

@@ -1,15 +1,14 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
-var Revenue = new keystone.List('Revenue');
+var ZestyRevenue = new keystone.List('ZestyRevenue');
 
-Revenue.add({
-    startdate:  { type: Types.Datetime, required: true, initial: true },
-    enddate:    { type: Types.Datetime, required: true, initial: true },
+ZestyRevenue.add({
+    name: { type: String, default: 'Zesty Revenue'},
     totalBill: { type: Number },
     ZestyMargin : { type: Number },
     Memberbership : { type: Number },
     totalRevenue : { type: Number },
 })
-Revenue.defaultColumns = 'startdate, enddate, totalBill, ZestyMargin, Memberbership, totalRevenue';
-Revenue.register();
+ZestyRevenue.defaultColumns = 'name, totalBill, ZestyMargin, Memberbership, totalRevenue';
+ZestyRevenue.register();
