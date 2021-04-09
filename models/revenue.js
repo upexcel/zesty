@@ -11,5 +11,5 @@ Revenue.add({
     Memberbership : { type: Number },
     totalRevenue : { type: Number },
 })
-Revenue.defaultColumns = 'user, bill';
+Revenue.defaultColumns = 'startdate, enddate, totalBill, ZestyMargin, Memberbership, totalRevenue';
 Revenue.register();
