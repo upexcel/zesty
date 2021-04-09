@@ -1397,17 +1397,35 @@ module.exports = {
 				user: req.body.userId,
 				startdate: { $gt: new Date() },
 			});
-
+			let pastrevenue = await revenue.model.findOne({user : req.body.userId})
 			let completeDataToCreate = JSON.parse(JSON.stringify(currentPlan));
 			delete completeDataToCreate._id;
 			completeDataToCreate.startdate = startday;
 			completeDataToCreate.enddate = endday;
 			if (!foundplan) {
 				console.log("sldkkfdslkfslsfdslkaaaa");
+				if(pastrevenue&&pastrevenue.bill){
+					await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill})
+				}else{
+					await revenue.model.create({
+						user : req.body.userId,
+						name: completeDataToCreate.name,
+						bill : completeDataToCreate.totalbill
+					})
+				}
 				let createdPlan = await foodplans.model.create(completeDataToCreate);
 				res.json({ error: 0, message: "Success", completeDataToCreate });
 			} else {
 				console.log("ttttttttttttttttttttt");
+				if(pastrevenue&&pastrevenue.bill){
+					await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill-foundplan.totalbill})
+				}else{
+					await revenue.model.create({
+						user : req.body.userId,
+						name: foundUser.name,
+						bill : completeDataToCreate.totalbill
+					})
+				}
 				let removeOld = await foodplans.model.remove({
 					user: req.body.userId,
 					startdate: { $gt: new Date() },
