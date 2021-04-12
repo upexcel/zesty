@@ -2,9 +2,6 @@ let jwt = require("jsonwebtoken");
 let moment = require("moment");
 let keystone = require("keystone");
 let users = keystone.list("User");
-// let plans = keystone.list('Plan');
-// let subscriptions = keystone.list('Subscription');
-// let carts = keystone.list('Cart');
 let dishes = keystone.list("Dishes");
 let side_dish = keystone.list("side_dish");
 let allergens = keystone.list("Allergens");
@@ -17,7 +14,6 @@ let cuisine = keystone.list("cuisine");
 let dietary_requirement = keystone.list("dietary_requirement");
 let foodplans = keystone.list("Foodplan");
 let typeOfFood = keystone.list("type_of_food");
-let revenue = keystone.list("ZestyRevenue")
 let otherChoicesModel = keystone.list("otherChoices");
 let passverify = require("./service");
 const { select } = require("async");
@@ -29,7 +25,19 @@ const Handlebars = require("handlebars");
 const service = require("./service");
 const Chef = keystone.list('Chef');
 const systemDates = keystone.list('SystemDates')
+let ZestyRevenue = keystone.list("ZestyRevenue");
+let WeekRevenue = keystone.list("ZestyWeekRevenue");
 
+const membershipData ={
+	weekly : 9,
+	monthly : 29,
+	Yearly : 219
+}
+const zestyMarginData = {
+	single : 5,
+	double : 7,
+	more : 8
+} 
 
 async function uploadImage(req) {
 	try {
@@ -1235,6 +1243,12 @@ module.exports = {
 			let fieldsToUpdate = await updateFood(req);
 			let selections = req.body.choices;
 			let deliveryDetails = req.body.deliveryInfo;
+
+			const updateUserMembership = await users.model.update({ _id: req.body.userId }, {
+				$set : {
+					membership : req.body.membership ? req.body.membership : 'weekly'
+				}
+			});
 			let foundUser = await users.model.findOne({ _id: req.body.userId });
 
 			console.log(req.body.totalbill,"TOTAL BILL")
@@ -1267,10 +1281,19 @@ module.exports = {
 				Shipping_Zipcode: deliveryDetails.shippingZipcode,
 				mobile: deliveryDetails.mobile,
 				primary_ingredeints: selections.primary_ingredeints,
-				membership: req.body.membership ? req.body.membership : 'weekly',
 				totalBill: price
 			};
-
+			dataToCreate.membership = req.body.membership =="weekly"? membershipData.weekly : (req.body.membership == "monthly" ? membershipData.monthly : (req.body.membership == "yearly") ?  membershipData.Yearly : membershipData.weekly );
+			let totalpeople = selections.adult_count+selections.children_count
+			if (totalpeople == 1){
+				dataToCreate.zesty_margin = zestyMarginData.single
+			}
+			if(totalpeople == 2){
+				dataToCreate.zesty_margin = zestyMarginData.double
+			}
+			if(totalpeople >= 3){
+				dataToCreate.zesty_margin = zestyMarginData.more
+			}
 			if (req.body.other_breakfast_choices_data) {
 				let otherChoices = await otherChoicesModel.model.create(
 					req.body.other_breakfast_choices_data
