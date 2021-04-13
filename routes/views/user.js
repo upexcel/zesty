@@ -211,6 +211,57 @@ async function updateFood(req) {
 }
 
 module.exports = {
+	addweeklyrevenue : async function(){
+		try{
+			const currentsystemdate = await systemDates.model.findOne({})
+			const currentfoodplans = await  foodplans.model.find({startdate:{$gte :currentsystemdate.weekstartdate }}).lean()
+			console.log(currentfoodplans)
+			let weeklyrevenuedata = {
+				startdate : currentsystemdate.weekstartdate,
+				enddate : currentsystemdate.weekenddate,
+				totalBill: 0,
+				ZestyMargin : 0,
+				Memberbership : 0,
+				totalRevenue : 0
+			}
+			if (currentfoodplans.length>0){
+				for (let foodplan of currentfoodplans){
+					weeklyrevenuedata.totalBill +=  foodplan.totalBill
+					weeklyrevenuedata.ZestyMargin += foodplan.zesty_margin
+					weeklyrevenuedata.Memberbership +=  foodplan.membership
+					weeklyrevenuedata.totalRevenue +=  foodplan.total_revenue
+				}
+			}
+			await WeekRevenue.model.remove({startdate:currentsystemdate.weekstartdate})
+			const weeklyrevenuesaved = await WeekRevenue.model.create(weeklyrevenuedata)
+			console.log(weeklyrevenuesaved,"weekly revenue saved")
+		}catch(err){
+			console.log(err)
+		}
+	},
+
+	addtotalrevenue : async function(){
+		const allweeksrevenue = await WeekRevenue.model.find({})
+		let revenuetobesaved = {
+			name: 'Zesty Revenue',
+			totalBill: 0,
+			ZestyMargin : 0,
+			Memberbership : 0,
+			totalRevenue : 0
+		}
+		if (allweeksrevenue.length>0){
+			for(let weeksrevenue of allweeksrevenue){
+				revenuetobesaved.totalBill += weeksrevenue.totalBill
+				revenuetobesaved.ZestyMargin += weeksrevenue.ZestyMargin
+				revenuetobesaved.Memberbership += weeksrevenue.Memberbership
+				revenuetobesaved.totalRevenue += weeksrevenue.totalRevenue 
+			}
+		}
+		await ZestyRevenue.model.remove({})
+		const createdrevenue = await ZestyRevenue.model.create(revenuetobesaved)
+		console.log(createdrevenue,"total revenue saved ")
+	},
+
 	getuser: async function (req, res) {
 		try {
 			let data = await users.model.find({});
@@ -1286,13 +1337,13 @@ module.exports = {
 			dataToCreate.membership = req.body.membership =="weekly"? membershipData.weekly : (req.body.membership == "monthly" ? membershipData.monthly : (req.body.membership == "yearly") ?  membershipData.Yearly : membershipData.weekly );
 			let totalpeople = selections.adult_count+selections.children_count
 			if (totalpeople == 1){
-				dataToCreate.zesty_margin = zestyMarginData.single
+				dataToCreate.zesty_margin = zestyMarginData.single * req.body.mealcount
 			}
 			if(totalpeople == 2){
-				dataToCreate.zesty_margin = zestyMarginData.double
+				dataToCreate.zesty_margin = zestyMarginData.double * req.body.mealcount
 			}
 			if(totalpeople >= 3){
-				dataToCreate.zesty_margin = zestyMarginData.more
+				dataToCreate.zesty_margin = zestyMarginData.more * req.body.mealcount
 			}
 			if (req.body.other_breakfast_choices_data) {
 				let otherChoices = await otherChoicesModel.model.create(

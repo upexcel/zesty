@@ -96,6 +96,21 @@ const setSystemDates = new CronJob('40 1 * * */6', async () => {
 }, null, true, 'Asia/Kolkata')
 setSystemDates.start();
 
+const addweeklyrevenue = new CronJob("0 0 * * *",async ()=>{
+	cronSend.addweeklyrevenue().then((data) => {
+	}).catch(err => {
+		console.log(err)
+	});
+})
+addweeklyrevenue.start();
+
+const addtotalrevenue = new CronJob('0 12 * * *', async ()=>{
+	cronSend.addtotalrevenue().then((data) => {
+	}).catch(err => {
+		console.log(err)
+	});
+})
+addtotalrevenue.start();
 // Configure the navigation bar in Keystone's Admin UI
 keystone.set('nav', {
 	// posts: ['posts', 'post-categories'],
