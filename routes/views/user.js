@@ -1423,28 +1423,28 @@ module.exports = {
 			completeDataToCreate.enddate = endday;
 			if (!foundplan) {
 				console.log("sldkkfdslkfslsfdslkaaaa");
-				if(pastrevenue&&pastrevenue.bill){
-					await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill})
-				}else{
-					await revenue.model.create({
-						user : req.body.userId,
-						name: completeDataToCreate.name,
-						bill : completeDataToCreate.totalbill
-					})
-				}
+				// if(pastrevenue&&pastrevenue.bill){
+				// 	await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill})
+				// }else{
+				// 	await revenue.model.create({
+				// 		user : req.body.userId,
+				// 		name: completeDataToCreate.name,
+				// 		bill : completeDataToCreate.totalbill
+				// 	})
+				// }
 				let createdPlan = await foodplans.model.create(completeDataToCreate);
 				res.json({ error: 0, message: "Success", completeDataToCreate });
 			} else {
 				console.log("ttttttttttttttttttttt");
-				if(pastrevenue&&pastrevenue.bill){
-					await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill-foundplan.totalbill})
-				}else{
-					await revenue.model.create({
-						user : req.body.userId,
-						name: foundUser.name,
-						bill : completeDataToCreate.totalbill
-					})
-				}
+				// if(pastrevenue&&pastrevenue.bill){
+				// 	await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill-foundplan.totalbill})
+				// }else{
+				// 	await revenue.model.create({
+				// 		user : req.body.userId,
+				// 		name: foundUser.name,
+				// 		bill : completeDataToCreate.totalbill
+				// 	})
+				// }
 				let removeOld = await foodplans.model.remove({
 					user: req.body.userId,
 					startdate: { $gt: new Date() },

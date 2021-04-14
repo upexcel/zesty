@@ -9,8 +9,28 @@ let users = keystone.list('User');
 let userDish = keystone.list("UserDish");
 let side_dish = keystone.list('side_dish');
 let moment = require('moment');
+const { updateLocale } = require('moment');
 
+const getdishdetails = async (id)=>{
+	const dish = await dishes.model.findOne({_id:id})
+	return dish.name
+	
+}
+const getsidedishdetails = async(ids)=>{
+	if(ids.length>=1){
+		let sidedish = []
+		for (let id of ids){
+			let dish = await userDish.model.findOne({_id:id})
+			if(dish){
+				sidedish.push(`${dish.count} ${dish.name}`)
+			}
 
+		}
+		return `with ${sidedish.join(",")}`
+	}else{
+		return ""
+	}
+}
 async function updateMealPrevious (extra_details , standard_details){
 	let common_dish = extra_details.concat(standard_details)
 	let resp = []
@@ -50,6 +70,25 @@ const foodEntry = (val,foodTime) => {
 	} else {
 		return ""
 	}
+}
+
+const reminderserviceforfoodplan = async (html, email, subject) => {
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+	console.log(html, "HTML SENDING MAIL")
+	const msg = {
+		to: email,
+		from: process.env.EMAIL,
+		subject: subject,
+		html: html
+	}
+	sgMail
+		.send(msg)
+		.then(() => {
+			console.log('Email sent')
+		})
+		.catch((error) => {
+			console.error(error);
+		})
 }
 
 module.exports = {
@@ -201,6 +240,9 @@ module.exports = {
 		upcomingSunday = new Date(upcomingSunday);
 		let lastTolastweekSaturday = new Date(Date.now() - 12096e5)
 		for (let userData of allUsers) {
+			let text = `<p>Hi ${userData.name.first} ${userData.name.last}</p>
+			<br>
+			<p>Your foodplan for this week is : </p>`
 			let foodPlanDataExist = await foodplans.model
 				.findOne({
 					user: userData._id,
@@ -227,7 +269,7 @@ module.exports = {
 					let startday = moment(today, "YYYY-MM-DD").add(startdate, 'days').set("hour", 0).set("minute", 0).set("seconds", 0)
 					let endday = moment(today, "YYYY-MM-DD").add(enddate,'days' ).set("hour", 0).set("minute", 0).set("seconds", 0)
 					console.log(startday,endday,'Start AND END DATE')
-					
+					console.log("****************************************************************************************************")
 					let saveObject = {
 						user: foodPlanDataByChef.user,
 						foodDetails: foodPlanDataByChef.foodDetails,
@@ -319,9 +361,60 @@ module.exports = {
 						Friday_Dinner_Meal: foodPlanDataByChef.Friday_Dinner_Meal,	
 						Saturday_Breakfast_Meal: foodPlanDataByChef.Saturday_Breakfast_Meal,
 						Saturday_Lunch_Meal: foodPlanDataByChef.Saturday_Lunch_Meal,		
-						Saturday_Dinner_Meal: foodPlanDataByChef.Saturday_Dinner_Meal
+						Saturday_Dinner_Meal: foodPlanDataByChef.Saturday_Dinner_Meal,
+						totalBill:foodPlanDataByChef.totalBill,
+						zesty_margin:foodPlanDataByChef.zesty_margin,
+						membership:foodPlanDataByChef.membership,
+						total_revenue:foodPlanDataByChef.total_revenue
 					};
-
+					text += (saveObject.Sunday_Breakfast)? `<br>
+					<p>Sunday Breakfast - ${await  getdishdetails(saveObject.Sunday_Breakfast)}  ${await getsidedishdetails(saveObject.Sunday_Breakfast_Meal)} </p>`:""
+					text += (saveObject.Sunday_Lunch)? `
+					<p>Sunday Lunch - ${await  getdishdetails(saveObject.Sunday_Lunch)}  ${await getsidedishdetails(saveObject.Sunday_Lunch_Meal)}</p>`:""
+					text += (saveObject.Sunday_Dinner)? `
+					<p>Sunday Dinner - ${await  getdishdetails(saveObject.Sunday_Dinner)}  ${await getsidedishdetails(saveObject.Sunday_Dinner_Meal)}</p>`:""
+					text += (saveObject.Monday_Breakfast)? `
+					<p>Monday Breakfast - ${await  getdishdetails(saveObject.Monday_Breakfast)}  ${await getsidedishdetails(saveObject.Monday_Breakfast_Meal)}</p>`:""
+					text += (saveObject.Monday_Lunch)? `
+					<p>Monday Lunch - ${await  getdishdetails(saveObject.Monday_Lunch)}  ${await getsidedishdetails(saveObject.Monday_Lunch_Meal)}</p>`:""
+					text += (saveObject.Monday_Dinner)? `
+					<p>Monday Dinner -${await  getdishdetails(saveObject.Monday_Dinner)}  ${await getsidedishdetails(saveObject.Monday_Dinner_Meal)}</p>`:""
+					text += (saveObject.Tuesday_Breakfast)? `
+					<p>Tuesday Breakfast - ${await  getdishdetails(saveObject.Tuesday_Breakfast)}  ${await getsidedishdetails(saveObject.Tuesday_Breakfast_Meal)}</p>`:""
+					text += (saveObject.Tuesday_Lunch)? `
+					<p>Tuesday Lunch - ${await  getdishdetails(saveObject.Tuesday_Lunch)}  ${await getsidedishdetails(saveObject.Tuesday_Lunch_Meal)}</p>`:""
+					text += (saveObject.Tuesday_Dinner)? `
+					<p>Tuesday Dinner - ${await  getdishdetails(saveObject.Tuesday_Dinner)}  ${await getsidedishdetails(saveObject.Tuesday_Dinner_Meal)}</p>`:""
+					text += (saveObject.Wednesday_Breakfast)? `
+					<p>Wednesday Breakfast - ${await  getdishdetails(saveObject.Wednesday_Breakfast)}  ${await getsidedishdetails(saveObject.Wednesday_Breakfast_Meal)}</p>`:""
+					text += (saveObject.Wednesday_Lunch)? `
+					<p> Wednesday Lunch -${await  getdishdetails(saveObject.Wednesday_Lunch)}  ${await getsidedishdetails(saveObject.Wednesday_Lunch_Meal)}</p>`:""
+					text += (saveObject.Wednesday_Dinner)? `
+					<p>Wednesday Dinner -${await  getdishdetails(saveObject.Wednesday_Dinner)}  ${await getsidedishdetails(saveObject.Wednesday_Dinner_Meal)}</p>`:""
+					text += (saveObject.Thursday_Breakfast)? `
+					<p>Thrusday Breakfast -${await  getdishdetails(saveObject.Thursday_Breakfast)}  ${await getsidedishdetails(saveObject.Thursday_Breakfast_Meal)}</p>`:""
+					text += (saveObject.Thursday_Lunch)? `
+					<p>Thrusday Lunch - ${await  getdishdetails(saveObject.Thursday_Lunch)}  ${await getsidedishdetails(saveObject.Thursday_Lunch_Meal)}</p>`:""
+					text += (saveObject.Thursday_Dinner)? `
+					<p>Thrusday Dinner - ${await  getdishdetails(saveObject.Thursday_Dinner)}  ${await getsidedishdetails(saveObject.Thursday_Dinner_Meal)}</p>`:""
+					text += (saveObject.Friday_Breakfast)? `
+					<p>Friday Breakfast - ${await  getdishdetails(saveObject.Friday_Breakfast)}  ${await getsidedishdetails(saveObject.Friday_Breakfast_Meal)}</p>`:""
+					text += (saveObject.Friday_Lunch)? `
+					<p>Friday Lunch - ${await  getdishdetails(saveObject.Friday_Lunch)}  ${await getsidedishdetails(saveObject.Friday_Lunch_Meal)}</p>`:""
+					text += (saveObject.Friday_Dinner)? `
+					<p>Friday Dinner -${await  getdishdetails(saveObject.Friday_Dinner)}  ${await getsidedishdetails(saveObject.Friday_Dinner_Meal)}</p>`:""
+					text += (saveObject.Saturday_Breakfast)? `
+					<p>Saturday Breakfast -${await  getdishdetails(saveObject.Saturday_Breakfast)}  ${await getsidedishdetails(saveObject.Saturday_Breakfast_Meal)}</p>`:""
+					text += (saveObject.Saturday_Lunch)? `
+					<p>Saturday Lunch - ${await  getdishdetails(saveObject.Saturday_Lunch)}  ${await getsidedishdetails(saveObject.Saturday_Lunch_Meal)}</p>`:""
+					text += (saveObject.Saturday_Dinner)? `
+					<p>Saturday Dinner - ${await  getdishdetails(saveObject.Saturday_Dinner)}  ${await getsidedishdetails(saveObject.Saturday_Dinner_Meal)}</p>`:""
+					text +=  '<br>' +
+					`<p>your order price is ${foodPlanDataByChef.totalBill}</p>`
+					console.log(text)
+					let subject = "Food plan for the week "
+					let email = userData.email
+					await reminderserviceforfoodplan(text,email,subject)
 					let createNext = await foodplans.model.create(saveObject);
 				}
 			}

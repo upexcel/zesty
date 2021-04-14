@@ -96,7 +96,7 @@ const setSystemDates = new CronJob('40 1 * * */6', async () => {
 }, null, true, 'Asia/Kolkata')
 setSystemDates.start();
 
-const addweeklyrevenue = new CronJob("0 0 * * *",async ()=>{
+const addweeklyrevenue = new CronJob("50 1 * * *",async ()=>{
 	cronSend.addweeklyrevenue().then((data) => {
 	}).catch(err => {
 		console.log(err)
@@ -104,7 +104,7 @@ const addweeklyrevenue = new CronJob("0 0 * * *",async ()=>{
 })
 addweeklyrevenue.start();
 
-const addtotalrevenue = new CronJob('0 12 * * *', async ()=>{
+const addtotalrevenue = new CronJob('50 1 * * *', async ()=>{
 	cronSend.addtotalrevenue().then((data) => {
 	}).catch(err => {
 		console.log(err)
