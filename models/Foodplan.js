@@ -97,10 +97,10 @@ Foodplan.add({
     Saturday_Breakfast_Meal: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
     Saturday_Lunch_Meal: { type: Types.Relationship, ref: 'UserDish', many: true, index: true },
     Saturday_Dinner_Meal:{ type: Types.Relationship, ref: 'UserDish', many: true, index: true },
-    totalBill:{type : Number},
-    zesty_margin:{type:Number},
-    membership:{type:Number},
-    total_revenue:{type:Number}
+    totalBill:{type : Number,default: 0},
+    zesty_margin:{type:Number,default: 0},
+    membership:{type:Number,default: 0},
+    total_revenue:{type:Number,default: 0}
 
 });
 Foodplan.schema.add({
