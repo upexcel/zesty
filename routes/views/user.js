@@ -208,6 +208,7 @@ async function updateFood(req) {
 				`<p>your order price is ${price}</p>`
 		await passverify.reminderservice(text, email, subject, null);
 		dataToReturn.mealcount = mealcount
+		console.log(mealcount,"mealcount from update food in save Foodplan")
 		return dataToReturn;
 	} catch (error) {
 		console.log(error);
