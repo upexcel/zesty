@@ -82,9 +82,11 @@ async function updateFood(req) {
 		let price = req.body.totalbill
 		let foodDayDetails = req.body.foodDetails;
 		let standardMealDetails = req.body.updatedMealData;
+		let mealcount = 0
 		for (let item in foodDayDetails) {
 			if (foodDayDetails[`${item}`]) {
 				if (foodDayDetails[`${item}`].Breakfast.length) {
+					mealcount += 1
 					let founditem = await dishes.model.findOne({
 						_id: foodDayDetails[`${item}`].Breakfast[0],
 					});
@@ -124,6 +126,7 @@ async function updateFood(req) {
 					dataToReturn[`${chefForBreakFast}`] = founditem.chef;
 				}
 				if (foodDayDetails[`${item}`].Lunch.length) {
+					mealcount += 1
 					let founditem = await dishes.model.findOne({
 						_id: foodDayDetails[`${item}`].Lunch[0],
 					});
@@ -160,6 +163,7 @@ async function updateFood(req) {
 					dataToReturn[`${itemToUpdate2}`] = foodDayDetails[`${item}`].Lunch[0];
 				}
 				if (foodDayDetails[`${item}`].Dinner.length) {
+					mealcount += 1
 					let founditem = await dishes.model.findOne({
 						_id: foodDayDetails[`${item}`].Dinner[0],
 					});
@@ -203,6 +207,7 @@ async function updateFood(req) {
 		text +=  '<br>' +
 				`<p>your order price is ${price}</p>`
 		await passverify.reminderservice(text, email, subject, null);
+		dataToReturn.mealcount = mealcount
 		return dataToReturn;
 	} catch (error) {
 		console.log(error);
@@ -1334,16 +1339,17 @@ module.exports = {
 				primary_ingredeints: selections.primary_ingredeints,
 				totalBill: price
 			};
+			let mealcount = req.body.mealcount? req.body.mealcount : fieldsToUpdate.mealcount
 			dataToCreate.membership = req.body.membership =="weekly"? membershipData.weekly : (req.body.membership == "monthly" ? membershipData.monthly : (req.body.membership == "yearly") ?  membershipData.Yearly : membershipData.weekly );
 			let totalpeople = selections.adult_count+selections.children_count
 			if (totalpeople == 1){
-				dataToCreate.zesty_margin = zestyMarginData.single * req.body.mealcount
+				dataToCreate.zesty_margin = zestyMarginData.single * mealcount
 			}
 			if(totalpeople == 2){
-				dataToCreate.zesty_margin = zestyMarginData.double * req.body.mealcount
+				dataToCreate.zesty_margin = zestyMarginData.double * mealcount
 			}
 			if(totalpeople >= 3){
-				dataToCreate.zesty_margin = zestyMarginData.more * req.body.mealcount
+				dataToCreate.zesty_margin = zestyMarginData.more * mealcount
 			}
 			if (req.body.other_breakfast_choices_data) {
 				let otherChoices = await otherChoicesModel.model.create(
