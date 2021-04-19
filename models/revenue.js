@@ -5,10 +5,10 @@ var ZestyRevenue = new keystone.List('ZestyRevenue');
 
 ZestyRevenue.add({
     name: { type: String, default: 'Zesty Revenue'},
-    totalBill: { type: Number,required: true },
-    ZestyMargin : { type: Number, required: true },
-    Memberbership : { type: Number, required: true },
-    totalRevenue : { type: Number, required: true },
+    totalBill: { type: Number,required: true,default:0 },
+    ZestyMargin : { type: Number, required: true,default:0  },
+    Memberbership : { type: Number, required: true,default:0  },
+    totalRevenue : { type: Number, required: true,default:0  },
 })
 ZestyRevenue.defaultColumns = 'name, totalBill, ZestyMargin, Memberbership, totalRevenue';
 ZestyRevenue.register();
