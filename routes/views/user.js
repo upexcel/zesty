@@ -1352,7 +1352,7 @@ module.exports = {
 			if(totalpeople >= 3){
 				dataToCreate.zesty_margin = zestyMarginData.more * mealcount
 			}
-			dataToCreate.total_revenue = dataToCreate.totalBill + dataToCreate.membership + dataToCreate.zesty_margin
+			dataToCreate.total_revenue = dataToCreate.membership + dataToCreate.zesty_margin
 			if (req.body.other_breakfast_choices_data) {
 				let otherChoices = await otherChoicesModel.model.create(
 					req.body.other_breakfast_choices_data
