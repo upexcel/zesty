@@ -6,10 +6,10 @@ var WeekRevenue = new keystone.List('ZestyWeekRevenue');
 WeekRevenue.add({
     startdate:  { type: Types.Datetime, required: true, initial: true },
     enddate:    { type: Types.Datetime, required: true, initial: true },
-    totalBill: { type: Number },
-    ZestyMargin : { type: Number },
-    Memberbership : { type: Number },
-    totalRevenue : { type: Number },
+    totalBill: { type: Number ,required: true},
+    ZestyMargin : { type: Number, required: true },
+    Memberbership : { type: Number, required: true },
+    totalRevenue : { type: Number, required: true },
 })
 WeekRevenue.defaultColumns = 'startdate, enddate, totalBill, ZestyMargin, Memberbership, totalRevenue';
 WeekRevenue.register();
