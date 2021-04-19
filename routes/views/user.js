@@ -1329,6 +1329,7 @@ module.exports = {
 				Lunch_Time_Interval: selections.Lunch_Time_Interval,
 				Dinner_Time_Interval: selections.Dinner_Time_Interval,
 				Days: selections.day,
+				createdAt: Date.now(),
 				startdate: systemDetails.weekstartdate,
 				enddate: systemDetails.weekenddate,
 				Receiver_Name: deliveryDetails.receiverName,
@@ -1394,6 +1395,7 @@ module.exports = {
 				res.json({ error: 0, message: "Success", lastWeekFoodPlan });
 			} else {
 				let mailData = await sendMailToStaff(foundUser);
+				let deletePreviousFoodPlan = await foodplans.model.remove({_id : foundplan._id})
 				let newRecord = await foodplans.model.create(completeDataToCreate);
 				res.json({ error: 0, message: "Success", foundUser });
 			}

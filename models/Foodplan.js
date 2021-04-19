@@ -1,4 +1,5 @@
 let keystone = require('keystone');
+const { Date } = require('keystone/lib/fieldTypes');
 let Types = keystone.Field.Types;
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -100,7 +101,8 @@ Foodplan.add({
     totalBill:{type : Number,default: 0},
     zesty_margin:{type:Number,default: 0},
     membership:{type:Number,default: 0},
-    total_revenue:{type:Number,default: 0}
+    total_revenue:{type:Number,default: 0},
+    createdAt:  {type: Types.Datetime, default: Date.now }
 
 });
 Foodplan.schema.add({
