@@ -93,7 +93,7 @@ const setSystemDates = new CronJob('40 1 * * */6', async () => {
 		chefenddate : newChefEndDate,
 		chefstartdate : newChefStartDate
 	})
-	const html = `<h1>system dates has been updated on ${Date.now()}</h1>`
+	const html = `<h1>system dates has been updated on ${new Date(Date.now())}</h1>`
 	const mail = "abhay_goyal@excellencetechnologies.in"
 	const subject = "System dates updated"
 	await service.reminderservice(html,mail,subject)
