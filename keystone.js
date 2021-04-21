@@ -105,7 +105,7 @@ const addweeklyrevenue = new CronJob("50 1 * * *",async ()=>{
 	}).catch(err => {
 		console.log(err)
 	});
-})
+}, null, true, 'Asia/Kolkata')
 addweeklyrevenue.start();
 
 const addtotalrevenue = new CronJob('50 1 * * *', async ()=>{
@@ -113,8 +113,18 @@ const addtotalrevenue = new CronJob('50 1 * * *', async ()=>{
 	}).catch(err => {
 		console.log(err)
 	});
-})
+}, null, true, 'Asia/Kolkata')
 addtotalrevenue.start();
+
+// // const sendChefSms = new CronJob('0 19 * * *', () => {
+// 	service.chefSMSForDaily().then((data) => {
+// 	}).catch(err => {
+// 		console.log(err)
+// 	});
+// // }, null, true, 'Asia/Kolkata')
+// // sendChefSms.start();
+
+
 // Configure the navigation bar in Keystone's Admin UI
 keystone.set('nav', {
 	// posts: ['posts', 'post-categories'],

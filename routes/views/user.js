@@ -28,10 +28,6 @@ const systemDates = keystone.list('SystemDates')
 let ZestyRevenue = keystone.list("ZestyRevenue");
 let WeekRevenue = keystone.list("ZestyWeekRevenue");
 
-const accountSid = process.env.twilio_account_sid
-const authtoken = process.env.twilio_auth_token
-const twilioNumber = process.env.twilio_number
-const client = require('twilio')(accountSid,authtoken);
 
 const membershipData ={
 	weekly : 9,
@@ -43,19 +39,6 @@ const zestyMarginData = {
 	double : 7,
 	more : 8
 } 
-
-const sendSms =  async (smsbody,number)=> {
-	try{
-		const msg = await client.messages.create({
-			body : smsbody,
-			from : twilioNumber,
-			to :  number
-		})
-		console.log(msg,"response from sendsms function");
-	}catch(err){
-		console.log(err,"error from send msg")
-	}
-}
 
 async function uploadImage(req) {
 	try {
@@ -2354,7 +2337,11 @@ module.exports = {
                 }
             }
             let resp = await service.createChefMail(textResponse)
-            res.send(resp).status(200);
+			if ( req.query.day ) {
+				res.send(resp[req.query.day]).status(200); 
+			} else {
+				res.send(resp).status(200);
+			}
         } catch (err) {
             console.log(err);
         }
