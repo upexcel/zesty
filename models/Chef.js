@@ -11,10 +11,7 @@ Chef.add({
 		type: String
 	},
 	profileImage: { type: Types.CloudinaryImage },
-	// status : {
-	// 	type : Boolean,
-	// 	default : true
-	// }
+	mobile_no : {type : Number}
 });
 
 Chef.register();
