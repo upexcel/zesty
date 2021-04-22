@@ -183,15 +183,20 @@ module.exports = {
 	// chefSMSForDaily: async () => {
 	// 	try {
 	// 		let chefs = await Chef.model.find({})
+	// 		let days =["Sunday","Monday","Tuesday","Wednesday","Thrusday","Friday","Saturday"]
+	// 		let day = (new Date()).getDay() + 1
 	// 		for await (let item of chefs) { 
 	// 			if (item.email) {
-	// 				let html = `Hello, Below is the link of your Dishes.
-	// 				<a href={{link}}> {{link}} </a>`;
-	// 				const template = Handlebars.compile(html);
-	// 				let mailHtml = template({
-	// 					link: `${process.env.webBaseUrl}/chef/${item.name}`,
-	// 				});
-	// 				let mailSendData = await sendSms(mailHtml, '+918383871788');
+	// 				// let html = `Hello, Below is the link of your Dishes.	
+	// 				// <a href={{link}}> {{link}} </a>`;
+	// 				// const template = Handlebars.compile(html);
+	// 				// let mailHtml = template({
+	// 				// 	link: `${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]}`,
+	// 				// });
+	// 				let msg = `Your Menu for the day is 
+					
+	// 				link: ${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]} `
+	// 				let mailSendData = await sendSms(msg, '+919982266883');
 	// 			}
 	// 		}
 	// 	} catch (err) {
