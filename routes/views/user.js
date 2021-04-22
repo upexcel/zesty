@@ -2338,7 +2338,8 @@ module.exports = {
             }
             let resp = await service.createChefMail(textResponse)
 			if ( req.query.day ) {
-				res.send(resp[req.query.day]).status(200); 
+				let queryDay = req.query.day
+				res.send({[queryDay] : resp[req.query.day]}).status(200); 
 			} else {
 				res.send(resp).status(200);
 			}
