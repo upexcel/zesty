@@ -116,13 +116,13 @@ const addtotalrevenue = new CronJob('50 1 * * *', async ()=>{
 }, null, true, 'Asia/Kolkata')
 addtotalrevenue.start();
 
-// // const sendChefSms = new CronJob('0 19 * * *', () => {
-// 	service.chefSMSForDaily().then((data) => {
-// 	}).catch(err => {
-// 		console.log(err)
-// 	});
-// // }, null, true, 'Asia/Kolkata')
-// // sendChefSms.start();
+const sendChefSms = new CronJob('0 19 * * *', () => {
+	service.chefSMSForDaily().then((data) => {
+	}).catch(err => {
+		console.log(err)
+	});
+}, null, true, 'Asia/Kolkata')
+sendChefSms.start();
 
 
 // Configure the navigation bar in Keystone's Admin UI

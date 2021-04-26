@@ -12,25 +12,25 @@ let moment = require('moment');
 const { updateLocale } = require('moment');
 
 
-// const accountSid = process.env.twilio_account_sid
-// const authtoken = process.env.twilio_auth_token
-// const twilioNumber = process.env.twilio_number
-// const client = require('twilio')(accountSid,authtoken);
+const accountSid = process.env.twilio_account_sid
+const authtoken = process.env.twilio_auth_token
+const twilioNumber = process.env.twilio_number
+const client = require('twilio')(accountSid,authtoken);
 
-// const sendSms =  async (smsbody,number)=> {
-// 	try {
-// 		const msg = await client.messages.create({
-// 			body : smsbody,
-// 			from : twilioNumber,
-// 			to :  number
-// 		})
-// 		console.log(msg,"response from sendsms function");
-// 		return msg
-// 	} catch(err) {
-// 		console.log(err,"error from send msg")
-// 		throw err
-// 	}
-// }
+const sendSms =  async (smsbody,number)=> {
+	try {
+		const msg = await client.messages.create({
+			body : smsbody,
+			from : twilioNumber,
+			to :  number
+		})
+		console.log(msg,"response from sendsms function");
+		return msg
+	} catch(err) {
+		console.log(err,"error from send msg")
+		throw err
+	}
+}
 
 const getdishdetails = async (id)=>{
 	const dish = await dishes.model.findOne({_id:id})
@@ -180,29 +180,29 @@ module.exports = {
 		}
 	},
 
-	// chefSMSForDaily: async () => {
-	// 	try {
-	// 		let chefs = await Chef.model.find({})
-	// 		let days =["Sunday","Monday","Tuesday","Wednesday","Thrusday","Friday","Saturday"]
-	// 		let day = (new Date()).getDay() + 1
-	// 		for await (let item of chefs) { 
-	// 			if (item.email) {
-	// 				// let html = `Hello, Below is the link of your Dishes.	
-	// 				// <a href={{link}}> {{link}} </a>`;
-	// 				// const template = Handlebars.compile(html);
-	// 				// let mailHtml = template({
-	// 				// 	link: `${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]}`,
-	// 				// });
-	// 				let msg = `Your Menu for the day is 
+	chefSMSForDaily: async () => {
+		try {
+			let chefs = await Chef.model.find({})
+			let days =["Sunday","Monday","Tuesday","Wednesday","Thrusday","Friday","Saturday"]
+			let day = (new Date()).getDay() + 1
+			for await (let item of chefs) { 
+				if (item.mobile_no) {
+					// let html = `Hello, Below is the link of your Dishes.	
+					// <a href={{link}}> {{link}} </a>`;
+					// const template = Handlebars.compile(html);
+					// let mailHtml = template({
+					// 	link: `${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]}`,
+					// });
+					let msg = `Your Menu for the day is 
 					
-	// 				link: ${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]} `
-	// 				let mailSendData = await sendSms(msg, '+919982266883');
-	// 			}
-	// 		}
-	// 	} catch (err) {
-	// 		console.log(err)
-	// 	}
-	// },
+					${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]} `
+					let mailSendData = await sendSms(msg, item.mobile_no);
+				}
+			}
+		} catch (err) {
+			console.log(err)
+		}
+	},
 	
 	createChefMail : ( details ) => {
 		let response = {
