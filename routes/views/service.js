@@ -207,7 +207,7 @@ module.exports = {
 					let msg = `Your Menu for the day is 
 					
 					${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]} `
-					let mailSendData = await sendSms(msg, item.mobile_no);
+					let mailSendData = await sendSms(msg, `+${item.mobile_no}`);
 				}
 			}
 		} catch (err) {
