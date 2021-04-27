@@ -207,32 +207,32 @@ module.exports = {
 	createChefMail : ( details ) => {
 		let response = {
 			'Sunday' : {
-			  'Lunch': [],
 			  'Breakfast': [],
+			  'Lunch': [],
 			  'Dinner': []
 			},'Monday' : {
-			  'Lunch': [],
 			  'Breakfast': [],
+			  'Lunch': [],
 			  'Dinner': []
 			},'Tuesday' : {
-			  'Lunch': [],
 			  'Breakfast': [],
+			  'Lunch': [],
 			  'Dinner': []
 			},'Wednesday' : {
-			  'Lunch': [],
 			  'Breakfast': [],
+			  'Lunch': [],
 			  'Dinner': []
 			},'Thursday' : {
-			  'Lunch': [],
 			  'Breakfast': [],
+			  'Lunch': [],
 			  'Dinner': []
 			},'Friday' : {
-			  'Lunch': [],
 			  'Breakfast': [],
+			  'Lunch': [],
 			  'Dinner': []
 			},'Saturday' : {
-			  'Lunch': [],
 			  'Breakfast': [],
+			  'Lunch': [],
 			  'Dinner': []
 			}
 		  }
