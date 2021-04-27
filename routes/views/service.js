@@ -9,8 +9,7 @@ let users = keystone.list('User');
 let userDish = keystone.list("UserDish");
 let side_dish = keystone.list('side_dish');
 let moment = require('moment');
-const { updateLocale } = require('moment');
-
+const systemDates = keystone.list('SystemDates');
 
 const accountSid = process.env.twilio_account_sid
 const authtoken = process.env.twilio_auth_token
@@ -180,6 +179,24 @@ module.exports = {
 		}
 	},
 
+	systemDatesUpdate : async () => {
+		const weekendDates = await systemDates.model.findOne({})
+		let newWeekEndDate = moment(weekendDates.weekenddate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
+		let newWeekStartDate =  moment(weekendDates.weekstartdate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
+		let newChefEndDate = moment(weekendDates.chefenddate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
+		let newChefStartDate =  moment(weekendDates.chefstartdate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
+		console.log(newWeekEndDate,"update of new week end date")
+		console.log(newWeekStartDate,"update of new week Start date")
+		console.log(newChefEndDate,"update of new chef end date")
+		console.log(newChefStartDate,"update of new chef start date")
+		const updated = await systemDates.model.update({_id: weekendDates},
+			{weekenddate : newWeekEndDate,
+			weekstartdate : newWeekStartDate,
+			chefenddate : newChefEndDate,
+			chefstartdate : newChefStartDate
+		})
+	},
+
 	chefSMSForDaily: async () => {
 		try {
 			let chefs = await Chef.model.find({})
@@ -187,12 +204,6 @@ module.exports = {
 			let day = (new Date()).getDay() + 1
 			for await (let item of chefs) { 
 				if (item.mobile_no) {
-					// let html = `Hello, Below is the link of your Dishes.	
-					// <a href={{link}}> {{link}} </a>`;
-					// const template = Handlebars.compile(html);
-					// let mailHtml = template({
-					// 	link: `${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]}`,
-					// });
 					let msg = `Your Menu for the day is 
 					
 					${process.env.webBaseUrl}/chef/${item.name}?day=${days[day]} `

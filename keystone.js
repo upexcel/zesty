@@ -52,8 +52,6 @@ keystone.set('cors allow headers', true);
 
 var cronSend = require('./routes/views/user')
 var service = require('./routes/views/service')
-const systemDates = keystone.list('SystemDates')
-const moment =  require('moment');
 
 var CronJob = require('cron').CronJob;
 var job = new CronJob('30 13 * * 5', function () {
@@ -77,26 +75,11 @@ var previousFoodPlanUpdate = new CronJob('20 1 * * 6', function () {
 }, null, true, 'Asia/Kolkata');
 previousFoodPlanUpdate.start();
 
-const setSystemDates = new CronJob('40 1 * * */6', async () => {
-	const weekendDates = await systemDates.model.findOne({})
-	let newWeekEndDate = moment(weekendDates.weekenddate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
-	let newWeekStartDate =  moment(weekendDates.weekstartdate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
-	let newChefEndDate = moment(weekendDates.chefenddate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
-	let newChefStartDate =  moment(weekendDates.chefstartdate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
-	console.log(newWeekEndDate,"update of new week end date")
-	console.log(newWeekStartDate,"update of new week Start date")
-	console.log(newChefEndDate,"update of new chef end date")
-	console.log(newChefStartDate,"update of new chef start date")
-	const updated = await systemDates.model.update({_id: weekendDates},
-		{weekenddate : newWeekEndDate,
-		weekstartdate : newWeekStartDate,
-		chefenddate : newChefEndDate,
-		chefstartdate : newChefStartDate
-	})
-	const html = `<h1>system dates has been updated on ${new Date(Date.now())}</h1>`
-	const mail = "abhay_goyal@excellencetechnologies.in"
-	const subject = "System dates updated"
-	await service.reminderservice(html,mail,subject)
+const setSystemDates = new CronJob('40 1 * * 6', function (){
+	service.systemDatesUpdate().then((data) => {
+	}).catch(err => {
+		console.log(err)
+	});
 }, null, true, 'Asia/Kolkata')
 setSystemDates.start();
 
