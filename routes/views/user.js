@@ -2352,12 +2352,12 @@ module.exports = {
 		try {
 			let dateToFind = new Date();
 			console.log(dateToFind, "Saskaslaskalsalsk");
-			let foundFood = await foodplans.model.findOne({
+			let foundFood = await foodplans.model.find({
 				user: req.params.userId,
 				startdate: {
 					$lt: dateToFind,
 				},
-			});
+			}).sort({startdate : -1})[0];
 			if (foundFood) {
 				let response = {
 					primaryCuisine: foundFood.Primary_Cuisine,
