@@ -2357,7 +2357,7 @@ module.exports = {
 				startdate: {
 					$lt: dateToFind,
 				},
-			}).sort({startdate : -1})[0];
+			}).sort({startdate : -1}).limit(1);
 			if (foundFood) {
 				let response = {
 					primaryCuisine: foundFood.Primary_Cuisine,
