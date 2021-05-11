@@ -218,65 +218,65 @@ async function updateFood(req) {
 }
 
 module.exports = {
-	addweeklyrevenue : async function(){
-		try{
-			const currentsystemdate = await systemDates.model.findOne({})
-			const currentfoodplans = await  foodplans.model.find({startdate:{$gte :currentsystemdate.weekstartdate }}).lean()
-			console.log(currentfoodplans)
-			let weeklyrevenuedata = {
-				startdate : currentsystemdate.weekstartdate,
-				enddate : currentsystemdate.weekenddate,
-				totalBill: 0,
-				ZestyMargin : 0,
-				Memberbership : 0,
-				totalRevenue : 0
-			}
-			if (currentfoodplans.length>0){
-				for (let foodplan of currentfoodplans){
-					weeklyrevenuedata.totalBill +=  foodplan.totalBill
-					weeklyrevenuedata.ZestyMargin += foodplan.zesty_margin
-					weeklyrevenuedata.Memberbership +=  foodplan.membership
-					weeklyrevenuedata.totalRevenue +=  foodplan.total_revenue
-				}
-			}
-			await WeekRevenue.model.remove({startdate:currentsystemdate.weekstartdate})
-			const weeklyrevenuesaved = await WeekRevenue.model.create(weeklyrevenuedata)
-			console.log(weeklyrevenuesaved,"weekly revenue saved")
-		}catch(err){
-			console.log(err)
-		}
-	},
+	// addweeklyrevenue : async function(){
+	// 	try{
+	// 		const currentsystemdate = await systemDates.model.findOne({})
+	// 		const currentfoodplans = await  foodplans.model.find({startdate:{$gte :currentsystemdate.weekstartdate }}).lean()
+	// 		console.log(currentfoodplans)
+	// 		let weeklyrevenuedata = {
+	// 			startdate : currentsystemdate.weekstartdate,
+	// 			enddate : currentsystemdate.weekenddate,
+	// 			totalBill: 0,
+	// 			ZestyMargin : 0,
+	// 			Memberbership : 0,
+	// 			totalRevenue : 0
+	// 		}
+	// 		if (currentfoodplans.length>0){
+	// 			for (let foodplan of currentfoodplans){
+	// 				weeklyrevenuedata.totalBill +=  foodplan.totalBill
+	// 				weeklyrevenuedata.ZestyMargin += foodplan.zesty_margin
+	// 				weeklyrevenuedata.Memberbership +=  foodplan.membership
+	// 				weeklyrevenuedata.totalRevenue +=  foodplan.total_revenue
+	// 			}
+	// 		}
+	// 		await WeekRevenue.model.remove({startdate:currentsystemdate.weekstartdate})
+	// 		const weeklyrevenuesaved = await WeekRevenue.model.create(weeklyrevenuedata)
+	// 		console.log(weeklyrevenuesaved,"weekly revenue saved")
+	// 	}catch(err){
+	// 		console.log(err)
+	// 	}
+	// },
 
-	addtotalrevenue : async function(){
-		const allweeksrevenue = await WeekRevenue.model.find({})
-		let revenuetobesaved = {
-			name: 'Zesty Revenue',
-			totalBill: 0,
-			ZestyMargin : 0,
-			Memberbership : 0,
-			totalRevenue : 0
-		}
-		if (allweeksrevenue.length>0){
-			for(let weeksrevenue of allweeksrevenue){
-				revenuetobesaved.totalBill += weeksrevenue.totalBill
-				revenuetobesaved.ZestyMargin += weeksrevenue.ZestyMargin
-				revenuetobesaved.Memberbership += weeksrevenue.Memberbership
-				revenuetobesaved.totalRevenue += weeksrevenue.totalRevenue 
-			}
-		}
-		await ZestyRevenue.model.remove({})
-		const createdrevenue = await ZestyRevenue.model.create(revenuetobesaved)
-		console.log(createdrevenue,"total revenue saved ")
-	},
+	// addtotalrevenue : async function(){
+	// 	const allweeksrevenue = await WeekRevenue.model.find({})
+	// 	let revenuetobesaved = {
+	// 		name: 'Zesty Revenue',
+	// 		totalBill: 0,
+	// 		ZestyMargin : 0,
+	// 		Memberbership : 0,
+	// 		totalRevenue : 0
+	// 	}
+	// 	if (allweeksrevenue.length>0){
+	// 		for(let weeksrevenue of allweeksrevenue){
+	// 			revenuetobesaved.totalBill += weeksrevenue.totalBill
+	// 			revenuetobesaved.ZestyMargin += weeksrevenue.ZestyMargin
+	// 			revenuetobesaved.Memberbership += weeksrevenue.Memberbership
+	// 			revenuetobesaved.totalRevenue += weeksrevenue.totalRevenue 
+	// 		}
+	// 	}
+	// 	await ZestyRevenue.model.remove({})
+	// 	const createdrevenue = await ZestyRevenue.model.create(revenuetobesaved)
+	// 	console.log(createdrevenue,"total revenue saved ")
+	// },
 
-	getuser: async function (req, res) {
-		try {
-			let data = await users.model.find({});
-			res.json(data);
-		} catch (error) {
-			res.status(500).json({ error: 1, message: error });
-		}
-	},
+	// getuser: async function (req, res) {
+	// 	try {
+	// 		let data = await users.model.find({});
+	// 		res.json(data);
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: 1, message: error });
+	// 	}
+	// },
 
 	userdetails: async (req, res) => {
 		try {
@@ -373,35 +373,35 @@ module.exports = {
 		}
 	},
 
-	createsubscription: async (req, res) => {
-		try {
-			let validitystart = new Date();
-			planDetail = await plans.model.findOne({ _id: req.body.planId });
-			if (planDetail) {
-				let planTitle = planDetail.title;
-				console.log(planTitle);
-				let validityend;
-				if (planTitle == "Monthly") {
-					validityend = moment(validitystart, "YYYY-MM-DD").add("days", 30);
-				} else if (planTitle == "Yearly") {
-					validityend = moment(validitystart, "YYYY-MM-DD").add("days", 365);
-				}
+	// createsubscription: async (req, res) => {
+	// 	try {
+	// 		let validitystart = new Date();
+	// 		planDetail = await plans.model.findOne({ _id: req.body.planId });
+	// 		if (planDetail) {
+	// 			let planTitle = planDetail.title;
+	// 			console.log(planTitle);
+	// 			let validityend;
+	// 			if (planTitle == "Monthly") {
+	// 				validityend = moment(validitystart, "YYYY-MM-DD").add("days", 30);
+	// 			} else if (planTitle == "Yearly") {
+	// 				validityend = moment(validitystart, "YYYY-MM-DD").add("days", 365);
+	// 			}
 
-				let subsDetail = await subscriptions.model.create({
-					userId: req.body.userId,
-					planId: req.body.planId,
-					validityPeriodStart: validitystart,
-					validityPeriodEnd: validityend,
-					subscriptionId: req.body.subscriptionId,
-				});
-				res.json({ detail: subsDetail });
-			} else {
-				res.json({ error: 0, message: "No Plan with this Email Exists" });
-			}
-		} catch (error) {
-			res.status(500).json({ error: 1, message: error });
-		}
-	},
+	// 			let subsDetail = await subscriptions.model.create({
+	// 				userId: req.body.userId,
+	// 				planId: req.body.planId,
+	// 				validityPeriodStart: validitystart,
+	// 				validityPeriodEnd: validityend,
+	// 				subscriptionId: req.body.subscriptionId,
+	// 			});
+	// 			res.json({ detail: subsDetail });
+	// 		} else {
+	// 			res.json({ error: 0, message: "No Plan with this Email Exists" });
+	// 		}
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: 1, message: error });
+	// 	}
+	// },
 
 	emailsender: async (req, res) => {
 		try {
@@ -586,114 +586,114 @@ module.exports = {
 		}
 	},
 
-	verifyemail: async (req, res) => {
-		try {
-			let receivedtoken = req.query.token;
-			jwt.verify(
-				receivedtoken,
-				process.env.TOKEN_SECRET,
-				async function (err, decoded) {
-					let id = decoded.token._id;
-					if (err) {
-						res.send(err.message);
-					} else {
-						try {
-							let founduser = await users.model.findOne({ _id: id });
-							if (founduser) {
-								founduser.emailVerified = true;
-								let update = await founduser.save();
+ 	// verifyemail: async (req, res) => {
+	// 	try {
+	// 		let receivedtoken = req.query.token;
+	// 		jwt.verify(
+	// 			receivedtoken,
+	// 			process.env.TOKEN_SECRET,
+	// 			async function (err, decoded) {
+	// 				let id = decoded.token._id;
+	// 				if (err) {
+	// 					res.send(err.message);
+	// 				} else {
+	// 					try {
+	// 						let founduser = await users.model.findOne({ _id: id });
+	// 						if (founduser) {
+	// 							founduser.emailVerified = true;
+	// 							let update = await founduser.save();
 
-								res.redirect("https://web-zesty-app.herokuapp.com");
-							} else {
-								res
-									.status(500)
-									.json({
-										error: 1,
-										message: "No User Found With this Email.",
-									});
-							}
-						} catch (error) {
-							res.status(500).json({ error: 1, message: error });
-						}
-					}
-				}
-			);
-		} catch (error) {
-			res.status(500).json({ error: 1, message: error });
-		}
-	},
+	// 							res.redirect("https://web-zesty-app.herokuapp.com");
+	// 						} else {
+	// 							res
+	// 								.status(500)
+	// 								.json({
+	// 									error: 1,
+	// 									message: "No User Found With this Email.",
+	// 								});
+	// 						}
+	// 					} catch (error) {
+	// 						res.status(500).json({ error: 1, message: error });
+	// 					}
+	// 				}
+	// 			}
+	// 		);
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: 1, message: error });
+	// 	}
+	// },
 
-	getsubscription: async (req, res) => {
-		try {
-			let subDetail = await subscriptions.model.findOne({
-				userId: req.body.id,
-			});
-			if (subDetail) {
-				let plan = subDetail.planId;
-				let planDetail = await plans.model.findOne({ _id: plan });
-				console.log(planDetail.title);
-				let remaingSubscription = subDetail.validityPeriodEnd - new Date();
+	// getsubscription: async (req, res) => {
+	// 	try {
+	// 		let subDetail = await subscriptions.model.findOne({
+	// 			userId: req.body.id,
+	// 		});
+	// 		if (subDetail) {
+	// 			let plan = subDetail.planId;
+	// 			let planDetail = await plans.model.findOne({ _id: plan });
+	// 			console.log(planDetail.title);
+	// 			let remaingSubscription = subDetail.validityPeriodEnd - new Date();
 
-				if (remaingSubscription > 0) {
-					return res.json({
-						error: 0,
-						subscribed: true,
-						remtime: remaingSubscription,
-						title: planDetail.title,
-					});
-				} else {
-					return res.json({
-						error: 0,
-						subscribed: false,
-						remtime: remaingSubscription,
-						title: null,
-					});
-				}
-			} else {
-				return res.json({
-					error: 0,
-					subscribed: false,
-				});
-			}
-		} catch (error) {
-			res.status(500).json({ error: 1, message: error });
-		}
-	},
+	// 			if (remaingSubscription > 0) {
+	// 				return res.json({
+	// 					error: 0,
+	// 					subscribed: true,
+	// 					remtime: remaingSubscription,
+	// 					title: planDetail.title,
+	// 				});
+	// 			} else {
+	// 				return res.json({
+	// 					error: 0,
+	// 					subscribed: false,
+	// 					remtime: remaingSubscription,
+	// 					title: null,
+	// 				});
+	// 			}
+	// 		} else {
+	// 			return res.json({
+	// 				error: 0,
+	// 				subscribed: false,
+	// 			});
+	// 		}
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: 1, message: error });
+	// 	}
+	// },
 
-	updateSubscription: async (req, res) => {
-		try {
-			let subDetail = await subscriptions.model.findOne({
-				userId: req.body.userId,
-			});
-			if (subDetail) {
-				planDetail = await plans.model.findOne({ title: req.body.title });
-				let validitystart = new Date();
-				if (planDetail) {
-					let planTitle = planDetail.title;
-					console.log(planTitle);
-					let validityend;
-					if (planTitle == "Monthly") {
-						validityend = moment(validitystart, "YYYY-MM-DD").add("days", 30);
-					} else if (planTitle == "Yearly") {
-						validityend = moment(validitystart, "YYYY-MM-DD").add("days", 365);
-					}
-					subDetail.planId = planDetail._id;
-					subDetail.validityPeriodStart = validitystart;
-					subDetail.validityPeriodStart = validityend;
-					let update = await subDetail.save();
-					res.json({ error: 0, message: "Plan Updated" });
-				} else {
-					res
-						.status(500)
-						.json({ error: 1, message: "No Plan found with this name." });
-				}
-			} else {
-				res.status(500).json({ error: 1, message: "User had no plans." });
-			}
-		} catch (error) {
-			res.status(500).json({ error: 1, message: error });
-		}
-	},
+	// updateSubscription: async (req, res) => {
+	// 	try {
+	// 		let subDetail = await subscriptions.model.findOne({
+	// 			userId: req.body.userId,
+	// 		});
+	// 		if (subDetail) {
+	// 			planDetail = await plans.model.findOne({ title: req.body.title });
+	// 			let validitystart = new Date();
+	// 			if (planDetail) {
+	// 				let planTitle = planDetail.title;
+	// 				console.log(planTitle);
+	// 				let validityend;
+	// 				if (planTitle == "Monthly") {
+	// 					validityend = moment(validitystart, "YYYY-MM-DD").add("days", 30);
+	// 				} else if (planTitle == "Yearly") {
+	// 					validityend = moment(validitystart, "YYYY-MM-DD").add("days", 365);
+	// 				}
+	// 				subDetail.planId = planDetail._id;
+	// 				subDetail.validityPeriodStart = validitystart;
+	// 				subDetail.validityPeriodStart = validityend;
+	// 				let update = await subDetail.save();
+	// 				res.json({ error: 0, message: "Plan Updated" });
+	// 			} else {
+	// 				res
+	// 					.status(500)
+	// 					.json({ error: 1, message: "No Plan found with this name." });
+	// 			}
+	// 		} else {
+	// 			res.status(500).json({ error: 1, message: "User had no plans." });
+	// 		}
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: 1, message: error });
+	// 	}
+	// },
 
 	loginuser: async (req, res) => {
 		try {
@@ -1243,14 +1243,14 @@ module.exports = {
 		}
 	},
 
-	listplans: async (req, res) => {
-		try {
-			let allPlans = await plans.model.find({});
-			res.json({ plans: allPlans });
-		} catch (error) {
-			res.status(500).json({ error: 1, message: error });
-		}
-	},
+	// listplans: async (req, res) => {
+	// 	try {
+	// 		let allPlans = await plans.model.find({});
+	// 		res.json({ plans: allPlans });
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: 1, message: error });
+	// 	}
+	// },
 
 	savefoodplan: async (req, res) => {
 		try {
@@ -1406,68 +1406,68 @@ module.exports = {
 		}
 	},
 
-	saveSamefoodplanAsLastWeek: async (req, res) => {
-		try {
-			let today = new Date();
-			let daynumber = today.getDay();
-			let startdate = 7 - daynumber;
-			let enddate = 7 - daynumber + 6;
-			let startday = moment(today, "YYYY-MM-DD")
-				.add("days", startdate)
-				.set("hour", 0)
-				.set("minute", 0)
-				.set("seconds", 0);
-			let endday = moment(today, "YYYY-MM-DD")
-				.add("days", enddate)
-				.set("hour", 0)
-				.set("minute", 0)
-				.set("seconds", 0);
-			let currentPlan = await foodplans.model.findOne({ _id: req.body.planId });
-			let foundplan = await foodplans.model.findOne({
-				user: req.body.userId,
-				startdate: { $gt: new Date() },
-			});
-			let pastrevenue = await revenue.model.findOne({user : req.body.userId})
-			let completeDataToCreate = JSON.parse(JSON.stringify(currentPlan));
-			delete completeDataToCreate._id;
-			completeDataToCreate.startdate = startday;
-			completeDataToCreate.enddate = endday;
-			if (!foundplan) {
-				console.log("sldkkfdslkfslsfdslkaaaa");
-				// if(pastrevenue&&pastrevenue.bill){
-				// 	await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill})
-				// }else{
-				// 	await revenue.model.create({
-				// 		user : req.body.userId,
-				// 		name: completeDataToCreate.name,
-				// 		bill : completeDataToCreate.totalbill
-				// 	})
-				// }
-				let createdPlan = await foodplans.model.create(completeDataToCreate);
-				res.json({ error: 0, message: "Success", completeDataToCreate });
-			} else {
-				console.log("ttttttttttttttttttttt");
-				// if(pastrevenue&&pastrevenue.bill){
-				// 	await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill-foundplan.totalbill})
-				// }else{
-				// 	await revenue.model.create({
-				// 		user : req.body.userId,
-				// 		name: foundUser.name,
-				// 		bill : completeDataToCreate.totalbill
-				// 	})
-				// }
-				let removeOld = await foodplans.model.remove({
-					user: req.body.userId,
-					startdate: { $gt: new Date() },
-				});
-				let newRecord = await foodplans.model.create(completeDataToCreate);
-				res.json({ error: 0, message: "Success", completeDataToCreate });
-			}
-		} catch (error) {
-			console.log(error);
-			res.status(500).json({ error: 1, message: error });
-		}
-	},
+	// saveSamefoodplanAsLastWeek: async (req, res) => {
+	// 	try {
+	// 		let today = new Date();
+	// 		let daynumber = today.getDay();
+	// 		let startdate = 7 - daynumber;
+	// 		let enddate = 7 - daynumber + 6;
+	// 		let startday = moment(today, "YYYY-MM-DD")
+	// 			.add("days", startdate)
+	// 			.set("hour", 0)
+	// 			.set("minute", 0)
+	// 			.set("seconds", 0);
+	// 		let endday = moment(today, "YYYY-MM-DD")
+	// 			.add("days", enddate)
+	// 			.set("hour", 0)
+	// 			.set("minute", 0)
+	// 			.set("seconds", 0);
+	// 		let currentPlan = await foodplans.model.findOne({ _id: req.body.planId });
+	// 		let foundplan = await foodplans.model.findOne({
+	// 			user: req.body.userId,
+	// 			startdate: { $gt: new Date() },
+	// 		});
+	// 		let pastrevenue = await revenue.model.findOne({user : req.body.userId})
+	// 		let completeDataToCreate = JSON.parse(JSON.stringify(currentPlan));
+	// 		delete completeDataToCreate._id;
+	// 		completeDataToCreate.startdate = startday;
+	// 		completeDataToCreate.enddate = endday;
+	// 		if (!foundplan) {
+	// 			console.log("sldkkfdslkfslsfdslkaaaa");
+	// 			// if(pastrevenue&&pastrevenue.bill){
+	// 			// 	await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill})
+	// 			// }else{
+	// 			// 	await revenue.model.create({
+	// 			// 		user : req.body.userId,
+	// 			// 		name: completeDataToCreate.name,
+	// 			// 		bill : completeDataToCreate.totalbill
+	// 			// 	})
+	// 			// }
+	// 			let createdPlan = await foodplans.model.create(completeDataToCreate);
+	// 			res.json({ error: 0, message: "Success", completeDataToCreate });
+	// 		} else {
+	// 			console.log("ttttttttttttttttttttt");
+	// 			// if(pastrevenue&&pastrevenue.bill){
+	// 			// 	await revenue.model.update({user:req.body.userId},{bill:completeDataToCreate.totalbill+pastrevenue.bill-foundplan.totalbill})
+	// 			// }else{
+	// 			// 	await revenue.model.create({
+	// 			// 		user : req.body.userId,
+	// 			// 		name: foundUser.name,
+	// 			// 		bill : completeDataToCreate.totalbill
+	// 			// 	})
+	// 			// }
+	// 			let removeOld = await foodplans.model.remove({
+	// 				user: req.body.userId,
+	// 				startdate: { $gt: new Date() },
+	// 			});
+	// 			let newRecord = await foodplans.model.create(completeDataToCreate);
+	// 			res.json({ error: 0, message: "Success", completeDataToCreate });
+	// 		}
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 		res.status(500).json({ error: 1, message: error });
+	// 	}
+	// },
 
 	showfoodplan: async (req, res) => {
 		try {
@@ -1618,33 +1618,33 @@ module.exports = {
 		}
 	},
 
-	cronsender: async () => {
-		try {
-			let data = await users.model.find();
-			for await (let element of data) {
-				let email = element.email;
-				let html = `Hello, Select delicious food on Zesty to kill your hunger.
-                you can select your next week's menu from here -
-                <a href={{link}}> {{link}} </a>`;
-				let subject = "Your menu for next week.";
-				console.log(
-					`${process.env.webBaseUrl}/subscribe?_id=${element._id}`,
-					"a-s-as-as-as-as-as-as-"
-				);
-				const template = Handlebars.compile(html);
-				let mailHtml = template({
-					link: `${process.env.webBaseUrl}/subscribe?_id=${element._id}`,
-				});
-				passverify.reminderservice(mailHtml, email, subject);
-			}
-		} catch (error) {
-			res.status(500).json({ error: 1, message: error });
-		}
-	},
+	// cronsender: async () => {
+	// 	try {
+	// 		let data = await users.model.find();
+	// 		for await (let element of data) {
+	// 			let email = element.email;
+	// 			let html = `Hello, Select delicious food on Zesty to kill your hunger.
+    //             you can select your next week's menu from here -
+    //             <a href={{link}}> {{link}} </a>`;
+	// 			let subject = "Your menu for next week.";
+	// 			console.log(
+	// 				`${process.env.webBaseUrl}/subscribe?_id=${element._id}`,
+	// 				"a-s-as-as-as-as-as-as-"
+	// 			);
+	// 			const template = Handlebars.compile(html);
+	// 			let mailHtml = template({
+	// 				link: `${process.env.webBaseUrl}/subscribe?_id=${element._id}`,
+	// 			});
+	// 			passverify.reminderservice(mailHtml, email, subject);
+	// 		}
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: 1, message: error });
+	// 	}
+	// },
 
-	test: async (req, res) => {
-		res.json({ success: true });
-	},
+	// test: async (req, res) => {
+	// 	res.json({ success: true });
+	// },
 
 	listAllergens: async function (req, res) {
 		try {
@@ -1655,40 +1655,40 @@ module.exports = {
 		}
 	},
 
-	updatespice: async (req, res) => {
-		try {
-			const finalfood = await dishes.model
-				.find({ spice_level: { $in: ["1", "2", "3"] } })
-				.populate("available_days")
-				.populate("availability");
-			console.log(finalfood);
-			for await (let item of finalfood) {
-				if (item.spice_level == "1") {
-					let foundspicelevel = await spicelevels.model.findOne({ name: "1" });
-					console.log(foundspicelevel._id);
-					if (foundspicelevel) {
-						item.spice_level == foundspicelevel._id;
-					}
-				}
-				if (item.spice_level == "2") {
-					let foundspicelevel1 = await spicelevels.model.findOne({ name: "2" });
-					if (foundspicelevel1) {
-						item.spice_level == foundspicelevel1._id;
-					}
-				}
-				if (item.spice_level == "3") {
-					let foundspicelevel2 = await spicelevels.model.findOne({ name: "3" });
-					if (foundspicelevel2) {
-						item.spice_level == foundspicelevel2._id;
-					}
-				}
-			}
-			res.json({ success: "true" });
-		} catch (error) {
-			console.log(error);
-			res.json({ error: "true" });
-		}
-	},
+	// updatespice: async (req, res) => {
+	// 	try {
+	// 		const finalfood = await dishes.model
+	// 			.find({ spice_level: { $in: ["1", "2", "3"] } })
+	// 			.populate("available_days")
+	// 			.populate("availability");
+	// 		console.log(finalfood);
+	// 		for await (let item of finalfood) {
+	// 			if (item.spice_level == "1") {
+	// 				let foundspicelevel = await spicelevels.model.findOne({ name: "1" });
+	// 				console.log(foundspicelevel._id);
+	// 				if (foundspicelevel) {
+	// 					item.spice_level == foundspicelevel._id;
+	// 				}
+	// 			}
+	// 			if (item.spice_level == "2") {
+	// 				let foundspicelevel1 = await spicelevels.model.findOne({ name: "2" });
+	// 				if (foundspicelevel1) {
+	// 					item.spice_level == foundspicelevel1._id;
+	// 				}
+	// 			}
+	// 			if (item.spice_level == "3") {
+	// 				let foundspicelevel2 = await spicelevels.model.findOne({ name: "3" });
+	// 				if (foundspicelevel2) {
+	// 					item.spice_level == foundspicelevel2._id;
+	// 				}
+	// 			}
+	// 		}
+	// 		res.json({ success: "true" });
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 		res.json({ error: "true" });
+	// 	}
+	// },
 
     chefMailForNextWeek :  async (req,res) => {
         try {

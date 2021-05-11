@@ -43,32 +43,32 @@ exports = module.exports = function (app) {
 	app.all('/*', keystone.middleware.cors);
 
 	app.get('/', routes.views.index);
-	app.get('/api/getuser', routes.views.user.getuser);
+	// app.get('/api/getuser', routes.views.user.getuser);    //not being used anymore
 	app.post('/api/createuser', routes.views.user.createuser);
 	app.post('/api/sociallogin', routes.views.user.sociallogin);
 	app.post('/api/loginuser', routes.views.user.loginuser);
 	app.post('/api/getfood', routes.views.user.listFood);
-	app.get('/api/listplans', routes.views.user.listplans);
+	// app.get('/api/listplans', routes.views.user.listplans);  //not being used anymore
 	// app.post('/api/savecart', routes.views.user.createcart);
-	app.post('/api/createuserfood', routes.views.user.dishDetails);
-	app.get('/api/getuserfood', routes.views.user.getDishDetails);
+	// app.post('/api/createuserfood', routes.views.user.dishDetails);  //not being used anymore
+	// app.get('/api/getuserfood', routes.views.user.getDishDetails); //not being used anymore
 	app.get('/api/listallergens', routes.views.user.listAllergens);
-	app.get('/api/verifynewpassword', routes.views.user.verifypassword);
-	app.get('/api/verifyemail', routes.views.user.verifyemail);
+	// app.get('/api/verifynewpassword', routes.views.user.verifypassword); //not being used anymore
+	// app.get('/api/verifyemail', routes.views.user.verifyemail);  //not being used anymore
 	app.post('/api/updatepassword', routes.views.user.updatepassword);
-	app.post('/api/updatesubscription', routes.views.user.updateSubscription);
+	// app.post('/api/updatesubscription', routes.views.user.updateSubscription); //not being used anymore
 	app.post('/api/updateprofile', routes.views.user.updateUserProfile);
 	app.post('/api/forgotpassword', routes.views.user.emailsender);
-	app.post('/api/createsubscription', routes.views.user.createsubscription);
-	app.get('/api/getsubscription', routes.views.user.getsubscription);
+	// app.post('/api/createsubscription', routes.views.user.createsubscription); //not being used anymore
+	// app.get('/api/getsubscription', routes.views.user.getsubscription); 
 	app.post('/api/savefoodplan', routes.views.user.savefoodplan);
 	app.post('/api/showfoodplan', routes.views.user.showfoodplan);
 	app.post('/api/userdetails', routes.views.user.userdetails);
-	app.post('/api/test', routes.views.user.test);
-	app.get('/api/updatespice', routes.views.user.updatespice);
-	app.get('/api/test', routes.views.user.test);
+	// app.post('/api/test', routes.views.user.test);  //not being used anymore
+	// app.get('/api/updatespice', routes.views.user.updatespice); //not being used anymore
+	// app.get('/api/test', routes.views.user.test); //not being used anymore
 	app.post('/api/showPastAndCurrentfoodplan', routes.views.user.showPastAndCurrentfoodplan);
-	app.post('/api/saveSamefoodplanAsLastWeek', routes.views.user.saveSamefoodplanAsLastWeek);
+	// app.post('/api/saveSamefoodplanAsLastWeek', routes.views.user.saveSamefoodplanAsLastWeek);  //not being used anymore
 	app.get('/api/getPreviousWeekData/:userId', routes.views.user.getPreviousWeekData);
 	app.post('/api/getDishesByMealTime', routes.views.user.getDishesByMealTime);
 	app.get('/api/listPrimaryIngredeints', routes.views.user.listPrimaryIngredeints);

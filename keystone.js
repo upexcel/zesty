@@ -53,19 +53,22 @@ keystone.set('cors allow headers', true);
 var cronSend = require('./routes/views/user')
 var service = require('./routes/views/service')
 
-var CronJob = require('cron').CronJob;
-var job = new CronJob('30 13 * * 5', function () {
-	cronSend.cronsender();
-}, null, true, 'Asia/Kolkata');
-job.start();
+const {cronService} = require('./routes/crons/cron')
+cronService();
 
-var chefMailForNextWeek = new CronJob('35 1 * * 6', function () {
-	service.chefMailForNextWeek().then((data) => {
-	}).catch(err => {
-		console.log(err)
-	});
-}, null, true, 'Asia/Kolkata');
-chefMailForNextWeek.start();
+var CronJob = require('cron').CronJob;
+// var job = new CronJob('30 13 * * 5', function () {
+// 	cronSend.cronsender();
+// }, null, true, 'Asia/Kolkata');
+// job.start();
+
+// var chefMailForNextWeek = new CronJob('35 1 * * 6', function () {
+// 	service.chefMailForNextWeek().then((data) => {
+// 	}).catch(err => {
+// 		console.log(err)
+// 	});
+// }, null, true, 'Asia/Kolkata');
+// chefMailForNextWeek.start();
 
 var previousFoodPlanUpdate = new CronJob('20 1 * * 6', function () {
 	service.previousFoodPlanUpdate().then((data) => {
@@ -75,37 +78,37 @@ var previousFoodPlanUpdate = new CronJob('20 1 * * 6', function () {
 }, null, true, 'Asia/Kolkata');
 previousFoodPlanUpdate.start();
 
-const setSystemDates = new CronJob('40 1 * * 6', function (){
-	service.systemDatesUpdate().then((data) => {
-	}).catch(err => {
-		console.log(err)
-	});
-}, null, true, 'Asia/Kolkata')
-setSystemDates.start();
+// const setSystemDates = new CronJob('40 1 * * 6', function (){
+// 	service.systemDatesUpdate().then((data) => {
+// 	}).catch(err => {
+// 		console.log(err)
+// 	});
+// }, null, true, 'Asia/Kolkata')
+// setSystemDates.start();
 
-const addweeklyrevenue = new CronJob("50 1 * * *",async ()=>{
-	cronSend.addweeklyrevenue().then((data) => {
-	}).catch(err => {
-		console.log(err)
-	});
-}, null, true, 'Asia/Kolkata')
-addweeklyrevenue.start();
+// const addweeklyrevenue = new CronJob("50 1 * * *",async ()=>{
+// 	cronSend.addweeklyrevenue().then((data) => {
+// 	}).catch(err => {
+// 		console.log(err)
+// 	});
+// }, null, true, 'Asia/Kolkata')
+// addweeklyrevenue.start();
 
-const addtotalrevenue = new CronJob('50 1 * * *', async ()=>{
-	cronSend.addtotalrevenue().then((data) => {
-	}).catch(err => {
-		console.log(err)
-	});
-}, null, true, 'Asia/Kolkata')
-addtotalrevenue.start();
+// const addtotalrevenue = new CronJob('50 1 * * *', async ()=>{
+// 	cronSend.addtotalrevenue().then((data) => {
+// 	}).catch(err => {
+// 		console.log(err)
+// 	});
+// }, null, true, 'Asia/Kolkata')
+// addtotalrevenue.start();
 
-const sendChefSms = new CronJob('0 19 * * *', () => {
-	service.chefSMSForDaily().then((data) => {
-	}).catch(err => {
-		console.log(err)
-	});
-}, null, true, 'Asia/Kolkata')
-sendChefSms.start();
+// const sendChefSms = new CronJob('0 19 * * *', () => {
+// 	service.chefSMSForDaily().then((data) => {
+// 	}).catch(err => {
+// 		console.log(err)
+// 	});
+// }, null, true, 'Asia/Kolkata')
+// sendChefSms.start();
 
 
 // Configure the navigation bar in Keystone's Admin UI

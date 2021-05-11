@@ -159,43 +159,43 @@ module.exports = {
 			console.error(error);
 		}
 	},
-	chefMailForNextWeek: async () => {
-		try {
-			let chefs = await Chef.model.find({})
-			for await (let item of chefs) { 
-				if (item.email) {
-					let html = `Hello, Below is the link of your Dishes.
-					<a href={{link}}> {{link}} </a>`;
-					let subject = "Dishes for the next week";
-					const template = Handlebars.compile(html);
-					let mailHtml = template({
-						link: `${process.env.webBaseUrl}/chef/${item.name}`,
-					});
-					let mailSendData = await module.exports.reminderservice(mailHtml, [item.email,'praveena.nadi@gmail.com','gaganpreetkaur@yahoo.com'], subject);
-				}
-			}
-		} catch (err) {
-			console.log(err)
-		}
-	},
+	// chefMailForNextWeek: async () => {
+	// 	try {
+	// 		let chefs = await Chef.model.find({})
+	// 		for await (let item of chefs) { 
+	// 			if (item.email) {
+	// 				let html = `Hello, Below is the link of your Dishes.
+	// 				<a href={{link}}> {{link}} </a>`;
+	// 				let subject = "Dishes for the next week";
+	// 				const template = Handlebars.compile(html);
+	// 				let mailHtml = template({
+	// 					link: `${process.env.webBaseUrl}/chef/${item.name}`,
+	// 				});
+	// 				let mailSendData = await module.exports.reminderservice(mailHtml, [item.email,'praveena.nadi@gmail.com','gaganpreetkaur@yahoo.com'], subject);
+	// 			}
+	// 		}
+	// 	} catch (err) {
+	// 		console.log(err)
+	// 	}
+	// },
 
-	systemDatesUpdate : async () => {
-		const weekendDates = await systemDates.model.findOne({})
-		let newWeekEndDate = moment(weekendDates.weekenddate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
-		let newWeekStartDate =  moment(weekendDates.weekstartdate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
-		let newChefEndDate = moment(weekendDates.chefenddate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
-		let newChefStartDate =  moment(weekendDates.chefstartdate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
-		console.log(newWeekEndDate,"update of new week end date")
-		console.log(newWeekStartDate,"update of new week Start date")
-		console.log(newChefEndDate,"update of new chef end date")
-		console.log(newChefStartDate,"update of new chef start date")
-		const updated = await systemDates.model.update({_id: weekendDates},
-			{weekenddate : newWeekEndDate,
-			weekstartdate : newWeekStartDate,
-			chefenddate : newChefEndDate,
-			chefstartdate : newChefStartDate
-		})
-	},
+	// systemDatesUpdate : async () => {
+	// 	const weekendDates = await systemDates.model.findOne({})
+	// 	let newWeekEndDate = moment(weekendDates.weekenddate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
+	// 	let newWeekStartDate =  moment(weekendDates.weekstartdate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
+	// 	let newChefEndDate = moment(weekendDates.chefenddate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
+	// 	let newChefStartDate =  moment(weekendDates.chefstartdate).add(7,"days").format('YYYY-MM-DDTHH:mm:ss.SSS')
+	// 	console.log(newWeekEndDate,"update of new week end date")
+	// 	console.log(newWeekStartDate,"update of new week Start date")
+	// 	console.log(newChefEndDate,"update of new chef end date")
+	// 	console.log(newChefStartDate,"update of new chef start date")
+	// 	const updated = await systemDates.model.update({_id: weekendDates},
+	// 		{weekenddate : newWeekEndDate,
+	// 		weekstartdate : newWeekStartDate,
+	// 		chefenddate : newChefEndDate,
+	// 		chefstartdate : newChefStartDate
+	// 	})
+	// },
 
 	chefSMSForDaily: async () => {
 		try {
