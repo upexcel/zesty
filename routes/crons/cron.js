@@ -118,7 +118,7 @@ const cronService = async () => {
         }, null, true, 'Asia/Kolkata')
         addweeklyrevenue.start();
         
-        const addtotalrevenue = new CronJob('50 1 * * *', async ()=>{
+        const addtotalrevenue = new CronJob('0 2 * * *', async ()=>{
             try {
                 const allweeksrevenue = await WeekRevenue.model.find({})
                 let revenuetobesaved = {
