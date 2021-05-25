@@ -56,7 +56,7 @@ var service = require('./routes/views/service')
 const {cronService} = require('./routes/crons/cron')
 cronService();
 
-var CronJob = require('cron').CronJob;
+// var CronJob = require('cron').CronJob;
 // var job = new CronJob('30 13 * * 5', function () {
 // 	cronSend.cronsender();
 // }, null, true, 'Asia/Kolkata');
@@ -70,13 +70,13 @@ var CronJob = require('cron').CronJob;
 // }, null, true, 'Asia/Kolkata');
 // chefMailForNextWeek.start();
 
-var previousFoodPlanUpdate = new CronJob('20 1 * * 6', function () {
-	service.previousFoodPlanUpdate().then((data) => {
-	}).catch(err => {
-		console.log(err)
-	});
-}, null, true, 'Asia/Kolkata');
-previousFoodPlanUpdate.start();
+// var previousFoodPlanUpdate = new CronJob('20 1 * * 6', function () {
+// 	service.previousFoodPlanUpdate().then((data) => {
+// 	}).catch(err => {
+// 		console.log(err)
+// 	});
+// }, null, true, 'Asia/Kolkata');
+// previousFoodPlanUpdate.start();
 
 // const setSystemDates = new CronJob('40 1 * * 6', function (){
 // 	service.systemDatesUpdate().then((data) => {

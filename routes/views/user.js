@@ -15,18 +15,10 @@ let dietary_requirement = keystone.list("dietary_requirement");
 let foodplans = keystone.list("Foodplan");
 let typeOfFood = keystone.list("type_of_food");
 let otherChoicesModel = keystone.list("otherChoices");
-let passverify = require("./service");
-const { select } = require("async");
-const { indexOf } = require("lodash");
 const cloudinary = require("cloudinary").v2;
-var CronJob = require("cron").CronJob;
-const axios = require("axios");
-const Handlebars = require("handlebars");
 const service = require("./service");
 const Chef = keystone.list('Chef');
 const systemDates = keystone.list('SystemDates')
-let ZestyRevenue = keystone.list("ZestyRevenue");
-let WeekRevenue = keystone.list("ZestyWeekRevenue");
 
 
 const membershipData ={
@@ -207,7 +199,7 @@ async function updateFood(req) {
 		let subject = "Your Order Details.";
 		text +=  '<br>' +
 				`<p>your order price is ${price}</p>`
-		await passverify.reminderservice(text, email, subject, null);
+		await service.reminderservice(text, email, subject, null);
 		dataToReturn.mealcount = mealcount
 		console.log(mealcount,"mealcount from update food in save Foodplan")
 		return dataToReturn;
@@ -420,7 +412,7 @@ module.exports = {
 				);
 				let subject = "Verify your Password";
 				let link = process.env.PASSWORD_LINK + token;
-				let message = passverify.newemailservice(link, useremail, subject);
+				let message = service.newemailservice(link, useremail, subject);
 
 				res.json({ error: 0, message: "Success" });
 			}
@@ -504,7 +496,7 @@ module.exports = {
 						);
 
 						let link = process.env.EMAIL_LINK + token;
-						passverify.newemailservice(link, useremail, subject);
+						service.newemailservice(link, useremail, subject);
 					}
 					let token = jwt.sign(
 						{ token: { name: user.name, id: user.id } },
@@ -1635,7 +1627,7 @@ module.exports = {
 	// 			let mailHtml = template({
 	// 				link: `${process.env.webBaseUrl}/subscribe?_id=${element._id}`,
 	// 			});
-	// 			passverify.reminderservice(mailHtml, email, subject);
+	// 			service.reminderservice(mailHtml, email, subject);
 	// 		}
 	// 	} catch (error) {
 	// 		res.status(500).json({ error: 1, message: error });
@@ -2656,25 +2648,25 @@ async function sendMailToStaff(userData) {
 	let html = `Congrats, ${userName} created a foodplan.`;
 	let subject = "Foodplan";
 	if (!foodPlanOfUser) {
-		passverify.reminderservice(html, email, subject);
+		service.reminderservice(html, email, subject);
 	}
 	return "success mail";
 }
 
-async function incrementWeekRevenue(startdate,enddate,amounts) {
-	return "weekly Incremented";
-}
+// async function incrementWeekRevenue(startdate,enddate,amounts) {
+// 	return "weekly Incremented";
+// }
 
-async function decrementWeekRevenue(startdate,enddate,amounts) {
+// async function decrementWeekRevenue(startdate,enddate,amounts) {
 	
-	return "weekly Decremented";
-}
+// 	return "weekly Decremented";
+// }
 
 
-async function incrementZestyRevenue(startdate,enddate,amounts) {
-	return "Overall Incremented";
-}
+// async function incrementZestyRevenue(startdate,enddate,amounts) {
+// 	return "Overall Incremented";
+// }
 
-async function decrementZestyRevenue(startdate,enddate,amounts) {
-	return "Overall Decremented";
-}
+// async function decrementZestyRevenue(startdate,enddate,amounts) {
+// 	return "Overall Decremented";
+// }
